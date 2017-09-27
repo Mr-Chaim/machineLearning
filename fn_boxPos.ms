@@ -30,6 +30,8 @@ stepsBetweenUses = 1
 objPos = b.pos[3]/bDummy.pos[3]
 eulerNum = 2.718281828459045
 
+
+
 fn randomGen = (random 0.0 1.0)
 fn printBoxPos= (if nvpx.IsSimulating() == false do (print "No animation running"))
 fn accFinder bPast speedNow=(
@@ -98,13 +100,13 @@ fn windSpeedChange windForce counter=
 
 		/* In here we will start to use our Neural Network, the first layer deals with deciding if the object is above or below the Objective.
 		*/
-
+			windForce = w.strength
 			objPos = posFinder()
 			absDist = distFinder objPos
 			acel = accFinder bPast speedNow
 			dir = dirFinder bPrevious
 			spd = speedFinder bPast
-
+			bPast = b.pos[3]
 		/* 	This here is the representation of the neural network.
 
 			First is an imput Layer
@@ -170,5 +172,21 @@ fn windSpeedChange windForce counter=
 )
 fn backPropagation objPos absDist acel dir spd NetworkLayers NeuronOutput = 
 (
+	/*
+	So this is the back propagation method. I am not completely sure on which method use. 
+	Those are the atributes I have. 
+	
+	Aceleration
+	Speed
+	Distance
+	Position
+	Direction
+	WindForce
+
+	The weight for each layer
+
+	My option is to make an DataSset of the values, then calculate the necessary speed, aceleration to cover the necessary distance in the necessary range of time,
+	 also taking in consideration maxmum speed and aceleration 
+	*/
 
 )
