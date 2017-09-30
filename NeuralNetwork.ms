@@ -33,7 +33,9 @@ eulerNum = 2.718281828459045
 
 
 fn randomGen = (random 0.0 1.0)
+
 fn printBoxPos= (if nvpx.IsSimulating() == false do (print "No animation running"))
+
 fn accFinder bPast speedNow=(
 	/* Nex is where i get and calculate the aceleration of the object,
 	   the number will be turned into an absolute value between -1 and 1 as 1 being the maximum acceleration. */
@@ -48,7 +50,9 @@ fn accFinder bPast speedNow=(
 	if var > 1.0 do (acel = maxAcceleration) 
 	if var < -1.0 do (acel = -maxAcceleration)
 	return acel)
+
 fn speedFinder bPast= (b.pos[3]-bPast)
+
 fn dirFinder bPrevious=(
 	/* In here i will find the direction where the object is going, it can be a binary of up or down.*/
 	local dir = ((bDummy.pos[3]-b.pos[3])/(bDummy.pos[3]-bPrevious))
@@ -56,12 +60,16 @@ fn dirFinder bPrevious=(
 	if dir < 0 do (objectDir = -1) -- Object direction of -1 means the object is moving away from objective.
 	if dir == 0 do ( objectDir = 0)
 	return objectDir)
+
 fn posFinder = (b.pos[3] - bDummy.pos[3])
+
 fn distFinder objPos =(
 	if objPos >= 1.0 do (dist = (((b.pos[3]-bDummy.pos[3])/bDummy.pos[3])))
 	if objPos < 1.0 do (dist = (((bDummy.pos[3]-b.pos[3])/bDummy.pos[3])))
 	return dist)
+
 fn sigmFn InputVar = (1/(1+ eulerNum^(-InputVar)))
+
 fn binaryFn inputVar binNum = (
 	if binNum < 0 then
 	(
@@ -188,5 +196,5 @@ fn backPropagation objPos absDist acel dir spd NetworkLayers NeuronOutput =
 	My option is to make an DataSset of the values, then calculate the necessary speed, aceleration to cover the necessary distance in the necessary range of time,
 	 also taking in consideration maxmum speed and aceleration 
 	*/
-
+	
 )
