@@ -1,103 +1,202 @@
-maxAcceleration = 100/10
-gForce1 = random 0.1 1.0
-gForce2 = random 0.1 1.0
+-- constants
+
+maxAcel = 10.0
+maxWindSpd = 5
+maxWindSpdXY = 1
+topObjSpd = 100
+maxWindSpdArr = #(maxWindSpdXY,maxWindSpdXY,maxWindSpd)
+
+-- obj Variables
+
 x_force = $y_Force
 z_force = $z_Force
 y_force = $y_Force
 b = $Box003
 bDummy = $Dummy001
+windArray = #(x_force,y_force,z_force)
+
+-- Counters
+
 counterLine=0
-maxSpeed = 5
-maxSpeedXY = 1
-topSpeed = 100
+counterLine2=1
+counter = 0
+counter2 = 0
+steps = 15
+
+-- Starting Variables
+
 windForceX = x_Force.strength
 windForceY = y_Force.strength
 windForceZ = z_Force.strength
-counter = 0
-counter2 = 0
+
 bXpos = b.pos[1]
 bYpos = b.pos[2]
 bZpos = b.pos[3]
+
 bXpast = bXpos
 bYpast = bYpos
 bZpast = bZpos
+
 bDummyXpos = bDummy.pos[1]
 bDummyYpos = bDummy.pos[2]
 bDummyZpos = bDummy.pos[3]
-speedNowX = (bXpos-bXpast)/topSpeed
-speedNowY = (bYpos-bYpast)/topSpeed
-speedNowZ = (bZpos-bZpast)/topSpeed
-steps = 5
+
+speedNowX = (bXpos-bXpast)/topObjSpd
+speedNowY = (bYpos-bYpast)/topObjSpd
+speedNowZ = (bZpos-bZpast)/topObjSpd
+
 sumationArr1=0
 sumationArr2=0
 allSpeedsArray1 = #()
 allSpeedsArray2 = #()
-fn unregisterAllTimeCallBacks =
-(
-	unregisterTimeCallback windXAxis
-	unregisterTimeCallback windYAxis
-	unregisterTimeCallback windZAxis
-	unregisterTimeCallback displayInfo
-	unregisterTimeCallback gLine
-)
-unregisterAllTimeCallBacks()
-deleteSplineFN()
-fn windXAxis = 
+
+-- Order of function activation
+
+-- 1. Basic Variables
+
+fn windForceFunc windVar = (windVar.strength)
+
+fn deltaFunc bpos bDummyPos = ((bpos-bDummypos)/bDummyPos)
+
+fn speedNowFunc bpos bpast topObjSpd = ((bpos-bpast)/topObjSpd)
+
+-- 2. Complex Variables and basic calculations
+
+fn windAbsoluteFunc windForce maxWindSpd = (windForce/maxWindSpd)
+
+fn maxAcelFunc maxAcel delta= (maxAcel*delta)
+
+fn acelFunc speedNow bpos bpast maxAcelLocal = ((speedNow-(bpos-bpast))/maxAcelLocal)
+
+-- 3. Final Complex calculation
+
+fn windAcelFunc speedNow windAbs acel delta maxWindSpdArr = (((speedNow + (windAbs +acel ) ) / delta ) * maxWindSpdArr)
+
+
+-- Functions defined by object
+fn windAllDir = 
 (
 	if nvpx.IsSimulating() == true do
 	(
 
 		counter +=1
+
+		for n=1 to bPos.count do
+		(
+			bDummyPos = bDummy.pos[n]
+			bPos = b.pos[n]
+			bPast = bPastArr[n]
+			maxWindSpd = maxWindSpdArr[n]
+
+			windForce = windForceFunc windArray
+			
+			delta = deltaFunc bPos bDummyPos
+
+			speedNow = speedNowFunc bPos bPast topObjSpd
+
+			maxAcelLocal = maxAcelFunc maxAcel delta
+			
+			windAbs = windAbsoluteFunc windForce maxWindSpd
+			
+			acel = acelFunc speedNow bPos bPast maxAcelLocal
+			
+			
+			
+
+
+			/* if acel > maxAcelLocal do (acel = maxAcelLocal)
+			if acel < -maxAcelLocal do (acel = -maxAcelLocal)
+			if acel == 0.0 then (windacel = maxAcelLocal)
+			else  (windacel = (acel/windAbs)) */
+
+			windacel = windAcelFunc speedNow windAbs acel delta maxWindSpd
+
+			if (delta) < 0.0 or (delta) > 1.5 do
+			(
+				--if acelX == 0.0 do (windacelX = maxAcel)
+				windForce = -windacel
+				--append allSpeedsArray1 delta
+				if windForce > maxWindSpd do
+				(
+					windForce = maxWindSpd
+				)
+				if windForce < -maxWindSpd do
+				(
+					windForce = -maxWindSpd
+				)
+				
+			)
+			
+			windArray[n].strength = windForce
+
+			counter = 0
+		)
+		bPastArr = #(bPos[1],bPos[2],bPos[3])	
+		
+	)
+)
+/* fn windXAxis = 
+(
+	if nvpx.IsSimulating() == true do
+	(
+
+		counter +=1
+
 		if counter == 1 do
 		(
 			bDummyXpos = bDummy.pos[1]
 			bXpos = b.pos[1]
-			windAbsoluteX = (windForceX/maxSpeedXY)
-			acelX = ((speedNowX-(bXpos-bXpast)))/maxAcceleration
-			speedNowX = (bXpos-bXpast)/topSpeed
+			windForceX = windForceFn x_force
+			maxAcel = maxAcelFun maxAcel deltaX
+			deltaX = delta bXpos bDummyXpos
+			windAbsoluteX = windAbsolute windForceX maxWindSpdXY
+			acelX = acelFunc speedNowX bXpos bXpast maxAcel
+			speedNowX = speedNow bXpos bXpast topObjSpd
 			bXpast = bXpos
-			if acelX > maxAcceleration do (acelX = maxAcceleration)
-			if acelX < -maxAcceleration do (acelX = -maxAcceleration)
-			if acelX == 0.0 then (windacelX = maxAcceleration)
+			
+
+
+			if acelX > maxAcel do (acelX = maxAcel)
+			if acelX < -maxAcel do (acelX = -maxAcel)
+			if acelX == 0.0 then (windacelX = maxAcel)
 			else  (windacelX = (acelX/windAbsoluteX))
+
+			windacelX = windAcelFunc speedNowX windAbsoluteX acelX deltaX maxWindSpd
+
 			if (bXpos/bDummyXpos) < 1.0 do 
 			(
-				--if acelX == 0.0 do (windacelX = maxAcceleration)
-				aUnderX = (bDummyXpos-(bDummyXpos-bXpos))/bDummyXpos
-				windacelX = (((speedNowX)+(windAbsoluteX+acelX))/aUnderX)*maxSpeedXY
-				if acelX == 0.0 do (windacelX = maxAcceleration)
+				--if acelX == 0.0 do (windacelX = maxAcel)
+				
+				if acelX == 0.0 do (windacelX = maxAcel)
 				if windacelX < 0 do (windacelX = -windacelX)
 				windForceX = windacelX
-				append allSpeedsArray1 aUnderX
-				--format "1.Bpos: %. Dpos: %. Wstr: % , wacelX: % , UDummy: %. Acc at: % Spd: % Gforce1: %\n" bXpos bDummyXpos windAbsoluteX (windacelX/maxSpeedXY) aUnderX (acelX) speedNowX gforce1
-				if windForceX > maxSpeedXY do
+				append allSpeedsArray1 deltaX
+				if windForceX > maxWindSpdXY do
 				(
-					windForceX = maxSpeedXY
+					windForceX = maxWindSpdXY
 				)
-				if windForceX < -maxSpeedXY do
+				if windForceX < -maxWindSpdXY do
 				(
-					windForceX = -maxSpeedXY
+					windForceX = -maxWindSpdXY
 				)
 				
 			)
-			if (bXpos/bDummyXpos) == 0.0 do  (windForceX = 0.0)
+			if (bXpos/bDummyXpos) == 0.0 do (windForceX = 0.0)
 			if (bXpos/bDummyXpos) > 1.0 do
 			(
-				--if acelX == 0.0 do (windacelX = -maxAcceleration)
-				aOverX =  (bDummyXpos-(bXpos-bDummyXpos))/bDummyXpos
-				windacelX = (((speedNowX)+(windAbsoluteX+acelX))/aOverX)*maxSpeedXY
-				if acelX == 0.0 do (windacelX = -maxAcceleration)
-				--if windacelX < 0.0 do (windacelX = -windacelX)
+				--if acelX == 0.0 do (windacelX = -maxAcel)
+				windacelX = (((speedNowX)+(windAbsoluteX+acelX))/deltaX)*maxWindSpdXY
+				if acelX == 0.0 do (windacelX = -maxAcel)
+				if windacelX < 0.0 do (windacelX = -windacelX)
 				windForceX = windacelX
-				append allSpeedsArray2 aOverX
-				--format "2.Bpos: %. Dpos: %. Wstr: % , wacelX: % , ODummy: %. Acc at: % Spd: % Gforce2: %\n" bXpos bDummyXpos windAbsoluteX (windacelX/maxSpeedXY) aOverX (acelX) speedNowX gforce2
-			 	if windForceX > maxSpeedXY do
+				append allSpeedsArray2 deltaX
+			 	if windForceX > maxWindSpdXY do
 				(
-					windForceX = maxSpeedXY
+					windForceX = maxWindSpdXY
 				)
-				if windForceX < -maxSpeedXY do
+				if windForceX < -maxWindSpdXY do
 				(
-					windForceX = -maxSpeedXY
+					windForceX = -maxWindSpdXY
 				) 
 				
 			) 
@@ -120,52 +219,49 @@ fn windYAxis =
 		(
 			bYpos = b.pos[2]
 			bDummyYpos = bDummy.pos[2]
-			windAbsoluteY = (windForceY/maxSpeedXY)
-			acelY = ((speedNowY-(bYpos-bYpast)))/maxAcceleration
-			speedNowY = (bYpos-bYpast)/topSpeed
+			windAbsoluteY = (windForceY/maxWindSpdXY)
+			acelY = ((speedNowY-(bYpos-bYpast)))/maxAcel
+			speedNowY = (bYpos-bYpast)/topObjSpd
 			bYpast = bYpos
-			if acelY > maxAcceleration do (acelY = maxAcceleration)
-			if acelY < -maxAcceleration do (acelY = -maxAcceleration)
-			if acelY == 0.0 then (windacelY = maxAcceleration)
+			deltaY = (bYpos-bDummyYpos)/bDummyYpos
+			if acelY > maxAcel do (acelY = maxAcel)
+			if acelY < -maxAcel do (acelY = -maxAcel)
+			if acelY == 0.0 then (windacelY = maxAcel)
 			else  (windacelY = (acelY/windAbsoluteY))
 			if (bYpos/bDummyYpos) < 1.0 do 
 			(
-				--if acelY == 0.0 do (windacelY = maxAcceleration)
-				aUnderY = (bDummyYpos-(bDummyYpos-bYpos))/bDummyYpos
-				windacelY = (((speedNowY)+(windAbsoluteY+acelY))/aUnderY)*maxSpeedXY
-				if acelY == 0.0 do (windacelY = maxAcceleration)
+				--if acelY == 0.0 do (windacelY = maxAcel)
+				windacelY = (((speedNowY)+(windAbsoluteY+acelY))/deltaY)*maxWindSpdXY
+				if acelY == 0.0 do (windacelY = maxAcel)
 				if windacelY < 0 do (windacelY = -windacelY)
 				windForceY = windacelY
-				append allSpeedsArray1 aUnderY
-				--format "1.Bpos: %. Dpos: %. Wstr: % , wacelY: % , UDummy: %. Acc at: % Spd: % Gforce1: %\n" bYpos bDummyYpos windAbsoluteY (windacelY/maxSpeedXY) aUnderY (acelY) speedNowY gforce1
-				if windForceY > maxSpeedXY do
+				append allSpeedsArray1 deltaY
+				if windForceY > maxWindSpdXY do
 				(
-					windForceY = maxSpeedXY
+					windForceY = maxWindSpdXY
 				)
-				if windForceY < -maxSpeedXY do
+				if windForceY < -maxWindSpdXY do
 				(
-					windForceY = -maxSpeedXY
+					windForceY = -maxWindSpdXY
 				)
 				
 			)
 			if (bYpos/bDummyYpos) == 0.0 do (windForceY = 0.0)
 			if (bYpos/bDummyYpos) > 1.0 do
 			(
-				--if acelY == 0.0 do (windacelY = -maxAcceleration)
-				aOverY =  (bDummyYpos-(bYpos-bDummyYpos))/bDummyYpos
-				windacelY = (((speedNowY)+(windAbsoluteY+acelY))/aOverY)*maxSpeedXY
-				if acelY == 0.0 do (windacelY = -maxAcceleration)
+				--if acelY == 0.0 do (windacelY = -maxAcel)
+				windacelY = (((speedNowY)+(windAbsoluteY+acelY))/deltaY)*maxWindSpdXY
+				if acelY == 0.0 do (windacelY = -maxAcel)
 				--if windacelY < 0.0 do (windacelY = -windacelY)
 				windForceY = windacelY
-				append allSpeedsArray2 aOverY
-				--format "2.Bpos: %. Dpos: %. Wstr: % , wacelY: % , ODummy: %. Acc at: % Spd: % Gforce2: %\n" bYpos bDummyYpos windAbsoluteY (windacelY/maxSpeedXY) aOverY (acelY) speedNowY gforce2
-			 	if windForceY > maxSpeedXY do
+				append allSpeedsArray2 deltaY
+			 	if windForceY > maxWindSpdXY do
 				(
-					windForceY = maxSpeedXY
+					windForceY = maxWindSpdXY
 				)
-				if windForceY < -maxSpeedXY do
+				if windForceY < -maxWindSpdXY do
 				(
-					windForceY = -maxSpeedXY
+					windForceY = -maxWindSpdXY
 				) 
 				
 			) 
@@ -189,52 +285,46 @@ fn windZAxis =
 		(
 			bZpos = b.pos[3]
 			bDummyZpos = bDummy.pos[3]
-			windAbsoluteZ = (windForceZ/maxSpeed)
-			acelZ = ((speedNowZ-(bZpos-bZpast)))/maxAcceleration
-			speedNowZ = (bZpos-bZpast)/topSpeed
+			windAbsoluteZ = (windForceZ/maxWindSpd)
+			acelZ = ((speedNowZ-(bZpos-bZpast)))/maxAcel
+			speedNowZ = (bZpos-bZpast)/topObjSpd
 			bZpast = bZpos
-			if acelZ > maxAcceleration do (acelZ = maxAcceleration)
-			if acelZ < -maxAcceleration do (acelZ = -maxAcceleration)
-			if acelZ == 0.0 then (windacelZ = maxAcceleration)
+			deltaZ = (bZpos-bDummyZpos)/bDummyZpos
+			if acelZ > maxAcel do (acelZ = maxAcel)
+			if acelZ < -maxAcel do (acelZ = -maxAcel)
+			if acelZ == 0.0 then (windacelZ = maxAcel)
 			else  (windacelZ = (acelZ/windAbsoluteZ))
 			if (bZpos/bDummyZpos) < 1.0 do 
 			(
-				--if acelZ == 0.0 do (windacelZ = maxAcceleration)
-				aUnderZ =abs (bDummyZpos-(bDummyZpos-bZpos))/bDummyZpos
-				windacelZ = (((speedNowZ)+(windAbsoluteZ+acelZ))/aUnderZ)*maxSpeed
-				if acelZ == 0.0 do (windacelZ = maxAcceleration)
+				windacelZ = (((speedNowZ)+(windAbsoluteZ+acelZ))/deltaZ)*maxWindSpd
+				if acelZ == 0.0 do (windacelZ = maxAcel)
 				if windacelZ < 0 do (windacelZ = -windacelZ)
 				windForceZ = windacelZ
-				append allSpeedsArray1 aUnderZ
-				--format "1.Bpos: %. Dpos: %. Wstr: % , wacelZ: % , UDummy: %. Acc at: % Spd: % Gforce1: %\n" bZpos bDummyZpos windAbsoluteZ (windacelZ/maxSpeed) aUnderZ (acelZ) speedNowZ gforce1
-				if windForceZ > maxSpeed do
+				append allSpeedsArray1 deltaZ
+				if windForceZ > maxWindSpd do
 				(
-					windForceZ = maxSpeed
+					windForceZ = maxWindSpd
 				)
-				if windForceZ < -maxSpeed do
+				if windForceZ < -maxWindSpd do
 				(
-					windForceZ = -maxSpeed
+					windForceZ = -maxWindSpd
 				)
 				
 			)
 			if (bZpos/bDummyZpos) == 0.0 do  (windForceZ = 0.0)
 			if (bZpos/bDummyZpos) > 1.0 do
 			(
-				--if acelZ == 0.0 do (windacelZ = -maxAcceleration)
-				aOverZ = abs (bDummyZpos-(bZpos-bDummyZpos))/bDummyZpos
-				windacelZ = (((speedNowZ)+(windAbsoluteZ+acelZ))/aOverZ)*maxSpeed
-				if acelZ == 0.0 do (windacelZ = -maxAcceleration)
-				--if windacelZ < 0.0 do (windacelZ = -windacelZ)
+				windacelZ = (((speedNowZ)+(windAbsoluteZ+acelZ))/deltaZ)*maxWindSpd
+				if acelZ == 0.0 do (windacelZ = -maxAcel)
 				windForceZ = windacelZ
-				append allSpeedsArray2 aOverZ
-				--format "2.Bpos: %. Dpos: %. Wstr: % , wacelZ: % , ODummy: %. Acc at: % Spd: % Gforce2: %\n" bZpos bDummyZpos windAbsoluteZ (windacelZ/maxSpeed) aOverZ (acelZ) speedNowZ gforce2
-			 	if windForceZ > maxSpeed do
+				append allSpeedsArray2 deltaZ
+			 	if windForceZ > maxWindSpd do
 				(
-					windForceZ = maxSpeed
+					windForceZ = maxWindSpd
 				)
-				if windForceZ < -maxSpeed do
+				if windForceZ < -maxWindSpd do
 				(
-					windForceZ = -maxSpeed
+					windForceZ = -maxWindSpd
 				) 
 				
 			) 
@@ -246,26 +336,30 @@ fn windZAxis =
 		)	
 		
 	)
-)
+) */
+
+-- Information and display Functions
+
 fn displayInfo = 
 (
-	aUnderX = (bDummyXpos-(bDummyXpos-bXpos))/bDummyXpos
-	aUnderY = (bDummyYpos-(bDummyYpos-bYpos))/bDummyYpos
+	deltaX = (bXpos-bDummyXpos)/bDummyXpos
+	deltaY = (bYpos-bDummyYpos)/bDummyYpos
 	aUnderZ =abs (bDummyZpos-(bDummyZpos-bZpos))/bDummyZpos
-	windAbsoluteX = x_Force.strength/maxSpeedXY
-	windAbsoluteY = y_Force.strength/maxSpeedXY
-	windAbsoluteZ = z_Force.strength/maxSpeed
-	--format "1.Bpos: %X,%Y,%Z ." bXpos bYpos bZpos
-	--format "Dpos: %X,%Y,%Z ." bDummyXpos bDummyYpos bDummyZpos
+	windAbsoluteX = x_Force.strength/maxWindSpdXY
+	windAbsoluteY = y_Force.strength/maxWindSpdXY
+	windAbsoluteZ = z_Force.strength/maxWindSpd
 	format "Wstr: %X,%Y,%Z." windAbsoluteX windAbsoluteY windAbsoluteZ
-	format "UDummy: %X,%Y,%Z ." aUnderX aUnderY aUnderZ
+	format "Deltas: %X,%Y,%Z ." deltaX deltaY deltaZ
 	format "Acc at: %X,%Y,%Z .\n" speedNowX speedNowY speedNowZ
 )
+
 fn gLine = 
 (
+	counterLine += 1
  	if newLine == undefined do
  	(
   		newLine = splineShape ()
+  		newLine.name = "NewLine"
   		addnewSpline newLine
   		addKnot newLine 1 #corner #line b.pos
 		addKnot newLine 1 #corner #line bDummy.pos
@@ -277,12 +371,30 @@ fn gLine =
  	if newLine2 == undefined do
  	(
   		newLine2 = splineShape ()
+  		newLine2.name = "NewLine2"
   		addnewSpline newLine2
-  		addKnot newLine2 1 #smooth  #line b.pos
-  		--updateShape newLine2
+  		addKnot newLine2 1 #smooth #line b.pos
  	)
- 	addKnot newLine2 1 #smooth  #line b.pos
-  	updateShape newLine2
+ 	if sliderTime > 1 do
+ 	(
+	 	addKnot newLine2 1 #smooth #line b.pos
+	  	updateShape newLine2
+	 )
+  	if counterLine == steps do
+  	(
+	  	if newline3 == undefined do
+	  	(
+	  		newLine3 = splineShape()
+	  		newLine3.name = "NewLine3"
+	  	)
+	  	
+	  	addNewSpline newLine3
+	  	addKnot newLine3 counterLine2 #corner #line b.pos
+	  	addknot newLine3 counterLine2 #corner #line bDummy.pos
+	  	updateShape newLine3
+	  	counterLine = 0
+	  	counterLine2 +=1
+	 )
 )
 fn deleteSplineFN = 
 (
@@ -296,9 +408,29 @@ fn deleteSplineFN =
 		delete newLine2
 		newLine2 = undefined
 	)
+	if newLine3 != undefined do
+	(
+		delete newLine3
+		newLine3 = undefined
+	)
 )
-registerTimeCallback windXAxis
+-- Register and unregister Callbacks
+
+fn unregisterAllTimeCallBacks = (
+	unregisterTimeCallback windAllDir
+/* 	unregisterTimeCallback windXAxis
+	unregisterTimeCallback windYAxis
+	unregisterTimeCallback windZAxis */
+	unregisterTimeCallback displayInfo
+	unregisterTimeCallback gLine
+	)
+
+unregisterAllTimeCallBacks()
+deleteSplineFN()
+
+registerTimeCallback windAllDir
+/* registerTimeCallback windXAxis
 registerTimeCallback windYAxis
-registerTimeCallback windZAxis
+registerTimeCallback windZAxis */
 registerTimeCallback displayInfo
 registerTimeCallback gLine

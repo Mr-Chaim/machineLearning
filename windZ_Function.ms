@@ -18,12 +18,12 @@ fn windZAxis =
 (
 	if nvpx.IsSimulating() == true do
 	(
-		bZpast = bZpos
-		bZpos = b.pos[3]
-		bDummyZpos = bDummy.pos[3]
+		
 		counter +=1
 		if counter == 1 do
 		(
+			bZpos = b.pos[3]
+			bDummyZpos = bDummy.pos[3]
 			windAbsoluteZ = (windForceZ/maxSpeed)
 			acelZ = ((speedNowZ-(bZpos-bZpast)))/maxAcceleration
 			speedNowZ = (bZpos-bZpast)/topSpeed

@@ -18,12 +18,12 @@ fn windYAxis =
 (
 	if nvpx.IsSimulating() == true do
 	(
-		bYpast = bYpos
-		bYpos = b.pos[2]
-		bDummyYpos = bDummy.pos[2]
+		
 		counter +=1
 		if counter == 1 do
 		(
+			bYpos = b.pos[2]
+			bDummyYpos = bDummy.pos[2]
 			windAbsoluteY = (windForceY/maxSpeed)
 			acelY = ((speedNowY-(bYpos-bYpast)))/maxAcceleration
 			speedNowY = (bYpos-bYpast)/topSpeed
