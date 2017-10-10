@@ -8,10 +8,10 @@ unregisterAllTimeCallBacks()
 --deleteSplineFN()
 -- constants
 
-maxAcel = 10.0
-maxWindSpdZ = 5.0
+maxAcel = 20.0
+maxWindSpdZ = 7.0
 maxWindSpdXY = 1.0
-topObjSpd = 10.0
+topObjSpd = 50.0
 maxWindSpdArr = #(maxWindSpdXY,maxWindSpdXY,maxWindSpdZ)
 
 -- obj Variables
@@ -146,9 +146,9 @@ fn windForceFunc windNow maxWindSpd= --This function takes the strength of the s
 	)
 ) 
 
-fn deltaFunc  = (abs (bpos)/bDummyPos) --The delta function calculates the distance the box is from the Dummy 
+fn deltaFunc  = ((bDummyPos-bpos)/bDummyPos) --The delta function calculates the distance the box is from the Dummy 
 
-fn spdNowAbsFunc  = (((bpos-bpast)/topObjSpd)) --This will calculate the delta on position from the previous frame to the current frame and divide by the maximum possible speed.
+fn spdNowAbsFunc  = (((bpast-bpos)/topObjSpd)) --This will calculate the delta on position from the previous frame to the current frame and divide by the maximum possible speed.
 
 -- 2. Complex Variables and basic calculations
 
@@ -156,7 +156,7 @@ fn windAbsoluteFunc windForce maxWindSpd= (windForce/maxWindSpd) --This will tak
 
 fn maxAcelFunc maxAcel = (abs (maxAcel)) -- This will take the possible maximum acelAbseration and multiply by the delta.
 
-fn acelAbsFunc spdPastAbs maxAcelLocal = ((spdPastAbs-(bpos-bpast)/maxAcelLocal)) --Calculates the acelAbseration
+fn acelAbsFunc spdPastAbs maxAcelLocal = (((spdPastAbs-(bpast-bpos))/maxAcelLocal)) --Calculates the acelAbseration
 
 fn sigmFn InputVar = (1/(1+ e^(-InputVar)))
 
@@ -201,20 +201,41 @@ fn distPredFunc deltaDirAbs currentSpdAbs=
 
 -- 3. Weight Calculation
 
-fn getWeightFunc axisN1to3 weightType1to4 currentValue  multiplier1to20= 
+fn getWeightFunc axisN1to3 weightType1to4 currentValue  multiplier1to20 weights= 
 (
+	
 	multiplier1to20 = limiterFunc multiplier1to20 1 -1
 	multiplier1to20 = turnInto0to20Func multiplier1to20
-
+	
 	currentValue = limiterFunc currentValue 1 -1
 	currentValue = turnInto0to20Func currentValue
+	
+
+
 	weights[axisN1to3][weightType1to4][currentValue][multiplier1to20]
+	
+	
+)
+
+fn getWeightArrFunc n currentValues multiplier weights= 
+(
+	currentWeightsArr = #()
+	for a=1 to currentValues.count do 
+	(
+		currentValuesA = currentValues[a]
+		multiplierA = multiplier[a]
+		foo = getWeightFunc n a currentValuesA multiplierA weights
+		append currentWeightsArr foo
+		
+		print ("Step 3.4." + (a as string) + " - Weight" + (a as string) + ": "  + (twoDecimalScaleFunc foo as string))
+	)
+	currentWeightsArr
 )
 
 fn getWeightPos currentValues windAbs windacelAbs maxWindSpd= 
 (
 	varArr = #()
-	for a=1 to currentValues.count do 
+	for a=1 to currentValues.count do
 		(
 			currentValue = currentValues[a]
 			currentValue = limiterFunc currentValue 1 -1
@@ -244,24 +265,34 @@ fn getPosfromLayerFunc locarr circleArr =
 	posArr
 )
 
-fn weightChangerFunc predValueMinus1to1 actualValueMinus1to1 pastValueMinus1to1 weightType1to4 axisN1to3 multiplier1to20=
-(
-	past = limiterFunc pastValueMinus1to1 1 -1
-	past = turnInto0to20Func past
-	--print ("Step 3.3.5.1 - past : " +(past as string))
-
-	multiplier1to20 = limiterFunc multiplier1to20 1 -1
-	multiplier1to20 = turnInto0to20Func multiplier1to20
-	--print ("Step 3.3.5.2 - multiplier1to20 : " +(multiplier1to20 as string))
-
-	previousWeight = weights[axisN1to3][weightType1to4][past][multiplier1to20]
-	--print ("Step 3.3.5.3 - previousWeight : " +(previousWeight as string))
+fn weightChangerFunc predValueMinus1to1 actualValueMinus1to1 pastValueMinus1to1 axisN1to3 multiplier1to20=
+(	
+	for a=1 to currentValues.count do 
+	(
+		currentValuesA = actualValueMinus1to1[a]
+		predValuesA = predValueMinus1to1[a]
+		pastValuesA = pastValueMinus1to1[a]
+		multiplierA = multiplier1to20[a]
+		weigthType = a
+		
 	
-	foo = ((actualValueMinus1to1-predValueMinus1to1)+previousWeight)
-	--print ("Step 3.3.5.4 - foo : " +(foo as string))
-	
-	weights[axisN1to3][weightType1to4][past][multiplier1to20] = foo
-	--print ("Step 3.3.5.5 - foo : " +(foo as string))
+		past = limiterFunc pastValuesA 1 -1
+		past = turnInto0to20Func past
+		print ("Step 3.3.5." + (a as string) + ".1 - past Node Position : " +(past as string))
+
+		multiplierA = limiterFunc multiplierA 1 -1
+		multiplierA = turnInto0to20Func multiplierA
+		print ("Step 3.3.5." + (a as string) + ".2 - multiplier Node Position : " +(multiplierA as string))
+
+		previousWeight = weights[axisN1to3][weigthType][past][multiplierA]
+		print ("Step 3.3.5." + (a as string) + ".3 - previousWeight Value: " +((twoDecimalScaleFunc previousWeight) as string))
+		
+		foo = sigmFn (previousWeight - (predValuesA-currentValuesA))
+		print ("Step 3.3.5." + (a as string) + ".4 - Weight Change : " +((twoDecimalScaleFunc (predValuesA-currentValuesA)) as string))
+		
+		weights[axisN1to3][weigthType][past][multiplierA] = (limiterFunc foo 1 -1)
+		print ("Step 3.3.5." + (a as string) + ".5 - New weight applied: " +((twoDecimalScaleFunc (limiterFunc foo 1 -1)) as string))
+	)
 )
 
 -- 4. Final Complex calculation
@@ -269,21 +300,22 @@ fn weightChangerFunc predValueMinus1to1 actualValueMinus1to1 pastValueMinus1to1 
 fn windacelAbsFunc currentValues maxWindSpd currentWeightsArr= 
 (
 	summation = 0
-	divi = currentWeightsArr.count
- 	for a = 1 to divi do
+	divi = 0
+ 	for a = 1 to currentWeightsArr.count do
  	(
- 		cVA = currentValues[a]
- 		cWA = currentWeightsArr[a]
+ 		cVA = limiterFunc currentValues[a] 1 -1
+ 		cWA = limiterFunc currentWeightsArr[a] 1 -1
  		print ("Step 4.1.1."+(a as string)+" - cVA : "  + (twoDecimalScaleFunc cVA as string))
  		print ("Step 4.1.2."+(a as string)+" - cWA : "  + (twoDecimalScaleFunc cWA as string))
  		pResult = (cVA*cWA)
- 		print ("Step 4.1."+(a as string)+" - pResult : "  + (twoDecimalScaleFunc pResult as string))
+ 		print ("Step 4.1.3."+(a as string)+" - pResult : "  + (twoDecimalScaleFunc pResult as string))
  		summation += pResult
+ 		--divi += cWa
  	)
  	print ("Step 4.2 - summation : "  + (twoDecimalScaleFunc summation as string))
- 	division = summation/divi
- 	print ("Step 4.3 - division : "  + (twoDecimalScaleFunc division as string))
-	multiplication = (maxWindSpd * division)
+ 	--division = summation/divi
+ 	--print ("Step 4.3 - division : "  + (twoDecimalScaleFunc division as string))
+	multiplication = (maxWindSpd * summation)
 	print ("Step 4.4.1 - multiplication : "  + (twoDecimalScaleFunc multiplication as string))
 	multiplication = limiterFunc multiplication maxWindSpd -maxWindSpd
 	print ("Step 4.5.2 - multiplication : "  + (twoDecimalScaleFunc multiplication as string))
@@ -294,18 +326,18 @@ fn windacelAbsFunc currentValues maxWindSpd currentWeightsArr=
 -- Functions defined by object
 fn windAllDir = 
 (
-	--print ("Frame : " + (sliderTime as string))
+	print ("Frame : " + (sliderTime as string))
 
 	if nvpx.IsSimulating() == true do
 	(
 
 		counter +=1
-		--print ( "Counter: " +(Counter as string) )
+		print ( "Counter: " +(Counter as string) )
 		
 		for n=3 to b.Pos.count do
 		(
 
-			--print ("Starting with N = " + (n as string))
+			print ("Starting with N = " + (n as string))
 
 
 			/* 
@@ -315,28 +347,28 @@ fn windAllDir =
 			*/
 
 			bDummyPos = bDummy.pos[n]
-			--print ("Step 1.1.1 - bDummyPos : "  + (twoDecimalScaleFunc bDummyPos as string))
+			print ("Step 1.1.1 - bDummyPos : "  + (twoDecimalScaleFunc bDummyPos as string))
 			
 			bPos = b.pos[n]
-			--print ("Step 1.1.2 - bPos : "  + (twoDecimalScaleFunc bPos as string))
+			print ("Step 1.1.2 - bPos : "  + (twoDecimalScaleFunc bPos as string))
 			
 			bPast = bPastArr[n]
-			--print ("Step 1.1.3 - bPast : "  + (twoDecimalScaleFunc bPast as string))
+			print ("Step 1.1.3 - bPast : "  + (twoDecimalScaleFunc bPast as string))
 			
 			maxWindSpd = maxWindSpdArr[n]
-			--print ("Step 1.2 - maxWindSpd : "  + (twoDecimalScaleFunc maxWindSpd as string))
+			print ("Step 1.2 - maxWindSpd : "  + (twoDecimalScaleFunc maxWindSpd as string))
 			
 			spdPastAbs = spdNowAbs[n]
-			--print ("Step 1.3 - spdPastAbs : "  + (twoDecimalScaleFunc spdPastAbs as string))
+			print ("Step 1.3 - spdPastAbs : "  + (twoDecimalScaleFunc spdPastAbs as string))
 
 			acelPast = acelNowAbs[n]
-			--print ("Step 1.4 - acelPast : "  + (twoDecimalScaleFunc acelPast as string))
+			print ("Step 1.4 - acelPast : "  + (twoDecimalScaleFunc acelPast as string))
 
 			deltaPast = delta[n]
-			--print ("Step 1.5 - deltaPast : "  + (twoDecimalScaleFunc deltaPast as string))
+			print ("Step 1.5 - deltaPast : "  + (twoDecimalScaleFunc deltaPast as string))
 			
 			windNow =  windArray[n].strength
-			--print ("Step 1.6.1 - windNow : "  + (twoDecimalScaleFunc windNow as string))
+			print ("Step 1.6.1 - windNow : "  + (twoDecimalScaleFunc windNow as string))
 
 			
 				
@@ -347,13 +379,13 @@ fn windAllDir =
 
 
 			windForce = limiterFunc windNow maxWindSpd -maxWindSpd
-			--print ("Step 1.6.2 - WindForce : "  + (twoDecimalScaleFunc WindForce as string))
+			print ("Step 1.6.2 - WindForce : "  + (twoDecimalScaleFunc WindForce as string))
 			
 			delta[n] = deltaFunc()
-			--print ("Step 1.8.1 - delta[n] : "  + (twoDecimalScaleFunc delta[n] as string))
+			print ("Step 1.8.1 - delta[n] : "  + (twoDecimalScaleFunc delta[n] as string))
 			
 			deltaDirAbs = delta[n]
-			--print ("Step 1.8.2 - deltaDirAbs : "  + (twoDecimalScaleFunc deltaDirAbs as string))
+			print ("Step 1.8.2 - deltaDirAbs : "  + (twoDecimalScaleFunc deltaDirAbs as string))
 			
 			/*
 				In here we will calculate the maximum acelAbseration which will take in consideration the distance from the target, the furthest from the target, the faster the acceleration can be.
@@ -364,22 +396,22 @@ fn windAllDir =
 
 
 			maxAcelLocal = maxAcelFunc maxAcel 
-			--print ("Step 1.9 - maxAcelLocal : " +(twoDecimalScaleFunc maxAcelLocal as string))
+			print ("Step 1.9 - maxAcelLocal : " +(twoDecimalScaleFunc maxAcelLocal as string))
 			
 			windAbs = windAbsoluteFunc windForce maxWindSpd
-			--print ("Step 2.1 - windAbs : " +(twoDecimalScaleFunc windAbs as string))
+			print ("Step 2.1 - windAbs : " +(twoDecimalScaleFunc windAbs as string))
 			
 			acelAbs = acelAbsFunc spdPastAbs maxAcelLocal
-			--print ("Step 2.2 - acelAbs : " +(twoDecimalScaleFunc acelAbs as string))
+			print ("Step 2.2 - acelAbs : " +(twoDecimalScaleFunc acelAbs as string))
 
 			acelNowAbs[n] = acelAbs
-			--print ("Step 2.3 - acelNowAbs[n] : " +(twoDecimalScaleFunc acelNowAbs[n] as string))
+			print ("Step 2.3 - acelNowAbs[n] : " +(twoDecimalScaleFunc acelNowAbs[n] as string))
 			
 			spdNowAbs[n] = spdNowAbsFunc()
-			--print ("Step 2.4 - spdNowAbs[n] : " +(twoDecimalScaleFunc spdNowAbs[n] as string))
+			print ("Step 2.4 - spdNowAbs[n] : " +(twoDecimalScaleFunc spdNowAbs[n] as string))
 			
 			currentSpdAbs = spdNowAbs[n]
-			--print ("Step 2.5 - currentSpdAbs : " +(twoDecimalScaleFunc currentSpdAbs as string))
+			print ("Step 2.5 - currentSpdAbs : " +(twoDecimalScaleFunc currentSpdAbs as string))
 
 			/*
 			
@@ -388,13 +420,13 @@ fn windAllDir =
 			*/
 
 			deltaPred = distPredFunc deltaDirAbs currentSpdAbs
-			--print ("Step 3.1 - deltaPred : " +(twoDecimalScaleFunc deltaPred as string))
+			print ("Step 3.1 - deltaPred : " +(twoDecimalScaleFunc deltaPred as string))
 
 			speedPred = speedPredFunc acelAbs currentSpdAbs
-			--print ("Step 3.2 - speedPred : " +(twoDecimalScaleFunc speedPred as string))
+			print ("Step 3.2 - speedPred : " +(twoDecimalScaleFunc speedPred as string))
 			
 			acelPred = acelPredFunc acelAbs windNow
-			--print ("Step 3.3 - acelPred : " +(twoDecimalScaleFunc acelPred as string))
+			print ("Step 3.3 - acelPred : " +(twoDecimalScaleFunc acelPred as string))
 			
 			
 			/*
@@ -404,22 +436,15 @@ fn windAllDir =
 			*/
 			
 			currentValues = #(deltaDirAbs,currentSpdAbs,acelAbs)
-			--print ("Step 3.3.1 - currentValues : " +(currentValues as string))
+			print ("Step 3.3.1 - currentValues : " +(currentValues as string))
 			predValues = #(deltaPred,speedPred,acelPred)
-			--print ("Step 3.3.2 - predValues : " +(predValues as string))
+			print ("Step 3.3.2 - predValues : " +(predValues as string))
 			pastValues = #(deltaPast,spdPastAbs,acelPast)
-			--print ("Step 3.3.3 - pastValues : " +(pastValues as string))
+			print ("Step 3.3.3 - pastValues : " +(pastValues as string))
 			multiplier = #(speedPred,acelPred,windAbs)
-			--print ("Step 3.3.4 - multiplier : " +(multiplier as string))
+			print ("Step 3.3.4 - multiplier : " +(multiplier as string))
 
-			for a=1 to currentValues.count do 
-			(
-				currentValuesA = currentValues[a]
-				predValuesA = predValues[a]
-				pastValuesA = pastValues[a]
-				multiplierA = multiplier[a]
-				weightChangerFunc predValuesA currentValuesA pastValuesA a n multiplierA
-			)
+			weightChangerFunc predValues currentValues pastValues n multiplier
 			
 			/*
 			
@@ -427,18 +452,7 @@ fn windAllDir =
 
 			*/
 
-			currentWeightsArr = #()
-
-			for a=1 to currentValues.count do 
-			(
-				currentValuesA = currentValues[a]
-				multiplierA = multiplier[a]
-				foo = getWeightFunc n a currentValuesA multiplierA
-				append currentWeightsArr foo
-				
-				--print ("Step 3.4." + (a as string) + " - Weight" + (a as string) + ": "  + (twoDecimalScaleFunc foo as string))
-
-			)
+			currentWeightsArr = getWeightArrFunc n currentValues multiplier weights
 
 			/*
 				The function windacelAbsFunc takes all of the variables previously and calculates them to find the optimal wind speed to reach the target.
@@ -448,20 +462,20 @@ fn windAllDir =
 			
 			
 			windArray[n].strength = windacelAbs
-			--print ("Step 5.2 - windacelAbs: " + ((twoDecimalScaleFunc windacelAbs) as string))
-			--print ("Done with N = " + (n as string))
+			print ("Step 5.2 - windacelAbs: " + ((twoDecimalScaleFunc windacelAbs) as string))
+			print ("Done with N = " + (n as string))
 
 			
 			locArr = getWeightPos currentValues windAbs windacelAbs maxWindSpd
-			--print ("Step 6.1 locArr: " + ( locArr as string))	
+			print ("Step 6.1 locArr: " + ( locArr as string))	
 			posArr = getPosfromLayerFunc locarr circleArr
-			--print ("Step 6.2 posArr: " + ( posArr as string))
+			print ("Step 6.2 posArr: " + ( posArr as string))
 			splinePositioner posArr LayerLine
-			--print ("Step 6.3 Spline: Done")
+			print ("Step 6.3 Spline: Done")
 		)
 
 		bPastArr = #(b.Pos[1],b.Pos[2],b.Pos[3])
-		--print ("Step 7.1 bPastArr: " + ( bPastArr as string))	
+		print ("Step 7.1 bPastArr: " + ( bPastArr as string))	
 		--displayInfo delta spdNowAbs windArray 
 		
 	)
