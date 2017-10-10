@@ -9,8 +9,8 @@ unregisterAllTimeCallBacks()
 -- constants
 guideAxis = #("X","Y","Z")
 maxAcel = 15.0
-maxWindSpdZ = 15.0
-maxWindSpdXY = 15.0
+maxWindSpdZ = 100.0
+maxWindSpdXY = 100.0
 topObjSpd = 50.0
 maxWindSpdArr = #(maxWindSpdXY,maxWindSpdXY,maxWindSpdZ)
 
