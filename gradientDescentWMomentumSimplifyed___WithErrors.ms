@@ -59,7 +59,7 @@ abY = $Box_Y_Green
 abZ = $Box_Z_Blue
 analysisBox = #(abX,abY,abZ)
 windDifArr= #(0,0,0) 
-b.MassFX_Rigid_Body.mass = 50
+b.MassFX_Rigid_Body.mass = 150
 --Box Analisys creation
 
 fn boxCreation=
@@ -159,24 +159,28 @@ layerLineArr = lineCreationFunc layerLineArr
 	maxWindSpdZ = 500.0
 	maxWindSpdX = 100.0
 	maxWindSpdY = 100.0
-	maxAcelX = 5.0
-	maxAcelY = 5.0
-	maxAcelZ = 5.0
-	maxSpeedX = 5.0
-	maxSpeedY = 5.0
-	maxSpeedZ = 5.0
-
-fn changingLimits maxObjSpdArr maxAcelArr deltaVar spdPastAbs acelPast n=
-(
-
-
+	maxAcelX = 50.0
+	maxAcelY = 50.0
+	maxAcelZ = 50.0
+	maxSpeedX = 50.0
+	maxSpeedY = 50.0
+	maxSpeedZ = 50.0
 	maxObjSpdArr = #(maxSpeedX,maxSpeedY,maxSpeedZ)
 	maxAcelArr = #(maxAcelX,maxAcelY,maxAcelZ)
 	maxWindSpdArr = #(maxWindSpdX,maxWindSpdY,maxWindSpdZ)
-	maxWindSpdArr[n] = maxWindSpdArr[n] /( ((limiterFunc spdPastAbs spdPastAbs 1) + (limiterFunc acelPast acelPast 1))/2)
-	--print ((maxWindSpdArr) as string)
-	--maxAcelArr[n] = limiterFunc (maxAcelArr[n] / abs deltaVar) 1000 1
+
+fn changingLimits maxObjSpdArr maxAcelArr deltaDirAbs spdPastAbs acelPast n spdNowAbs=
+(
+	acelNowAbs[n]
+	spdNowAbs[n]
+	addSpeed = (binaryFunc (spdNowAbs[n]) 1 0 1 1)
+	addAcel = (binaryFunc (acelNowAbs[n]) 1 0 1 1)
+	addDelta = (binaryFunc (deltaDirAbs) 1 0 1 0)
+	--maxWindSpdArr[n] += maxObjSpdArr[n] * addSpeed * addAcel
+	--print (((maxWindSpdArr) as string) + " ---- " + (maxWindSpdArr[n] as string) +  " ---- " + ((addSpeed) as string) + " ---- " + ((addAcel) as string) + " ---- " + ((addDelta) as string))
+	--maxAcelArr[n] = limiterFunc (maxAcelArr[n] / abs deltaDirAbs) 1000 1
 	--print ((maxAcelArr) as string)
+	maxWindSpdArr[n]
 )
 
 -- Order of function activation
@@ -225,6 +229,7 @@ fn binaryFunc varInput var1 var2 var3 var4 =
 	if varInput < var3 do
 	(
 		foo = var4
+		
 	)
 	return foo
 )
@@ -279,11 +284,11 @@ fn windDisplacementFn deltaDirAbs currentSpdAbs windAbs n acelAbs=
 		foo1 =  binaryFunc (currentSpdAbs*10) 1 0 1 1
 		foo2 =  binaryFunc (acelAbs*10) 1 0 1 1
 		foo3 = 	binaryFunc (foo1 + foo2) 1 0 1 1
-		foo5 =  binaryFunc (deltaDirAbs*10) 1 1 1 0
+		foo5 =  binaryFunc (deltaDirAbs*10) 1 0 1 1
 		foo6 = 	deltaDirAbs * foo5
-		foo7 = 	(foo1* foo2*foo5)*(maxWindSpdArr[n]/100)
-	 	a = 0
-	 	--print (((twoDecimalScaleFunc (foo1)) as string) +"-"+ ((twoDecimalScaleFunc (foo2)) as string)+"-"+((twoDecimalScaleFunc foo3) as string)+"-"+((twoDecimalScaleFunc foo5) as string)+"-"+((twoDecimalScaleFunc foo6) as string)+"-"+((twoDecimalScaleFunc a) as string))
+		foo7 = 	(foo6*foo3)*(maxWindSpdArr[n]/100)
+	 	a = foo7
+	 	----print (((twoDecimalScaleFunc (foo3)) as string) +"-"+ ((twoDecimalScaleFunc (foo)) as string)+"-"+((twoDecimalScaleFunc foo2) as string)+"-"+((twoDecimalScaleFunc foo3) as string)+"-"+((twoDecimalScaleFunc foo4) as string)+"-"+((twoDecimalScaleFunc a) as string))
 	)
 	if n != 3 do
 	(
@@ -296,16 +301,16 @@ fn windDiferenceFunc deltaDirAbs  currentSpdAbs windAbs n acelAbs=
 (
 	if n == 3 do
 	(
-		foo1 = binaryFunc (currentSpdAbs*100) 1 0 1 1
-		foo2 = binaryFunc (acelAbs*10) 1 0 1 1
-		foo3 = binaryFunc (foo1 + foo2) 1 0 1 1
-		foo5 = binaryFunc (deltaDirAbs*1000) 1 1 1 1
-		foo6 = deltaDirAbs * foo5
-		foo7 = (foo1*foo2*foo5)*((deltaDirAbs*5))
+		foo1 =  binaryFunc (currentSpdAbs*10) 1 0 1 1
+		foo2 =  binaryFunc (acelAbs*10) 1 0 1 1
+		foo3 = 	binaryFunc (foo1 + foo2) 1 0 1 1
+		foo5 =  binaryFunc (deltaDirAbs*10) 1 0 1 1
+		foo6 = 	deltaDirAbs * foo5
+		foo7 = 	(foo6*foo3)*(maxWindSpdArr[n]/100)
 	 	a = foo7
-	 	--print ((foo1 as string) + " - "+ (foo2 as string)+" - "+(foo3 as string)+" - "+(foo5 as string)+" - "+(foo6 as string)+" - "+(foo7 as string))
+	 	----print (((twoDecimalScaleFunc (foo3)) as string) +"-"+ ((twoDecimalScaleFunc (foo)) as string)+"-"+((twoDecimalScaleFunc foo2) as string)+"-"+((twoDecimalScaleFunc foo3) as string)+"-"+((twoDecimalScaleFunc foo4) as string)+"-"+((twoDecimalScaleFunc a) as string))
 	)
-	if n < 3 do
+	if n != 3 do
 	(
 		a = 0.0
 	)
@@ -414,25 +419,25 @@ fn windacelAbsFunc currentValues maxWindSpd currentWeightsArr currentNames windD
 (
 	summation = 0
 	divi = 0
- 	for a = 1 to currentWeightsArr.count do
+ 	for a = 3 to currentWeightsArr.count do
  	(
  		cVA = limiterFunc currentValues[a] 1 -1
  		cWA = limiterFunc currentWeightsArr[a] 1 -1
- 		--print ("Step 4.1.1."+(a as string)+" - " + currentNames[a] +" Value : "  + (twoDecimalScaleFunc cVA as string))
- 		--print ("Step 4.1.2."+(a as string)+" - " + currentNames[a] +" Weight : "  + (twoDecimalScaleFunc cWA as string))
+ 		print ("Step 4.1.1."+(a as string)+" - " + currentNames[a] +" Value : "  + (twoDecimalScaleFunc cVA as string))
+ 		print ("Step 4.1.2."+(a as string)+" - " + currentNames[a] +" Weight : "  + (twoDecimalScaleFunc cWA as string))
  		pResult = (cVA*cWA)
- 		--print ("Step 4.1.3."+(a as string)+" - pResult : "  + (twoDecimalScaleFunc pResult as string))
+ 		print ("Step 4.1.3."+(a as string)+" - pResult : "  + (twoDecimalScaleFunc pResult as string))
  		summation += pResult
  		divi += cWa
  	)
- 	--print ("Step 4.2 - summation : "  + (twoDecimalScaleFunc summation as string))
+ 	print ("Step 4.2 - summation : "  + (twoDecimalScaleFunc summation as string))
  	division = summation/divi
  	--print ("Step 4.3 - division : "  + (twoDecimalScaleFunc division as string))
  	--print ((n as string) + " " +(twoDecimalScaleFunc (windDisp + windDifArr[n]) as string))
 	multiplication = (maxWindSpd * summation) + ((windDisp + windDifArr[n] ))
-	--print ("Step 4.4.1 - multiplication : "  + (twoDecimalScaleFunc multiplication as string))
+	print ("Step 4.4.1 - multiplication : "  + (twoDecimalScaleFunc multiplication as string))
 	multiplication = limiterFunc multiplication maxWindSpd -maxWindSpd
-	--print ("Step 4.5.2 - multiplication : "  + (twoDecimalScaleFunc multiplication as string))
+	print ("Step 4.5.2 - multiplication : "  + (twoDecimalScaleFunc multiplication as string))
 	return multiplication
 	
 ) --Final calculation to find the ideal wind speed for each axis.
@@ -513,7 +518,7 @@ fn windAllDir =
 				Finaly we calculate the speed in the current frame. 
 			*/
 
-			changingLimits maxObjSpdArr maxAcelArr deltaDirAbs spdPastAbs acelPast n
+			--changingLimits maxObjSpdArr maxAcelArr deltaDirAbs spdPastAbs acelPast n spdNowAbs
 
 			maxAcelLocal = maxAcelArr[n]
 			--print ("Step 1.9 - maxAcelLocal : " +(twoDecimalScaleFunc maxAcelLocal as string))
@@ -536,6 +541,7 @@ fn windAllDir =
 			/*
 			
 			After we calculated all of the current atributes, we can use that information to predict the atributes in the next timeStep.
+
 			*/
 
 			deltaPred = distPredFunc deltaDirAbs currentSpdAbs
@@ -551,6 +557,7 @@ fn windAllDir =
 			--print ("Step 3.1.4 - windDisp : " +(twoDecimalScaleFunc windDisp as string))
 			
 			/*
+
 			Now we will calculate the derivative of the weights and balance it agains our predictions.
 		
 			*/
@@ -570,6 +577,7 @@ fn windAllDir =
 			/*
 			
 			This here will get the weigths.
+
 			*/
 
 			currentWeightsArr = getWeightArrFunc n currentValues multiplier weights
@@ -639,6 +647,7 @@ fn splinePositioner posArr layerLineArr n=
 
 /*  fn displayInfo delta spdNowAbs windArray = 
 (
+
 	windAbsoluteX = twoDecimalScaleFunc windArray[1].strength
 	windAbsoluteY = twoDecimalScaleFunc windArray[2].strength
 	windAbsoluteZ = twoDecimalScaleFunc windArray[3].strength
@@ -660,6 +669,7 @@ fn splinePositioner posArr layerLineArr n=
 fn gLine = 
 (
 	counterLine += 1
+
  	if newLine == undefined do
  	(
   		newLine = splineShape ()
@@ -671,6 +681,7 @@ fn gLine =
 	setKnotPoint newLine 1 1 b.pos
 	setKnotPoint newLine 1 2 bDummy.pos
 	updateShape newLine
+
  	 if newLine2 == undefined do
  	(
   		newLine2 = splineShape ()
@@ -678,6 +689,7 @@ fn gLine =
   		addnewSpline newLine2
   		addKnot newLine2 1 #smooth #line b.pos
  	)
+
  	if sliderTime > 1 do
  	(
 	 	addKnot newLine2 1 #smooth #line b.pos
@@ -699,6 +711,7 @@ fn gLine =
 	  	counterLine = 0
 	  	counterLine2 +=1
 	 ) 
+
   	--if sliderTime == 0 do (deleteSplineFN())
 ) 
 fn deleteSplineFN = 
