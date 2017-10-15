@@ -126,6 +126,44 @@ weightZ = #(distanceWeights,speedWeights,acelWeights,windWeights)
 
 weights = #(weightX,weightY,weightZ)
 
+weightNamesX = #("Distance ","Speed ","Acel ","Wind ")
+weightNamesY = #("Distance ","Speed ","Acel ","Wind ")
+weightNamesZ = #("Distance ","Speed ","Acel ","Wind ")
+weightNames = #(weightNamesX,weightNamesY,weightNamesZ)
+weightNames = #("X","Y","Z")
+weightDataSet = (maxFilePath + "weightDatasetOriginal.csv")
+fn weightExporter=
+(
+	--weightDataSet = (maxFilePath + "weightDataset.csv")
+	if (doesFileExist weightDataSet) == false do
+	(
+		createDataset = createfile weightDataSet
+		close createDataset
+	)
+
+	createDataset = openFile weightDataSet mode:"a"
+	
+	for a=1 to weights.count do 
+	(
+		format "\nAxis: % --------------------\n" weightNames[a] to:createDataset
+		format ",Weight 1,Weight 2,Weight 3,Weight 4,Weight 5,Weight 6,Weight 7,Weight 8,Weight 9,Weight 10,Weight 11,Weight 12,Weight 13,Weight 14,Weight 15,Weight 16,Weight 17,Weight 18,Weight 19,Weight 20" to:createDataset
+		for a1=1 to weights[a].count do
+		(
+			format "\nWeight Type : % \n" weightNamesX[a1] to:createDataset
+			for a2=1 to weights[a][a1].count do
+			(
+				format "Node %" a2 to:createDataset
+				for a3=1 to weights[a][a1][a2].count do
+				(
+					singularWeight =  weights[a][a1][a2][a3]
+					format ",%" singularWeight to:createDataset
+				)
+				format "\n"  to:createDataset
+			)
+		)
+	)
+	close createDataset
+)
 
 fn weightsFunction weights n var= (return weights[n][var])
 
@@ -634,94 +672,7 @@ fn splinePositioner posArr layerLineArr n=
  		)
  		updateShape LayerLine
  	)
-
 )
-
-/*  fn displayInfo delta spdNowAbs windArray = 
-(
-	windAbsoluteX = twoDecimalScaleFunc windArray[1].strength
-	windAbsoluteY = twoDecimalScaleFunc windArray[2].strength
-	windAbsoluteZ = twoDecimalScaleFunc windArray[3].strength
-	distX = twoDecimalScaleFunc delta[1]
-	distY = twoDecimalScaleFunc delta[2]
-	distZ = twoDecimalScaleFunc delta[3]
-	spdNowAbsX = twoDecimalScaleFunc spdNowAbs[1]
-	spdNowAbsY = twoDecimalScaleFunc spdNowAbs[2]
-	spdNowAbsZ = twoDecimalScaleFunc spdNowAbs[3]
-	format "TC: %." sliderTime
-	format "Wstr: %X,%Y,%Z." windAbsoluteX windAbsoluteY windAbsoluteZ
-	format "Dlt: %X,%Y,%Z ." distX distY distZ
-	format "Spd: %X,%Y,%Z .\n" spdNowAbsX spdNowAbsY spdNowAbsZ
-)
- */
-
-
-/* 
-fn gLine = 
-(
-	counterLine += 1
- 	if newLine == undefined do
- 	(
-  		newLine = splineShape ()
-  		newLine.name = "NewLine"
-  		addnewSpline newLine
-  		addKnot newLine 1 #corner #line b.pos
-		addKnot newLine 1 #corner #line bDummy.pos
- 	)
-	setKnotPoint newLine 1 1 b.pos
-	setKnotPoint newLine 1 2 bDummy.pos
-	updateShape newLine
- 	 if newLine2 == undefined do
- 	(
-  		newLine2 = splineShape ()
-  		newLine2.name = "NewLine2"
-  		addnewSpline newLine2
-  		addKnot newLine2 1 #smooth #line b.pos
- 	)
- 	if sliderTime > 1 do
- 	(
-	 	addKnot newLine2 1 #smooth #line b.pos
-	  	updateShape newLine2
-	)
- 	
-  	if counterLine == steps do
-  	(
-	  	if newline3 == undefined do
-	  	(
-	  		newLine3 = splineShape()
-	  		newLine3.name = "NewLine3"
-	  	)
-	  	
-	  	addNewSpline newLine3
-	  	addKnot newLine3 counterLine2 #corner #line b.pos
-	  	addknot newLine3 counterLine2 #corner #line bDummy.pos
-	  	updateShape newLine3
-	  	counterLine = 0
-	  	counterLine2 +=1
-	 ) 
-  	--if sliderTime == 0 do (deleteSplineFN())
-) 
-fn deleteSplineFN = 
-(
-	if newline != undefined do 
-	(
-		delete newLine
-		newLine = undefined
-	)
-	if newLine2 != undefined do
-	(
-		delete newLine2
-		newLine2 = undefined
-	)
-	if newLine3 != undefined do
-	(
-		delete newLine3
-		newLine3 = undefined
-	)
-)
-*/
--- Register and unregister Callbacks
-
 
 registerTimeCallback windAllDir
 --registerTimeCallback gLine
