@@ -1,4 +1,4 @@
-# learningToStayUp
+# Max NeuralNet
 Machine Learning Algoritm with NN inside max.
 
-This Algoritm so far controls the wind inside max to move an object in a 3 dimensional space. 
+Demonstration of a neural network that will identify an location on a 3d space and learn to move an object to that location using 3 wind emitters, compensating for inertia and gravity.
