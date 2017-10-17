@@ -8,20 +8,20 @@ unregisterAllTimeCallBacks()
 --deleteSplineFN()
 -- constants
 guideAxis = #("X_Red","Y_Green","Z_Blue")
-/* maxAcel = 50.0
+maxAcel = 5.0
 maxWindSpdZ = 100.0
 maxWindSpdXY = 100.0
-topObjSpd = 505.0
+topObjSpd = 50.0
 maxAcelX = 50.0
 maxAcelY = 50.0
 maxAcelZ = 50.0
-maxSpeedX = 505.0
-maxSpeedY = 505.0
-maxSpeedZ = 505.0
+maxSpeedX = 500.0
+maxSpeedY = 500.0
+maxSpeedZ = 500.0
 maxObjSpdArr = #(maxSpeedX,maxSpeedY,maxSpeedZ)
 maxAcelArr = #(maxAcelX,maxAcelY,maxAcelZ)
 maxWindSpdArr = #(maxWindSpdXY,maxWindSpdXY,maxWindSpdZ)
- */
+
 -- obj Variables
 
 x_force = $x_Force
@@ -38,7 +38,7 @@ counterLine=0
 counterLine2=1
 counter = 0
 counter2 = 0
-steps = 15
+steps = 250
 
 -- Starting Variables
 
@@ -59,7 +59,7 @@ abY = $Box_Y_Green
 abZ = $Box_Z_Blue
 analysisBox = #(abX,abY,abZ)
 windDifArr= #(0,0,0) 
-b.MassFX_Rigid_Body.mass = 50
+b.MassFX_Rigid_Body.mass = 15
 --Box Analisys creation
 
 fn boxCreation=
@@ -73,7 +73,7 @@ fn boxCreation=
 fn boxHeightChange varWind varMaxWind varN arrayBox =
 (
 	percentage = varWind/varMaxWind
-	arrayBox[varN].height = percentage*400
+	arrayBox[varN].height = percentage*300.0
 )
 -- Layer Integrity check
 
@@ -126,15 +126,17 @@ weightZ = #(distanceWeights,speedWeights,acelWeights,windWeights)
 
 weights = #(weightX,weightY,weightZ)
 
-weightNamesX = #("Distance ","Speed ","Acel ","Wind ")
-weightNamesY = #("Distance ","Speed ","Acel ","Wind ")
-weightNamesZ = #("Distance ","Speed ","Acel ","Wind ")
-weightNames = #(weightNamesX,weightNamesY,weightNamesZ)
-weightNames = #("X","Y","Z")
-weightDataSet = (maxFilePath + "weightDatasetOriginal.csv")
+
+--weightDataSet = (maxFilePath + "weightDatasetOriginal.csv")
 fn weightExporter=
 (
-	--weightDataSet = (maxFilePath + "weightDataset.csv")
+	weightNamesX = #("Distance ","Speed ","Acel ","Wind ")
+	weightNamesY = #("Distance ","Speed ","Acel ","Wind ")
+	weightNamesZ = #("Distance ","Speed ","Acel ","Wind ")
+	weightNames = #(weightNamesX,weightNamesY,weightNamesZ)
+	weightNames = #("X","Y","Z")
+	weightDataSet = (maxFilePath + "weightDataset.csv")
+	
 	if (doesFileExist weightDataSet) == false do
 	(
 		createDataset = createfile weightDataSet
@@ -191,7 +193,49 @@ fn lineCreationFunc layerLineArr=
 	layerLineArr
 )
 
+fn boxGuidelines posLinesArr obj = 
+(
+	if posLinesArr == undefined or posLinesArr.count == 0 or (isDeleted posLinesArr[1]) == true do
+	(
+		posLinesArr=#()
+		for arr=1 to obj.pos.count do
+		(
+			posLines = splineShape()
+			posLines.name = ("GuideLine_" + (obj.name as string) + "_" + guideAxis[arr])
+			posLines.wirecolor = (wireColorVar[arr] as color)
+			addnewSpline posLines
+			addKnot posLines 1 #corner #line [0,0,0]
+			addKnot posLines 1 #corner #line obj.pos
+			updateShape posLines
+			append posLinesArr posLines
+		)
+	)
+	posLinesArr
+)
+
+fn boxGuidelinesPosfunc obj n= 
+(
+	fooPos = obj.pos
+	fooPos[n] = 0
+	fooPos
+)
+
+fn splineObjPositioner obj posLinesArr n= 
+(
+ 	if posLinesArr != undefined do
+ 	(
+ 		fooPos = boxGuidelinesPosfunc obj n
+ 		posLines = posLinesArr[n]
+ 		setKnotPoint posLines 1 1 obj.pos 
+ 		setKnotPoint posLines 1 2 fooPos
+ 		updateShape posLines
+ 	)
+)
+dummyLinesArr = boxGuidelines dummyLinesArr bDummy
+boxLinesArr = boxGuidelines boxLinesArr b
 layerLineArr = lineCreationFunc layerLineArr
+
+
 
 -- Limits Handling
 	maxWindSpdZ = 500.0
@@ -212,9 +256,9 @@ fn changingLimits maxObjSpdArr maxAcelArr deltaVar spdPastAbs acelPast n=
 	maxAcelArr = #(maxAcelX,maxAcelY,maxAcelZ)
 	maxWindSpdArr = #(maxWindSpdX,maxWindSpdY,maxWindSpdZ)
 	maxWindSpdArr[n] = maxWindSpdArr[n] /( ((limiterFunc spdPastAbs spdPastAbs 1) + (limiterFunc acelPast acelPast 1))/2)
-	--print ((maxWindSpdArr) as string)
+	----print ((maxWindSpdArr) as string)
 	--maxAcelArr[n] = limiterFunc (maxAcelArr[n] / abs deltaVar) 1000 1
-	--print ((maxAcelArr) as string)
+	----print ((maxAcelArr) as string)
 )
 
 -- Order of function activation
@@ -329,6 +373,14 @@ fn windDisplacementFn deltaDirAbs currentSpdAbs windAbs n acelAbs=
 	)
 
 	a
+)
+
+fn dummyPositioner counter= 
+(
+	if (counter == 1) do
+	(
+		bdummy.pos = [(random 500 3500),(random 500 3500),(random 500 3500)]
+	)
 )
 fn windDiferenceFunc deltaDirAbs  currentSpdAbs windAbs n acelAbs=
 (
@@ -482,9 +534,11 @@ fn windAllDir =
 
 	if nvpx.IsSimulating() == true do
 	(
-
+		if slidertime == 1 do (counter = 1)
+		dummyPositioner counter
+		if counter > steps do (counter = 0)
 		counter +=1
-		--print ( "Counter: " +(Counter as string) )
+		print ( "Counter: " +(Counter as string) )
 		
 		for n=1 to b.Pos.count do
 		(
@@ -634,6 +688,10 @@ fn windAllDir =
 			
 			splinePositioner posArr layerLineArr n
 
+			splineObjPositioner bDummy dummyLinesArr n
+			
+			splineObjPositioner b boxLinesArr n
+
 			boxHeightChange windacelAbs maxWindSpd N analysisBox
 
 			--print ("Step 6.3 Spline: Done")
@@ -673,6 +731,43 @@ fn splinePositioner posArr layerLineArr n=
  		updateShape LayerLine
  	)
 )
+/* fn splineBoxPositioner boxOrDummy n= 
+(
+ 	if layerLineArr != undefined do
+ 	(
+ 		layerLine = layerLineArr[n]
+ 		for a=1 to posArr.count do
+ 		(
+ 			setKnotPoint LayerLine 1 a posArr[a] 
+ 		)
+ 		updateShape LayerLine
+ 	)
+)
 
+fn lineCreationFunc layerLineArr= 
+(
+	if layerLineArr == undefined or layerLineArr.count == 0 or (isDeleted layerLineArr[1]) == true do
+	(
+		layerLineArr=#()
+		for arr=1 to b.pos.count do
+		(
+			LayerLine = splineShape()
+			LayerLine.name = ("LayerLine_" + guideAxis[arr])
+			layerLine.wirecolor = (wireColorVar[arr] as color)
+			addnewSpline LayerLine
+			for a=1 to circleArr.count do 
+			(
+				addKnot LayerLine 1 #corner #line [0,0,0]
+			)
+			updateShape LayerLine
+			append layerLineArr LayerLine
+		)
+	)
+	layerLineArr
+)
+fn boxGuidelines boxLinearr = 
+(
+
+) */
 registerTimeCallback windAllDir
 --registerTimeCallback gLine
