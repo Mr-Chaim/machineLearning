@@ -38,7 +38,7 @@ counterLine=0
 counterLine2=1
 counter = 0
 counter2 = 0
-steps = 250
+steps = 150
 
 -- Starting Variables
 
@@ -59,7 +59,7 @@ abY = $Box_Y_Green
 abZ = $Box_Z_Blue
 analysisBox = #(abX,abY,abZ)
 windDifArr= #(0,0,0) 
-b.MassFX_Rigid_Body.mass = 15
+b.MassFX_Rigid_Body.mass = 50
 --Box Analisys creation
 
 fn boxCreation=
@@ -379,7 +379,7 @@ fn dummyPositioner counter=
 (
 	if (counter == 1) do
 	(
-		bdummy.pos = [(random 500 3500),(random 500 3500),(random 500 3500)]
+		bdummy.pos = [(random 500 5500),(random 500 5500),(random 500 5500)]
 	)
 )
 fn windDiferenceFunc deltaDirAbs  currentSpdAbs windAbs n acelAbs=
