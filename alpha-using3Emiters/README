@@ -1,0 +1,14 @@
+For the alpha version the script is working.
+To make it run you:
+1) Open the max file
+2) run the script
+3) run the MASSfx simulation and it will run the script automaticaly.
+
+
+To change any settings on the script like maxSpeed, steps, or any one of the constants, please open the script and change, them save and reevaluate.
+You do not need to stop the simulation to change settings, when you re-evaluate, the simulation will be updated automaticaly. 
+
+To evaluate for errors, I would advice to un-comment the print settings so you can check where the script might break.
+All of the print sections have ben coded so it will print every step with a code.
+
+I will most likely not update this script to the next max, it works on max 2018.
