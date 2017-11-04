@@ -19,14 +19,14 @@ New interation of the project - Still in progress.
 -Added 3 layers to take the angle or tilt in consideration.
 -As of now the algoritm is not finished or tested.
 
-	Needs:
+Needs:
 
 	- Finish the last algoritm - I am turning the last function into a class by itself and need to figure out how to correlate the angle with the force. The solution might be easy, but i need to spend more time on it. 
 	- Test - As far as now, i have not completely tested all of the classes and had some issues when trying to run them so probably after i finish the last algoritm, there will be alot of testing and fixing.
 	- Shrink the code - Right now the code is very explicit on all of the classes for readability. After i finish the above steps, i should get the code to be a bit smaller. 
 	- Add comments - Folowing the same problem as the issue above, the code needs more readability. 
 
-	future:
+future:
 
 	-Add obj Options - theoricaly the algoritm can hold as many diferent objects as long as there are as many dummys and windEmiters. After the above issues are fixed, i should tackle the scalability of the algoritm.
 	-Translate into C++ - this will be in the future, the code needs to be working very well before that.
