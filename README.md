@@ -6,7 +6,7 @@ Demonstration of a neural network that will identify an location on a 3d space a
 10/30/2017-
 
 	-Right now I am working on updating to only one emiter which will change direction and angle in order to stay up.
-	-The previous version of the script is in the alpha folder, it will not be updated.
+	-The previous WORKING version of the script is in the alpha folder, it will not be updated.
 
 11/04/2017-
 
