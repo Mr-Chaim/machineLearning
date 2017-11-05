@@ -3,7 +3,8 @@
 
 struct compFnClass
 (
-	fn windForceFunc windNow maxWindSpd= --This function takes the strength of the selected wind on the windArray
+
+	fn windForceFn windNow maxWindSpd= --This function takes the strength of the selected wind on the windArray
 	(
 		if windNow >= maxWindSpd then
 		(
@@ -25,19 +26,19 @@ struct compFnClass
 	
 	fn spdNowFn deltaPast deltaPresent = (deltaPast-deltaPresent), --This will calculate the delta on position from the previous frame to the current frame and divide by the maximum possible speed.
 	
-	fn windAbsoluteFunc windForce maxWindSpd= (windForce/maxWindSpd), --This will take the wind strength on the previous frame and divide by the maximum wind for the axis.
+	fn windAbsFn windForce maxWindSpd= (windForce/maxWindSpd), --This will take the wind strength on the previous frame and divide by the maximum wind for the axis.
 	
-	fn maxAcelFunc maxAcel = (abs (maxAcel)), -- This will take the possible maximum acelAbseration and multiply by the delta.
+	fn maxAcelFn maxAcel = (abs (maxAcel)), -- This will take the possible maximum acelAbseration and multiply by the delta.
 	
 	fn acelfn spdPast speedNow= (speedNow-spdPast), --Calculates the acelAbseration
 
-	fn dirtiltFn deltaOposite deltaAdj= --Finds the tilt from source to target in one axis
+	fn tiltFn varOposite varAdj= --Finds the tilt from source to target in one axis
 	(
-		hip = sqrt((deltaOposite*deltaOposite)+(deltaAdj*deltaAdj))
-		coship = deltaAdj/hip
+		hip = sqrt((varOposite*varOposite)+(varAdj*varAdj))
+		coship = varAdj/hip
 		tilthip = acos coship
 
-		if deltaOposite < 0.0 do
+		if varOposite < 0.0 do
 		(
 			tilthip = -tilthip
 		)
@@ -47,58 +48,58 @@ struct compFnClass
 
 	fn sigmFn InputVar = (1/(1+ e^(-(InputVar as float)))),
 	
-	fn binaryFunc varInput var1 var2 var3 var4 =
+	fn binaryFn InputVar bolVar1 bolvar2 bolvar3 bolvar4 =
 	(
-		if varInput >= var1 do
+		if InputVar > bolVar1 do
 		(
-			foo = var2
+			foo = bolvar2
 		)
-		if varInput < var3 do
+		if InputVar < bolvar3 do
 		(
-			foo = var4
+			foo = bolvar4
 		)
 		return foo
 	),
-	fn randomGen = 
+	fn randomGenFn minValue maxValue= 
 	(
 		
-		random 0.0 1.0
+		random minValue maxValue
 	),
 
-	fn arrayCreaFn var=
+	fn arrayCreaFn InputVar=
 	(
 		arr = #()
 
-		for a=1 to var do
+		for a=1 to InputVar do
 		(
-			foo = compFunction.randomGen()
+			foo = compFnClass.randomGenFn -1.0 1.0
 			append arr foo
 		)
 		arr
 	),
 
-	fn rectifierFunc var1 var2 var3 = (1-(1^(1+var2))),
+	fn rectifierFn var1 var2 var3 = (1-(1^(1+var2))),
 	
-	fn twoDecimalScaleFunc var1= (formattedprint var1 format:"#.2f"),
+	fn twoDecFn InputVar= (formattedprint InputVar format:"#.2f"),
 
-	fn absFn var maxVar = (var/maxVar),
+	fn absFn InputVar maxVar = (InputVar/maxVar),
 	
-	fn constrainFn var = 
+	fn constrainFn InputVar = 
 	(
-		var = compFunction.limitFn var 1 -1
-		foo = ((var * 10)+10) as integer
-		compFunction.limitFn foo 20 1
+		InputVar = compFnClass.limitFn InputVar 1 -1
+		foo = ((InputVar * 10)+10) as integer
+		compFnClass.limitFn foo 20 1
 	),
 	
-	fn limitFn var1 var2 var3 = 
+	fn limitFn InputVar maxValue minValue = 
 	(
-		if var1 >= var2 do
+		if InputVar >= maxValue do
 		(
-			var1 = var2
+			InputVar = maxValue
 		)
-		if var1 < var3 do
+		if InputVar < minValue do
 		(
-			var1 = var3
+			InputVar = minValue
 		)
 		return var1
 	),
@@ -106,32 +107,32 @@ struct compFnClass
 	--prediction functions
 
 
-	fn speedPredFn acel currentSpd =
+	fn speedPredFn acel currentSpd maxSpeed=
 	(
 		foo = currentSpd + acel
-		return (compFnClass.limitFn foo 1 -1)
+		return (compFnClass.limitFn foo maxSpeed -maxSpeed)
 	),
 
-	fn acelPredFn acel windNow windMax=
+	fn acelPredFn acel windNow windMax maxAcel=
 	(
-		foo = acelAbs + (acelAbs * (windNow/windMax))
-		return (compFnClass.limitFn foo 1 -1)
+		foo = acel + (acel * (windNow/windMax))
+		return (compFnClass.limitFn foo maxAcel -maxAcel)
 	),
 	
-	fn distPredFn delta currentSpd=
+	fn distPredFn delta currentSpd maxDistance=
 	(
 		foo = delta + currentSpd
-		return (compFnClass.limitFn foo 1 -1)
+		return (compFnClass.limitFn foo maxDistance -maxDistance)
 	),
 
-	fn tiltPredFn  deltaPredOpos deltaPredAdj= 
+	fn tiltPredFn deltaPredOpos deltaPredAdj= 
 	(
 
 		hip = sqrt((deltaPredOpos*deltaPredOpos)+(deltaPredAdj*deltaPredAdj))
-		coship = deltaAdj/hip
+		coship = deltaPredAdj/hip
 		tilthip = acos coship
 
-		if deltaOposite < 0.0 do
+		if deltaPredOpos < 0.0 do
 		(
 			tilthip = -tilthip
 		)
@@ -139,18 +140,18 @@ struct compFnClass
 		tilthip
 	),
 
-	fn windDisplacementFn deltaDirAbs currentSpdAbs windAbs n acelAbs= 
+	fn windDispFn deltaDirAbs currentSpdAbs windAbs n acelAbs= 
 	(
 		if n == 3 do
 		(
-			foo1 =  compFunction.binaryFunc (currentSpdAbs*10) 1 0 1 1
-			foo2 =  compFunction.binaryFunc (acelAbs*10) 1 0 1 1
-			foo3 = 	compFunction.binaryFunc (foo1 + foo2) 1 0 1 1
-			foo5 =  compFunction.binaryFunc (deltaDirAbs*10) 1 1 1 0
+			foo1 =  compFnClass.binaryFn (currentSpdAbs*10) 1 0 1 1
+			foo2 =  compFnClass.binaryFn (acelAbs*10) 1 0 1 1
+			foo3 = 	compFnClass.binaryFn (foo1 + foo2) 1 0 1 1
+			foo5 =  compFnClass.binaryFn (deltaDirAbs*10) 1 1 1 0
 			foo6 = 	deltaDirAbs * foo5
 			foo7 = 	(foo1* foo2*foo5)*(maxWindSpdArr[n]/100)
 		 	a = 0
-		 	--print (((twoDecimalScaleFunc (foo1)) as string) +"-"+ ((twoDecimalScaleFunc (foo2)) as string)+"-"+((twoDecimalScaleFunc foo3) as string)+"-"+((twoDecimalScaleFunc foo5) as string)+"-"+((twoDecimalScaleFunc foo6) as string)+"-"+((twoDecimalScaleFunc a) as string))
+		 	--print (((twoDecFn (foo1)) as string) +"-"+ ((twoDecFn (foo2)) as string)+"-"+((twoDecFn foo3) as string)+"-"+((twoDecFn foo5) as string)+"-"+((twoDecFn foo6) as string)+"-"+((twoDecFn a) as string))
 		)
 		if n != 3 do
 		(
@@ -164,7 +165,7 @@ struct compFnClass
 	-- testing functions
 
 
-	fn dummyPositioner counter= 
+	fn dummyRandomFn counter= 
 	(
 		if (counter == 1) do
 		(
@@ -172,14 +173,14 @@ struct compFnClass
 		)
 	),
 	
-	fn windDiferenceFunc deltaDirAbs  currentSpdAbs windAbs n acelAbs=
+	fn windDifFn deltaDirAbs  currentSpdAbs windAbs n acelAbs=
 	(
 		if n == 3 do
 		(
-			foo1 = compFunction.binaryFunc (currentSpdAbs*100) 1 0 1 1
-			foo2 = compFunction.binaryFunc (acelAbs*10) 1 0 1 1
-			foo3 = compFunction.binaryFunc (foo1 + foo2) 1 0 1 1
-			foo5 = compFunction.binaryFunc (deltaDirAbs*1000) 1 1 1 1
+			foo1 = compFnClass.binaryFn (currentSpdAbs*100) 1 0 1 1
+			foo2 = compFnClass.binaryFn (acelAbs*10) 1 0 1 1
+			foo3 = compFnClass.binaryFn (foo1 + foo2) 1 0 1 1
+			foo5 = compFnClass.binaryFn (deltaDirAbs*1000) 1 1 1 1
 			foo6 = deltaDirAbs * foo5
 			foo7 = (foo1*foo2*foo5)*((deltaDirAbs*5))
 		 	a = foo7
@@ -191,106 +192,30 @@ struct compFnClass
 		)
 
 		a
-	),
+	)
+)
 
-	fn weightChangerFunc predVal actVal pastVal type weightPos=
-	(	
-		for a=1 to actVal.count do 
-		(
-			actValA = actVal[a]
-			predValA = predVal[a]
-			pastValA = pastVal[a]
-			weightPosA = weightPos[a]
-			weigthType = a
-			
+fn weightChangerFunc predVal actVal pastVal type weightPos=
+(	
+	for a=1 to actVal.count do 
+	(
+		actValA = actVal[a]
+		predValA = predVal[a]
+		pastValA = pastVal[a]
+		weightPosA = weightPos[a]
+		weigthType = a
 		
-			past = compFunction.limitFn pastValuesA 1 -1
-			past = compFunction.constrainFn past
-
-			multiplierA = compFunction.limitFn multiplierA 1 -1
-			multiplierA = compFunction.constrainFn multiplierA
-
-			previousWeight = wClassN.type[multiplierA]
-			
-			foo = compFunction.sigmFn (previousWeight - (predValuesA-currentValuesA))
-			
-			wClassN.type[multiplierA] = (limitFn foo 1 -1)
-		)
-	)
-
 	
-)
+		past = compFnClass.limitFn pastValuesA 1 -1
+		past = compFnClass.constrainFn past
 
+		multiplierA = compFnClass.limitFn multiplierA 1 -1
+		multiplierA = compFnClass.constrainFn multiplierA
 
-struct predClass
-(
-	distPredFn = compFnClass.distPredFn,
-	speedPredFn = compFnClass.speedPredFn,
-	acelPredFn = compFnClass.acelPredFn,
-	tiltPredFn = compFnClass.tiltPredFn,
-
-	deltaPred = [0,0,0],
-	speedPred = [0,0,0],
-	acelPred  = [0,0,0],
-	tiltPred = [0,0,0],
-
-
-
-	fn update basicClass speedClass acelClass =
-	(
-
-		for a=1 to 3 do 
-		(
-			deltaPred[a] = distPredFn basicClass.delta[a] speedClass.spdNow[a]
-			speedPred[a] = speedPredFn acelClass.acel[a] speedClass.spdNow[a]
-			acelPred[a] = acelPredFn acelClass.acel[a] basicClass.windNow constClass.maxWind
-		)
-		tiltPred[1] = tiltPredFn deltaPred[1] deltaPred[3]
-		tiltPred[2] = tiltPredFn deltaPred[2] deltaPred[3]
-		tiltPred[3] = tiltPredFn deltaPred[2] deltaPred[1]
-	)
-	--windDispX = windDisplacementFn deltaDirAbs currentSpdAbs windAbs n acelAbs
-)
-
-struct valueStoreClass
-(
-	deltaPredVal = [0,0,0],
-	deltaPastVal = [0,0,0],
-	deltaActVal = [0,0,0],
-
-	speedPredVal = [0,0,0],
-	speedPastVal = [0,0,0],
-	speedActVal = [0,0,0],
-
-	AcelPredVal = [0,0,0],
-	AcelPastVal = [0,0,0],
-	AcelActVal = [0,0,0],
-
-	tiltPredVal = [0,0,0],
-	tiltPastVal = [0,0,0],
-	tiltActVal = [0,0,0],
-
-
-	wForce = undefined,
-
-	fn update basicVarClass spdClass acelClass predClass= 
-	(
-
-		deltaPredVal = predClass.deltaPred
-		deltaPastVal = basicVarClass.deltaPast
-		deltaActVal = basicVarClass.delta
-
-		speedPredVal = predClass.speedPred
-		speedPastVal = spdClass.spdPast
-		speedActVal = spdClass.spdNow
-
-		AcelPredVal = predClass.acelPred
-		AcelPastVal = acelClass.acelPast
-		AcelActVal = acelClass.acel
-
-		tiltPredVal = predClass.anglePred
-		tiltPastVal = basicVarClass.tiltPast
-		tiltActVal = basicVarClass.tilt
-
+		previousWeight = wClassN.type[multiplierA]
+		
+		foo = compFnClass.sigmFn (previousWeight - (predValuesA-currentValuesA))
+		
+		wClassN.type[multiplierA] = (limitFn foo 1 -1)
 	)
 )
