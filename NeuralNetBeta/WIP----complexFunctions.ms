@@ -101,7 +101,7 @@ struct compFnClass
 		(
 			InputVar = minValue
 		)
-		return var1
+		return InputVar
 	),
 	
 	--prediction functions
