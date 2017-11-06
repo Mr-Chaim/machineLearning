@@ -1,5 +1,5 @@
 const = constClass()
-compClass = compFnClass()
+mathClass = mathClass()
 
 struct acelClass
 (
@@ -12,7 +12,7 @@ struct acelClass
 	(
 		for a=1 to 3 do 
 		(
-			name.acel[a] = compClass.acelFn speedClass.spdPast[a] speedClass.spdNow[a]
+			name.acel[a] = mathClass.acelFn speedClass.spdPast[a] speedClass.spdNow[a]
 		)
 	),
 	fn updatePast name= (name.acelPast = name.acel),
@@ -21,7 +21,7 @@ struct acelClass
 	(
 
 		spd = const.maxSpeed
-		ranGen = compClass.randomGenFn
+		ranGen = mathClass.randomGenFn
 
 		test.spdNow = [(ranGen -spd spd),(ranGen -spd spd),(ranGen -spd spd)]
 		test.spdPast = [(ranGen -spd spd),(ranGen -spd spd),(ranGen -spd spd)]
@@ -40,7 +40,7 @@ fn testacelClassFn =
 (
 
 	const = constClass()
-	compClass = compFnClass()
+	mathClass = mathClass()
 	testacel = acelClass()
 
 	testacel.testValue testacel

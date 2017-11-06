@@ -1,5 +1,5 @@
 const = constClass()
-compClass = compFnClass()
+mathClass = mathClass()
 
 struct spdClass
 (
@@ -13,7 +13,7 @@ struct spdClass
 	(
 		for a=1 to 3 do 
 		(
-			name.spdNow[a] = compClass.spdNowFn posClass.deltaPast[a] posClass.delta[a]
+			name.spdNow[a] = mathClass.spdNowFn posClass.deltaPast[a] posClass.delta[a]
 		)
 		return true
 	),
@@ -29,7 +29,7 @@ struct spdClass
 	(
 
 		dist = const.maxDistance
-		ranGen = compClass.randomGenFn
+		ranGen = mathClass.randomGenFn
 
 		test.deltaPast = [(ranGen -dist dist),(ranGen -dist dist),(ranGen -dist dist)]
 		test.delta = [(ranGen -dist dist),(ranGen -dist dist),(ranGen -dist dist)]
@@ -47,7 +47,7 @@ fn testSpdClassFn =
 (
 
 	const = constClass()
-	compClass = compFnClass()
+	mathClass = mathClass()
 	testspd = spdClass()
 
 	testspd.testValue testspd

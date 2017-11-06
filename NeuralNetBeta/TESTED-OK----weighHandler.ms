@@ -24,15 +24,16 @@ struct weightClass
 	fn init name= 
 
 	(
-		for a=1 to 3 do 
+		for a=1 to 3 do
+
 		(
-			name.deltaW[a] = compClass.arrayCreaFn 20
-			name.speedW[a] = compClass.arrayCreaFn 20
-			name.acelW[a] = compClass.arrayCreaFn 20
-			name.tiltW[a] = compClass.arrayCreaFn 20
+			name.deltaW[a] = mathClass.arrayCreaFn 20
+			name.speedW[a] = mathClass.arrayCreaFn 20
+			name.acelW[a] = mathClass.arrayCreaFn 20
+			name.tiltW[a] = mathClass.arrayCreaFn 20
 		)
 
-		name.wForce = compClass.arrayCreaFn 20
+		name.wForce = mathClass.arrayCreaFn 20
 
 		return true
 	),
@@ -47,93 +48,61 @@ struct weightClass
 
 		for a=1 to 3 do 
 		(
-			deltaFoo[1] = compClass.absFn name.deltaPredVal[a] const.maxDistance
-			deltaFoo[2] = compClass.absFn name.deltaPastVal[a] const.maxDistance
-			deltaFoo[3] = compClass.absFn name.deltaActVal[a] const.maxDistance
+			deltaFoo[1] = mathClass.absFn name.deltaPredVal[a] const.maxDistance
+			deltaFoo[2] = mathClass.absFn name.deltaPastVal[a] const.maxDistance
+			deltaFoo[3] = mathClass.absFn name.deltaActVal[a] const.maxDistance
 
-			speedFoo[1] = compClass.absFn name.speedPredVal[a] const.maxSpeed
-			speedFoo[2] = compClass.absFn name.speedPastVal[a] const.maxSpeed
-			speedFoo[3] = compClass.absFn name.speedActVal[a] const.maxSpeed
+			speedFoo[1] = mathClass.absFn name.speedPredVal[a] const.maxSpeed
+			speedFoo[2] = mathClass.absFn name.speedPastVal[a] const.maxSpeed
+			speedFoo[3] = mathClass.absFn name.speedActVal[a] const.maxSpeed
 
-			acelFoo[1] = compClass.absFn name.acelPredVal[a] const.maxacel
-			acelFoo[2] = compClass.absFn name.acelPastVal[a] const.maxacel
-			acelFoo[3] = compClass.absFn name.acelActVal[a] const.maxacel
+			acelFoo[1] = mathClass.absFn name.acelPredVal[a] const.maxacel
+			acelFoo[2] = mathClass.absFn name.acelPastVal[a] const.maxacel
+			acelFoo[3] = mathClass.absFn name.acelActVal[a] const.maxacel
 
-			tiltFoo[1] = compClass.absFn name.tiltPredVal[a] const.maxTilt
-			tiltFoo[2] = compClass.absFn name.tiltPastVal[a] const.maxTilt
-			tiltFoo[3] = compClass.absFn name.tiltActVal[a] const.maxTilt
+			tiltFoo[1] = mathClass.absFn name.tiltPredVal[a] const.maxTilt
+			tiltFoo[2] = mathClass.absFn name.tiltPastVal[a] const.maxTilt
+			tiltFoo[3] = mathClass.absFn name.tiltActVal[a] const.maxTilt
 			
 
-			deltaPos = compClass.constrainFn deltaFoo[2]
-			speedPos = compClass.constrainFn speedFoo[2]
-			acelPos = compClass.constrainFn acelFoo[2]
-			tiltPos = compClass.constrainFn tiltFoo[2]
+			deltaPos = mathClass.constrainFn deltaFoo[2]
+			speedPos = mathClass.constrainFn speedFoo[2]
+			acelPos = mathClass.constrainFn acelFoo[2]
+			tiltPos = mathClass.constrainFn tiltFoo[2]
 
-			name.deltaW[a][deltaPos] = compClass.sigmFn (name.deltaW[a][deltaPos] - ( deltaFoo[3] - deltaFoo[1]))
-			name.speedW[a][speedPos] = compClass.sigmFn (name.speedW[a][speedPos] - ( speedFoo[3] - speedFoo[1]))
-			name.acelW[a][acelPos] = compClass.sigmFn (name.acelW[a][acelPos] - ( acelFoo[3] - acelFoo[1]))
-			name.tiltW[a][tiltPos] = compClass.sigmFn (name.tiltW[a][tiltPos] - ( tiltFoo[3] - tiltFoo[1]))
-
+			name.deltaW[a][deltaPos] = mathClass.sigmFn (name.deltaW[a][deltaPos] - ( deltaFoo[3] - deltaFoo[1]))
+			name.speedW[a][speedPos] = mathClass.sigmFn (name.speedW[a][speedPos] - ( speedFoo[3] - speedFoo[1]))
+			name.acelW[a][acelPos] = mathClass.sigmFn (name.acelW[a][acelPos] - ( acelFoo[3] - acelFoo[1]))
+			name.tiltW[a][tiltPos] = mathClass.sigmFn (name.tiltW[a][tiltPos] - ( tiltFoo[3] - tiltFoo[1]))
 		)
 		return true
 	),
 
 	fn catchCurrent name= 
 	(
-
-
 		for a=1 to 3 do 
 		(
-			deltaFoo = compClass.absFn name.deltaActVal[a] const.maxDistance
-			speedFoo = compClass.absFn name.speedActVal[a] const.maxSpeed
-			acelFoo = compClass.absFn name.acelActVal[a] const.maxacel
-			tiltFoo = compClass.absFn name.tiltActVal[a] const.maxTilt
+			deltaFoo = mathClass.absFn name.deltaActVal[a] const.maxDistance
+			speedFoo = mathClass.absFn name.speedActVal[a] const.maxSpeed
+			acelFoo = mathClass.absFn name.acelActVal[a] const.maxacel
+			tiltFoo = mathClass.absFn name.tiltActVal[a] const.maxTilt
 			
 
-			deltaPos = compClass.constrainFn deltaFoo
-			speedPos = compClass.constrainFn speedFoo
-			acelPos = compClass.constrainFn acelFoo
-			tiltPos = compClass.constrainFn tiltFoo
+			deltaPos = mathClass.constrainFn deltaFoo
+			speedPos = mathClass.constrainFn speedFoo
+			acelPos = mathClass.constrainFn acelFoo
+			tiltPos = mathClass.constrainFn tiltFoo
 
 			name.deltaCurW[a] = name.deltaW[a][deltaPos]
 			name.speedCurW[a] = name.speedW[a][speedPos]
 			name.acelCurW[a] = name.acelW[a][acelPos]
 			name.tiltCurW[a] = name.tiltW[a][tiltPos]
 		)
-
-		return true
-	),
-
-	fn testValues test= 
-	(
-
-
-		for a=1 to 3 do
-		(
-
-			test.deltaPredVal[a] = compClass.randomGenFn -const.maxDistance const.maxDistance
-			test.deltaPastVal[a] = compClass.randomGenFn -const.maxDistance const.maxDistance
-			test.deltaActVal[a] = compClass.randomGenFn -const.maxDistance const.maxDistance
-
-			test.speedPredVal[a] = compClass.randomGenFn -const.maxSpeed const.maxSpeed
-			test.speedPastVal[a] = compClass.randomGenFn -const.maxSpeed const.maxSpeed
-			test.speedActVal[a] = compClass.randomGenFn -const.maxSpeed const.maxSpeed
-
-			test.acelPredVal[a] = compClass.randomGenFn -const.maxAcel const.maxAcel
-			test.acelPastVal[a] = compClass.randomGenFn -const.maxAcel const.maxAcel
-			test.acelActVal[a] = compClass.randomGenFn -const.maxAcel const.maxAcel
-
-			test.tiltPredVal[a] = compClass.randomGenFn -const.maxTilt const.maxTilt
-			test.tiltPastVal[a] = compClass.randomGenFn -const.maxTilt const.maxTilt
-			test.tiltActVal[a] = compClass.randomGenFn -const.maxTilt const.maxTilt
-		)
-
 		return true
 	),
 
 	fn updateObj name vClass = 
 	(
-
 		name.deltaPredVal = vClass.deltaPredVal
 		name.deltaPastVal = vClass.deltaPastVal
 		name.deltaActVal = vClass.deltaActVal
@@ -150,6 +119,33 @@ struct weightClass
 		name.tiltPastVal = vClass.tiltPastVal
 		name.tiltActVal = vClass.tiltActVal
 		
+		return true
+	),
+
+
+	fn testValues test= 
+	(
+
+
+		for a=1 to 3 do
+		(
+			test.deltaPredVal[a] = mathClass.randomGenFn -const.maxDistance const.maxDistance
+			test.deltaPastVal[a] = mathClass.randomGenFn -const.maxDistance const.maxDistance
+			test.deltaActVal[a] = mathClass.randomGenFn -const.maxDistance const.maxDistance
+
+			test.speedPredVal[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
+			test.speedPastVal[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
+			test.speedActVal[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
+
+			test.acelPredVal[a] = mathClass.randomGenFn -const.maxAcel const.maxAcel
+			test.acelPastVal[a] = mathClass.randomGenFn -const.maxAcel const.maxAcel
+			test.acelActVal[a] = mathClass.randomGenFn -const.maxAcel const.maxAcel
+
+			test.tiltPredVal[a] = mathClass.randomGenFn -const.maxTilt const.maxTilt
+			test.tiltPastVal[a] = mathClass.randomGenFn -const.maxTilt const.maxTilt
+			test.tiltActVal[a] = mathClass.randomGenFn -const.maxTilt const.maxTilt
+		)
+
 		return true
 	),
 
@@ -176,7 +172,7 @@ fn testWeightClassFn =
 
 (
 	const = constClass()
-	compClass = compFnClass()
+	mathClass = mathClass()
 	testWeightClass = weightClass()
 	testWeightClass.init testWeightClass
 	testWeightClass.testValues testWeightClass

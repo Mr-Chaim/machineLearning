@@ -11,13 +11,13 @@ struct predClass
 
 		for a=1 to 3 do 
 		(
-			name.deltaPred[a] = (compClass.distPredFn posClass.delta[a]  speedClass.spdNow[a] const.maxDistance) as float
-			name.speedPred[a] = (compClass.speedPredFn acelClass.acel[a]  speedClass.spdNow[a] const.maxSpeed) as float
-			name.acelPred[a] = (compClass.acelPredFn acelClass.acel[a] posClass.windNow  const.maxWindForce const.maxAcel) as float
+			name.deltaPred[a] = (mathClass.distPredFn posClass.delta[a]  speedClass.spdNow[a] const.maxDistance) as float
+			name.speedPred[a] = (mathClass.speedPredFn acelClass.acel[a]  speedClass.spdNow[a] const.maxSpeed) as float
+			name.acelPred[a] = (mathClass.acelPredFn acelClass.acel[a] posClass.windNow  const.maxWindForce const.maxAcel) as float
 		)
-		name.tiltPred[1] = (compClass.tiltPredFn name.deltaPred[1]  name.deltaPred[3] ) as float
-		name.tiltPred[2] = (compClass.tiltPredFn name.deltaPred[2]  name.deltaPred[3] ) as float
-		name.tiltPred[3] = (compClass.tiltPredFn name.deltaPred[2]  name.deltaPred[1] ) as float
+		name.tiltPred[1] = (mathClass.tiltPredFn name.deltaPred[1]  name.deltaPred[3] ) as float
+		name.tiltPred[2] = (mathClass.tiltPredFn name.deltaPred[2]  name.deltaPred[3] ) as float
+		name.tiltPred[3] = (mathClass.tiltPredFn name.deltaPred[2]  name.deltaPred[1] ) as float
 
 		return true
 	),
@@ -27,17 +27,17 @@ struct predClass
 		for a=1 to 3 do
 		(
 
-			test.deltaPast[a] = (compClass.randomGenFn -const.maxDistance const.maxDistance) as float
-			test.delta[a] = (compClass.randomGenFn -const.maxDistance const.maxDistance) as float
-			test.spdPast[a] = (compClass.randomGenFn -const.maxSpeed const.maxSpeed) as float
-			test.spdNow[a] = (compClass.randomGenFn -const.maxSpeed const.maxSpeed) as float
-			test.acelPast[a] = (compClass.randomGenFn -const.maxAcel const.maxAcel) as float
-			test.acel[a] = (compClass.randomGenFn -const.maxAcel const.maxAcel) as float
-			test.tiltPast[a] = (compClass.randomGenFn -const.maxTilt const.maxTilt) as float
-			test.tilt[a] = (compClass.randomGenFn -const.maxTilt const.maxTilt) as float
+			test.deltaPast[a] = (mathClass.randomGenFn -const.maxDistance const.maxDistance) as float
+			test.delta[a] = (mathClass.randomGenFn -const.maxDistance const.maxDistance) as float
+			test.spdPast[a] = (mathClass.randomGenFn -const.maxSpeed const.maxSpeed) as float
+			test.spdNow[a] = (mathClass.randomGenFn -const.maxSpeed const.maxSpeed) as float
+			test.acelPast[a] = (mathClass.randomGenFn -const.maxAcel const.maxAcel) as float
+			test.acel[a] = (mathClass.randomGenFn -const.maxAcel const.maxAcel) as float
+			test.tiltPast[a] = (mathClass.randomGenFn -const.maxTilt const.maxTilt) as float
+			test.tilt[a] = (mathClass.randomGenFn -const.maxTilt const.maxTilt) as float
 
 		)
-		test.windNow = (compClass.randomGenFn 0.0 const.maxWindForce) as float
+		test.windNow = (mathClass.randomGenFn 0.0 const.maxWindForce) as float
 		
 		return true
 	),
@@ -58,7 +58,7 @@ struct predClass
 fn testPredClass =
 (
 	const = constClass()
-	compClass = compFnClass()
+	mathClass = mathClass()
 	predClassTest = predClass()
 	predClassTest.testValues predClassTest
 	predClassTest.updateValues predClassTest predClassTest predClassTest predClassTest

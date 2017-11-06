@@ -61,7 +61,7 @@ fn testCurrentObjFn obj1 obj2 objWind=
 
 	objClassTest = objClass()
 
-	rGen = compFnClass.randomGenFn
+	rGen = mathClass.randomGenFn
 
 	obj1.pos = [(rGen 0 100),(rGen 0 100),(rGen 0 100)]
 	obj2.pos = [(rGen 0 100),(rGen 0 100),(rGen 0 100)]

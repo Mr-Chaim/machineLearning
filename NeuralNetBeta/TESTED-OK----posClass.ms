@@ -1,6 +1,6 @@
 --Basic Functions
 const = constClass()
-compClass = compFnClass()
+mathClass = mathClass()
 
 struct posClass 
 (
@@ -26,13 +26,13 @@ struct posClass
 		name.targetPos = objClass.targetPos
 		name.sourcePos = objClass.sourcePos
 
-		name.delta[1] = compClass.deltafn name.sourcePos[1] name.targetPos[1]
-		name.delta[2] = compClass.deltafn name.sourcePos[2] name.targetPos[2]
-		name.delta[3] = compClass.deltafn name.sourcePos[3] name.targetPos[3]
+		name.delta[1] = mathClass.deltafn name.sourcePos[1] name.targetPos[1]
+		name.delta[2] = mathClass.deltafn name.sourcePos[2] name.targetPos[2]
+		name.delta[3] = mathClass.deltafn name.sourcePos[3] name.targetPos[3]
 
-		name.tilt[1] = compClass.tiltfn name.delta[1] name.delta[3]
-		name.tilt[2] = compClass.tiltfn name.delta[2] name.delta[3]
-		name.tilt[3] = compClass.tiltfn name.delta[2] name.delta[1]
+		name.tilt[1] = mathClass.tiltfn name.delta[1] name.delta[3]
+		name.tilt[2] = mathClass.tiltfn name.delta[2] name.delta[3]
+		name.tilt[3] = mathClass.tiltfn name.delta[2] name.delta[1]
 
 		name.windNow = objClass.windForce
 		return true
@@ -51,7 +51,7 @@ struct posClass
 	fn testValue test=
 	(
 		dist = const.maxDistance
-		ranGen = compClass.randomGenFn
+		ranGen = mathClass.randomGenFn
 
 		test.targetPos = [(ranGen -dist dist),(ranGen -dist dist),(ranGen -dist dist)]
 		test.sourcePos = [(ranGen -dist dist),(ranGen -dist dist),(ranGen -dist dist)]
@@ -67,7 +67,7 @@ fn testPosClassFn =
 (
 
 	const = constClass()
-	compClass = compFnClass()
+	mathClass = mathClass()
 	testPos = posClass()
 
 	testPos.testValue testPos

@@ -46,21 +46,21 @@ struct valueClass
 	(
 		for a=1 to 3 do
 		(
-			test.deltaPred[a] = compClass.randomGenFn -const.maxDistance const.maxDistance
-			test.deltaPast[a] = compClass.randomGenFn -const.maxDistance const.maxDistance
-			test.delta[a] = compClass.randomGenFn -const.maxDistance const.maxDistance
+			test.deltaPred[a] = mathClass.randomGenFn -const.maxDistance const.maxDistance
+			test.deltaPast[a] = mathClass.randomGenFn -const.maxDistance const.maxDistance
+			test.delta[a] = mathClass.randomGenFn -const.maxDistance const.maxDistance
 			
-			test.speedPred[a] = compClass.randomGenFn -const.maxSpeed const.maxSpeed
-			test.spdPast[a] = compClass.randomGenFn -const.maxSpeed const.maxSpeed
-			test.spdNow[a] = compClass.randomGenFn -const.maxSpeed const.maxSpeed
+			test.speedPred[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
+			test.spdPast[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
+			test.spdNow[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
 			
-			test.acelPred[a] = compClass.randomGenFn -const.maxAcel const.maxAcel
-			test.acelPast[a] = compClass.randomGenFn -const.maxAcel const.maxAcel
-			test.acel[a] = compClass.randomGenFn -const.maxAcel const.maxAcel
+			test.acelPred[a] = mathClass.randomGenFn -const.maxAcel const.maxAcel
+			test.acelPast[a] = mathClass.randomGenFn -const.maxAcel const.maxAcel
+			test.acel[a] = mathClass.randomGenFn -const.maxAcel const.maxAcel
 			
-			test.tiltPred[a] = compClass.randomGenFn -const.maxTilt const.maxTilt
-			test.tiltPast[a] = compClass.randomGenFn -const.maxTilt const.maxTilt
-			test.tilt[a] = compClass.randomGenFn -const.maxTilt const.maxTilt
+			test.tiltPred[a] = mathClass.randomGenFn -const.maxTilt const.maxTilt
+			test.tiltPast[a] = mathClass.randomGenFn -const.maxTilt const.maxTilt
+			test.tilt[a] = mathClass.randomGenFn -const.maxTilt const.maxTilt
 		)
 
 		return true
@@ -84,7 +84,7 @@ struct valueClass
 fn valueClassTestFn =
 (
 	const = constClass()
-	compClass = compFnClass()
+	mathClass = mathClass()
 	valueClassTest = valueClass()
 	valueClassTest.testValues valueClassTest
 	valueClassTest.updateValue valueClassTest valueClassTest valueClassTest valueClassTest valueClassTest
