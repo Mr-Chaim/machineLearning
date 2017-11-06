@@ -21,7 +21,7 @@ struct valueClass
 
 	wForce = undefined,
 
-	fn updateValue name posClass spdClass acelClass predClass= 
+	fn importVar name posClass spdClass acelClass predClass= 
 	(
 
 		name.deltaPredVal = predClass.deltaPred
@@ -67,6 +67,9 @@ struct valueClass
 	),
 
 	private
+	
+	const = constClass(),
+	
 
 	deltaPred = [0,0,0],
 	deltaPast = [0,0,0],
@@ -81,13 +84,15 @@ struct valueClass
 	tiltPast = [0,0,0],
 	tilt = [0,0,0]
 )
+
+
 fn valueClassTestFn =
 (
 	const = constClass()
 	mathClass = mathClass()
 	valueClassTest = valueClass()
 	valueClassTest.testValues valueClassTest
-	valueClassTest.updateValue valueClassTest valueClassTest valueClassTest valueClassTest valueClassTest
+	valueClassTest.importVar valueClassTest valueClassTest valueClassTest valueClassTest valueClassTest
 
 	print valueClassTest.deltaPredVal
 	print valueClassTest.deltaPastVal
@@ -104,4 +109,3 @@ fn valueClassTestFn =
 
 	return true
 )
-valueClassTestFn()

@@ -1,6 +1,3 @@
-const = constClass()
-mathClass = mathClass()
-
 struct spdClass
 (
 	spdNow = [0,0,0],
@@ -38,6 +35,9 @@ struct spdClass
 	),
 
 	private
+	
+	const = constClass(),
+	
 
 	deltaPast = [0,0,0],
 	delta = [0,0,0]
@@ -45,9 +45,6 @@ struct spdClass
 
 fn testSpdClassFn =
 (
-
-	const = constClass()
-	mathClass = mathClass()
 	testspd = spdClass()
 
 	testspd.testValue testspd

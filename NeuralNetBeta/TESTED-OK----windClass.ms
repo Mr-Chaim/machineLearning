@@ -1,6 +1,3 @@
-const = constClass()
-mathClass = mathClass()
-
 struct windClass
 (
 	public
@@ -20,9 +17,8 @@ struct windClass
 	tiltFinal = [0,0,0],
 
 
-	fn updateValues name vClass wClass =
+	fn importValues name vClass wClass =
 	(
-
 		name.deltaActVal = vClass.deltaActVal
 		name.speedActVal = vClass.speedActVal
 		name.AcelActVal  = vClass.AcelActVal
@@ -31,9 +27,7 @@ struct windClass
 		name.speedCurW   = wClass.speedCurW
 		name.acelCurW    = wClass.acelCurW
 		name.tiltCurW    = wClass.tiltCurW
-
 		return true
-
 	),
 
 	fn updateAbsolute name =
@@ -41,44 +35,33 @@ struct windClass
 
 		for a = 1 to 3 do
 		(
-
 			name.deltaAbs[a] = mathClass.absFn name.deltaActVal[a] const.maxDistance
 			name.speedAbs[a] = mathClass.absFn name.speedActVal[a] const.maxSpeed
 			name.AcelAbs[a]  = mathClass.absFn name.AcelActVal[a] const.maxAcel
 			name.tiltAbs[a]  = mathClass.absFn name.tiltActVal[a] const.maxTilt
-
 		)
-		name.deltaW = name.deltaCurW
-		name.speedW = name.speedCurW
-		name.acelW  = name.acelCurW
-		name.tiltW  = name.tiltCurW
 		return true
 	),
 
 	fn calculate name= 
 	(
-		
-		limitFn = mathClass.limitFn
-
-		deltaCalculate = name.deltaCalculate
-		speedCalculate = name.speedCalculate
-		acelCalculate  = name.acelCalculate
-		tiltCalculate  = name.tiltCalculate
-		windCalculate  = name.windCalculate
-
-
-
+		deltaCalculate = [0,0,0]
+		speedCalculate = [0,0,0]
+		acelCalculate  = [0,0,0]
+		tiltCalculate  = [0,0,0]
+		sumation = 0
+		windCalculate  = 0
 		for a=1 to 3 do
 		(
-
-			deltaCalculate[a] = limitFn (name.deltaAbs[a] * name.deltaW[a]) 1 -1
-			speedCalculate[a] = limitFn (name.speedAbs[a] * name.speedW[a]) 1 -1
-			acelCalculate[a]  = limitFn (name.AcelAbs[a] * name.acelW[a]) 1 -1
-			tiltCalculate[a]  = ((name.tiltAbs[a] + (name.tiltW[a]*(deltaCalculate[a] + speedCalculate[a] + acelCalculate[a])/3) )* name.maxTilt )
-			windCalculate    += (deltaCalculate[a] + speedCalculate[a] + acelCalculate[a])/3
+			deltaCalculate[a] = mathClass.limitFn (name.deltaAbs[a] * name.deltaCurW[a]) 1 -1
+			speedCalculate[a] = mathClass.limitFn (name.speedAbs[a] * name.speedCurW[a]) 1 -1
+			acelCalculate[a]  = mathClass.limitFn (name.AcelAbs[a] * name.acelCurW[a]) 1 -1
+			sumation = (deltaCalculate[a] + speedCalculate[a] + acelCalculate[a])
+			tiltCalculate[a]  = ((name.tiltAbs[a] + (name.tiltCurW[a]*(sumation/3)) )* name.maxTilt )
+			windCalculate    += (sumation/3)
 		)
 
-		name.windforce = limitFn ((windCalculate/3) * const.maxWindForce) const.maxWindForce 0 
+		name.windforce = mathClass.limitFn ((windCalculate/3) * const.maxWindForce) const.maxWindForce 0 
 		name.tiltFinal = tiltCalculate
 
 		return true
@@ -86,24 +69,25 @@ struct windClass
 
 	fn testValues name= 
 	(
-
-		ranGen = mathClass.randomGenFn
 		for a=1 to 3 do
 		(
-			name.deltaActVal[a] = ranGen -const.maxDistance const.maxDistance
-			name.speedActVal[a] = ranGen -const.maxSpeed const.maxSpeed
-			name.AcelActVal[a]  = ranGen -const.maxAcel const.maxAcel
-			name.tiltActVal[a]  = ranGen -const.maxTilt const.maxTilt
-			name.deltaCurW[a]   = ranGen -1.0 1.0
-			name.speedCurW[a]   = ranGen -1.0 1.0
-			name.acelCurW[a]    = ranGen -1.0 1.0
-			name.tiltCurW[a]    = ranGen -1.0 1.0
+			name.deltaActVal[a] = mathClass.randomGenFn -const.maxDistance const.maxDistance
+			name.speedActVal[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
+			name.AcelActVal[a]  = mathClass.randomGenFn -const.maxAcel const.maxAcel
+			name.tiltActVal[a]  = mathClass.randomGenFn -const.maxTilt const.maxTilt
+			name.deltaCurW[a]   = mathClass.randomGenFn -1.0 1.0
+			name.speedCurW[a]   = mathClass.randomGenFn -1.0 1.0
+			name.acelCurW[a]    = mathClass.randomGenFn -1.0 1.0
+			name.tiltCurW[a]    = mathClass.randomGenFn -1.0 1.0
 		)
 		return true
 	),
 
 
-	private 
+	private
+	
+	const = constClass(),
+	
 
 	maxWindForce = const.maxWindForce,
 	maxDistance  = const.maxDistance,
@@ -113,7 +97,6 @@ struct windClass
 	randomGenFn  = mathClass.randomGenFn,
 	limitFn      = mathClass.limitFn,
 	absFn        = mathClass.absFn,
-
 
 	deltaActVal = [0,0,0],
 	speedActVal = [0,0,0],
@@ -141,7 +124,7 @@ fn testWindClassFn =
 	windClassTest = windClass()
 
 	windClassTest.testValues windClassTest
-	windClassTest.updateValues windClassTest windClassTest windClassTest
+	windClassTest.importValues windClassTest windClassTest windClassTest
 	windClassTest.updateAbsolute windClassTest
 	windClassTest.calculate windClassTest
 	format "\n"
@@ -158,4 +141,4 @@ fn testWindClassFn =
 
 	return true
 )
-testWindClassFn()
+--testWindClassFn()

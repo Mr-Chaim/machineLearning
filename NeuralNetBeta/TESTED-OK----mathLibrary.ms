@@ -21,10 +21,10 @@ struct mathClass
 		coship  = varAdj/hip
 		tilthip = acos coship
 
-		if varOposite < 0.0 do
+		/*if varOposite < 0.0 do
 		(
 			tilthip = -tilthip
-		)
+		)*/
 
 		tilthip
 	),
@@ -110,10 +110,10 @@ struct mathClass
 		hip     = sqrt((deltaPredOpos*deltaPredOpos)+(deltaPredAdj*deltaPredAdj))
 		coship  = deltaPredAdj/hip
 		tilthip = acos coship
-		if deltaPredOpos < 0.0 do
+		/*if deltaPredOpos < 0.0 do
 		(
 			tilthip = -tilthip
-		)
+		)*/
 		tilthip
 	),
 

@@ -32,11 +32,15 @@ struct objClass
 
 	fn initWind name objName= 
 	(
-		name.windObj = objName
+		if classof objName == Wind then
+		(
+			name.windObj = objName
 
-		name.windPos = objName.pos
-		name.windTilt = objName.dir
-		name.windForce = objName.strength
+			name.windPos = objName.pos
+			name.windTilt = objName.dir
+			name.windForce = objName.strength
+		)
+		else (format "Error, no Wind object on %, Obj is : %" objName (classof objName))
 		return true
 	),
 
@@ -53,30 +57,62 @@ struct objClass
 		name.windForce = name.windObj.strength
 
 		return true
-	)
+	),
+
+	fn initAll name source target windObj=
+	(
+		name.initSource name source 
+		name.initTarget name target
+		name.initWind name windObj
+	),
+
+	fn updateWind name windClass =
+	(
+		name.windObj.pos = name.sourcePos
+		name.windObj.dir = windClass.tiltFinal
+		name.windObj.strength = windClass.windForce
+	),
+	fn testWind test = 
+	(
+		const = constClass()
+		maxDistance = const.maxDistance
+		maxTilt = const.maxTilt
+		maxWind = const.maxWindForce
+		rGen = mathClass.randomGenFn
+
+		test.tiltFinal = [(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt)]
+		test.windForce = rGen 0 maxWind
+
+	),
+
+	private
+	tiltFinal = [0,0,0]
 
 )
 fn testCurrentObjFn obj1 obj2 objWind= 
 (
-
 	objClassTest = objClass()
+
+	const = constClass()
+	maxDistance = const.maxDistance
+	maxTilt = const.maxTilt
+	maxWind = const.maxWindForce
 
 	rGen = mathClass.randomGenFn
 
-	obj1.pos = [(rGen 0 100),(rGen 0 100),(rGen 0 100)]
-	obj2.pos = [(rGen 0 100),(rGen 0 100),(rGen 0 100)]
-	objWind.pos = [(rGen 0 100),(rGen 0 100),(rGen 0 100)]
+	obj1.pos = [(rGen 0 maxDistance),(rGen 0 maxDistance),(rGen 0 maxDistance)]
+	obj2.pos = [(rGen 0 maxDistance),(rGen 0 maxDistance),(rGen 0 maxDistance)]
 
-	obj1.dir = [(rGen -180 180),(rGen -180 180),(rGen -180 180)]
-	obj2.dir = [(rGen -180 180),(rGen -180 180),(rGen -180 180)]
-	objWind.dir = [(rGen -180 180),(rGen -180 180),(rGen -180 180)]
+	obj1.dir = [(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt)]
+	obj2.dir = [(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt)]
 
-	objWind.strength = rGen 0 100
+	
 
 	objClassTest.initSource objClassTest obj1
 	objClassTest.initTarget objClassTest obj2
 	objClassTest.initWind objClassTest objWind
-
+	objClassTest.testWind objClassTest
+	objClassTest.updateWind objClassTest objClassTest
 
 
 	objClassTest.updateValue objClassTest
@@ -97,6 +133,4 @@ fn testCurrentObjFn obj1 obj2 objWind=
 	print objClassTest.windForce
 
 	return true
-
 )
---testCurrentObjFn $Box001 $Box002 $wind001

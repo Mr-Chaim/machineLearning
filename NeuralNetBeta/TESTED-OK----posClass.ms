@@ -1,6 +1,3 @@
---Basic Functions
-const = constClass()
-mathClass = mathClass()
 
 struct posClass 
 (
@@ -38,7 +35,7 @@ struct posClass
 		return true
 	),
 
-	fn updatePastPos name= 
+	fn updatePast name= 
 	(
 		name.sourcePosPast = name.targetPos
 		name.targetPosPast = name.sourcePos
@@ -60,7 +57,8 @@ struct posClass
 		return true
 	),
 	private
-	windForce = 0
+	windForce = 0,
+	const = constClass()
 )
 
 fn testPosClassFn =
@@ -72,7 +70,7 @@ fn testPosClassFn =
 
 	testPos.testValue testPos
 	testPos.updatePos testPos testPos
-	testPos.updatePastPos testPos
+	testPos.updatePast testPos
 
 	print testPos.sourcePosPast
 	print testPos.targetPosPast

@@ -1,9 +1,4 @@
 -- Weight handler
-
-
---vClass = valueStoreClass()
---
-
 struct weightClass
 (
 
@@ -101,7 +96,7 @@ struct weightClass
 		return true
 	),
 
-	fn updateObj name vClass = 
+	fn importVar name vClass = 
 	(
 		name.deltaPredVal = vClass.deltaPredVal
 		name.deltaPastVal = vClass.deltaPastVal
@@ -151,6 +146,9 @@ struct weightClass
 
 
 	private
+	
+	const = constClass(),
+	
 
 	deltaPredVal = [0,0,0],
 	deltaPastVal = [0,0,0],
@@ -172,8 +170,10 @@ fn testWeightClassFn =
 
 (
 	const = constClass()
-	mathClass = mathClass()
+	mathClass()
+	
 	testWeightClass = weightClass()
+	
 	testWeightClass.init testWeightClass
 	testWeightClass.testValues testWeightClass
 	testWeightClass.updateWeight testWeightClass
