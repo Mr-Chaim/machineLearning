@@ -83,6 +83,7 @@ include "C:\Users\Samir\Documents\GitHub\MachineLearningMax\machineLearning\Neur
 
 const = constClass()
 mathClass()
+
 fn testLimitParameters delta sourceObj=
 (
 	dist = [const.maxDistance,const.maxDistance,const.maxDistance]
@@ -92,6 +93,7 @@ fn testLimitParameters delta sourceObj=
 		sourceObj.pos = [20,20,20]
 	)
 )
+
 fn testMainClassFn = 
 (
 	simulation1 = objClass()
@@ -156,7 +158,7 @@ fn testMainClassFn =
 	windS1.updateAbsolute windS1
 	windS1.calculate windS1
 			/*
-			Now that i have the final wind I can assign it to the wind Object.
+				Now that i have the final wind I can assign it to the wind Object.
 			*/
 
 	simulation1.updateWind simulation1 windS1
