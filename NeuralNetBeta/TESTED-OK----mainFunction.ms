@@ -94,7 +94,7 @@ fn testLimitParameters delta sourceObj=
 	)
 )
 
-fn testMainClassFn = 
+struct mainClass
 (
 	simulation1 = objClass()
 	weightsS1 = weightClass()
@@ -105,74 +105,99 @@ fn testMainClassFn =
 	valueS1 = valueClass()
 	windS1 = windClass()
 
-
-	simulation1.initAll simulation1 a b w
-	weightClass.init weightsS1
-
+	fn init name obj1 obj2 windObj=
+	(
+		name.simulation1.initAll name.simulation1 obj1 obj2 windObj
+		name.weightsS1.init name.weightsS1
+	)
 
 			/* 
 				Get the variables from each tilt, 1=X, 2=Y and 3=Z. 
 				The X and Y have the same maxWind speed and Z has a higher one as it has to account for gravity. 
 				Then for last we will assign the speed of the last frame as spdPastAbs.
 			*/
+	fn updateValue name
+	(
 
-	simulation1.updateValue simulation1
-	posS1.updatePos posS1 simulation1
-	spdS1.updateSpd spdS1 posS1
-	acelS1.updateAcel acelS1 spdS1
+		localSim1 = name.simulation1
+		localweS1 = name.weightsS1
+		localpS1 = name.posS1
+		localsS1 = name.spdS1
+		localaS1 = name.acelS1
+		localprS1 = name.predS1
+		localvS1 = name.valueS1
+		localwiS1 = name.windS1
 
-			/*
-				In here we will use some functions to get the wind from used in the last frame.
-				Then the delta of the position from the last frame to now.
-			*/
 
-	predS1.updateValues predS1 posS1 spdS1 acelS1
+		localSim1.updateValue localSim1
+		localpS1.updatePos localpS1 localSim1
+		localsS1.updateSpd localsS1 localpS1
+		localaS1.updateAcel localaS1 localsS1
 
-			/*
-				Next I will take all f the previous values in the other classes and import them into a single class.
-			*/
+				/*
+					In here we will use some functions to get the wind from used in the last frame.
+					Then the delta of the position from the last frame to now.
+				*/
 
-	valueS1.importVar valueS1 posS1 spdS1 acelS1 predS1
+		localprS1.updateValues localprS1 localpS1 localsS1 localaS1
 
-			/*
-				Next, the Weight class will Import the values from the Values class and update the weights using back backPropagation. 
-				The weights are calculated as the derivate of the previous prediction, the actual result and the past values.
-				Right now I am using mainly a sigmoid function to get the weight, but I will update to another function soon.
-				The last function will catch the waights and save them into their variables to be used in the wind Class.
-			*/
+				/*
+					Next I will take all f the previous values in the other classes and import them into a single class.
+				*/
 
-	weightsS1.importVar weightsS1 valueS1
-	weightsS1.updateWeight weightsS1
-	weightsS1.catchCurrent weightsS1
+		localvS1.importVar localvS1 localpS1 localsS1 localaS1 localprS1
 
-			/*
-				Now it is the Wind calculation class. It has been tested and is working so far as no bugs, but it still needs to be tested with the simulation.
-				Right now the calculation is a simple FFN the value of each layer is multiplied by the weight.
-				After the multiplication of that layer is completed, it then is added to the multiplication fo the next layer.
-				The average fo the layers is multiplied to the weight of the tilt then to the tilt absolute.
-				After the tilt is calculated, the average of the previous layers is summed into every axis.
-				The average number of every axis should be a number between -1 and 1 this number is multiplied to the maxWind to be the wind Force. 
-			*/
+				/*
+					Next, the Weight class will Import the values from the Values class and update the weights using back backPropagation. 
+					The weights are calculated as the derivate of the previous prediction, the actual result and the past values.
+					Right now I am using mainly a sigmoid function to get the weight, but I will update to another function soon.
+					The last function will catch the waights and save them into their variables to be used in the wind Class.
+				*/
 
-	windS1.importValues windS1 valueS1 weightsS1
-	windS1.updateAbsolute windS1
-	windS1.calculate windS1
-			/*
-				Now that i have the final wind I can assign it to the wind Object.
-			*/
+		localweS1.importVar localweS1 localvS1
+		localweS1.updateWeight localweS1
+		localweS1.catchCurrent localweS1
 
-	simulation1.updateWind simulation1 windS1
+				/*
+					Now it is the Wind calculation class. It has been tested and is working so far as no bugs, but it still needs to be tested with the simulation.
+					Right now the calculation is a simple FFN the value of each layer is multiplied by the weight.
+					After the multiplication of that layer is completed, it then is added to the multiplication fo the next layer.
+					The average fo the layers is multiplied to the weight of the tilt then to the tilt absolute.
+					After the tilt is calculated, the average of the previous layers is summed into every axis.
+					The average number of every axis should be a number between -1 and 1 this number is multiplied to the maxWind to be the wind Force. 
+				*/
 
-			/*
-				Now i will update the past Values to be used on the next interation.
-			*/
+		windS1.importValues windS1 localvS1 localweS1
+		windS1.updateAbsolute windS1
+		windS1.calculate windS1
+				/*
+					Now that i have the final wind I can assign it to the wind Object.
+				*/
 
-	posS1.updatePast posS1
-	spdS1.updatePast spdS1
-	acelS1.updatePast acelS1
-	testLimitParameters posS1.delta simulation1.source
-	--debug
+		localSim1.updateWind localSim1 windS1
+
+				/*
+					Now i will update the past Values to be used on the next interation.
+				*/
+
+		localpS1.updatePast localpS1
+		localsS1.updatePast localsS1
+		localaS1.updatePast localaS1
+		testLimitParameters localpS1.delta localSim1.source
+		--debug
+		
+		format "End Angle: %\n" (localSim1.windObj.dir)
+		format "Start tilt: % % %\n" (localpS1.tilt[1]/180) (localpS1.tilt[2]/180) (localpS1.tilt[3]/180)
+	),
+
+	private
 	
-	format "End Angle: %\n" (simulation1.windObj.dir)
-	format "Start tilt: % % %\n" (posS1.tilt[1]/180) (posS1.tilt[2]/180) (posS1.tilt[3]/180)
+	localSim1,
+	localweS1,
+	localpS1,
+	localsS1,
+	localaS1,
+	localprS1,
+	localvS1,
+	localwiS1
 )
