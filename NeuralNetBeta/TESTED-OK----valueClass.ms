@@ -28,10 +28,10 @@ struct valueClass
 	tltLc     = [0,0,0],
 	tltLcPast = [0,0,0],
 	
-	souPos    = [0,0,0],
+	souPos     = [0,0,0],
 	souPosPast = [0,0,0],
 	
-	tarPos    = [0,0,0],
+	tarPos     = [0,0,0],
 	tarPosPast = [0,0,0],
 
 	fn importWnd name windClass =
