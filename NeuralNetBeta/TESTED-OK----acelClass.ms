@@ -1,36 +1,38 @@
 struct acelClass
 (
-	acel = [0,0,0],
-	-- Past atributes
-	acelPast = [0,0,0],
+	aclS     = 0,
+	aclSPast = 0,
 
 	fn updateAcel name speedClass =
 	(
-		for a=1 to 3 do 
-		(
-			name.acel[a] = mathClass.acelFn speedClass.spdPast[a] speedClass.spdNow[a]
-		)
+		name.acelSingle = mathClass.acelFn speedClass.spdSPast speedClass.spdS
+		
+		return true
 	),
 
-	fn updatePast name= (name.acelPast = name.acel),
+	fn updatePast name= 
+	(
+		name.aclSPast = name.aclS
+		
+		return true
+	),
 
 	fn testValue test=
 	(
-		spd = const.maxSpeed
+		maxS   = const.maxSpeed
 		ranGen = mathClass.randomGenFn
 
-		test.spdNow = [(ranGen -spd spd),(ranGen -spd spd),(ranGen -spd spd)]
-		test.spdPast = [(ranGen -spd spd),(ranGen -spd spd),(ranGen -spd spd)]
+		test.spdS  = [(ranGen -maxS maxS),(ranGen -maxS maxS),(ranGen -maxS maxS)]
+		test.spdSPast = [(ranGen -maxS maxS),(ranGen -maxS maxS),(ranGen -maxS maxS)]
+		
 		return true
 	),
+	
 	private
 	
-	const = constClass(),
-	
-
-	spdPast = [0,0,0],
-	spdNow = [0,0,0]
-
+	const    = constClass(),
+	spdS     = 0,
+	spdSPast = 0
 
 )
 

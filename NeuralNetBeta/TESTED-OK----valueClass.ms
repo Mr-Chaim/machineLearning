@@ -2,110 +2,193 @@ struct valueClass
 (
 	public
 
-	deltaPredVal = [0,0,0],
-	deltaPastVal = [0,0,0],
-	deltaActVal = [0,0,0],
+	wndF     = 0,
+	wndFPast = 0,
+	wndFPred = 0,
+	
+	dstS     = 0,
+	dstSPast = 0,
+	dstSPred = 0,
+	
+	spdS     = 0,
+	spdSPast = 0,
+	spdSPred = 0,
+	
+	aclS     = 0,
+	aclSPast = 0,
+	aclSPred = 0,
+	
+	tltF     = [0,0,0],
+	tltFPast = [0,0,0],
+	tltFPred = [0,0,0],
 
-	speedPredVal = [0,0,0],
-	speedPastVal = [0,0,0],
-	speedActVal = [0,0,0],
+	dstLc     = 0,
+	dstLcPast = 0,
 
-	AcelPredVal = [0,0,0],
-	AcelPastVal = [0,0,0],
-	AcelActVal = [0,0,0],
+	tltLc     = [0,0,0],
+	tltLcPast = [0,0,0],
+	
+	souPos    = [0,0,0],
+	souPosPast = [0,0,0],
+	
+	tarPos    = [0,0,0],
+	tarPosPast = [0,0,0],
 
-	tiltPredVal = [0,0,0],
-	tiltPastVal = [0,0,0],
-	tiltActVal = [0,0,0],
-
-
-	wForce = undefined,
-
-	fn importVar name posClass spdClass acelClass predClass= 
+	fn importWnd name windClass =
 	(
+		name.wndF      = windClass.wndF    
+		name.wndFPast  = windClass.wndFPast
 
-		name.deltaPredVal = predClass.deltaPred
-		name.deltaPastVal = posClass.deltaPast
-		name.deltaActVal = posClass.delta
-
-		name.speedPredVal = predClass.speedPred
-		name.speedPastVal = spdClass.spdPast
-		name.speedActVal = spdClass.spdNow
-
-		name.AcelPredVal = predClass.acelPred
-		name.AcelPastVal = acelClass.acelPast
-		name.AcelActVal = acelClass.acel
-
-		name.tiltPredVal = predClass.tiltPred
-		name.tiltPastVal = posClass.tiltPast
-		name.tiltActVal = posClass.tilt
 		return true
 	),
+	fn importDist name posClass =
+	(
+		name.dstS      = posClass.dstS
+		name.dstSPast  = posClass.dstSPast
 
+		name.dstLc     = posClass.dstLc
+		name.dstLcPast = posClass.dstLcPast
+
+		return true
+	),
+	fn importSpd name spdClass =
+	(
+		name.spdS      = spdClass.spdS
+		name.spdSPast  = spdClass.spdSPast
+
+		return true
+	),
+	fn importAcl name acelClass =
+	(
+		name.aclS      = acelClass.aclS
+		name.aclSPast  = acelClass.aclSPast
+
+		return true
+	),
+	fn importTlt name posClass =
+	(
+		name.tltF      = posClass.tltF
+		name.tltFPast  = posClass.tltFPast
+		name.tltLc     = posClass.tltLc
+		name.tltLcPast = posClass.tltLcPast
+
+		return true
+	),
+	fn importPos name posClass =
+	(
+		name.souPos     = posClass.souPos
+		name.souPosPast = posClass.souPosPast
+
+		name.tarPos     = posClass.tarPos
+		name.tarPosPast = posClass.tarPosPast
+
+		return true
+	),
+	fn importPred name predClass =
+	(
+		name.wndFPred = predClass.wndFPred
+		name.dstSPred = predClass.dstSPred
+		name.spdSPred = predClass.spdSPred
+		name.aclSPred = predClass.aclSPred
+		name.tltFPred = predClass.tltFPred
+
+		return True
+	),
 	fn testValues test= 
 	(
+		
+		maxW = const.maxWindForce
+		maxD = const.maxDistance
+		maxS = const.maxSpeed
+		maxA = const.maxacel
+		maxT = const.maxTilt
+		
+		test.wndF     = mathClass.randomGenFn -maxW maxW
+		test.wndFPast = mathClass.randomGenFn -maxW maxW
+		test.wndFPred = mathClass.randomGenFn -maxW maxW
+		
+		test.dstS     = mathClass.randomGenFn -maxD maxD
+		test.dstSPast = mathClass.randomGenFn -maxD maxD
+		test.dstSPred = mathClass.randomGenFn -maxD maxD
+		
+		test.spdS     = mathClass.randomGenFn -maxS maxS
+		test.spdSPast = mathClass.randomGenFn -maxS maxS
+		test.spdSPred = mathClass.randomGenFn -maxS maxS
+		
+		test.aclS     = mathClass.randomGenFn -maxA maxA
+		test.aclSPast = mathClass.randomGenFn -maxA maxA
+		test.aclSPred = mathClass.randomGenFn -maxA maxA
+		
+		test.dstLc     = mathClass.randomGenFn -maxD maxD
+		test.dstLcPast = mathClass.randomGenFn -maxD maxD
+		
 		for a=1 to 3 do
 		(
-			test.deltaPred[a] = mathClass.randomGenFn -const.maxDistance const.maxDistance
-			test.deltaPast[a] = mathClass.randomGenFn -const.maxDistance const.maxDistance
-			test.delta[a] = mathClass.randomGenFn -const.maxDistance const.maxDistance
+			test.tltF[a]     = mathClass.randomGenFn -maxT maxT
+			test.tltFPast[a] = mathClass.randomGenFn -maxT maxT
+			test.tltFPred[a] = mathClass.randomGenFn -maxT maxT
 			
-			test.speedPred[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
-			test.spdPast[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
-			test.spdNow[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
+			test.tltLc[a]     =mathClass.randomGenFn -maxT maxT
+			test.tltLcPast[a] =mathClass.randomGenFn -maxT maxT
 			
-			test.acelPred[a] = mathClass.randomGenFn -const.maxAcel const.maxAcel
-			test.acelPast[a] = mathClass.randomGenFn -const.maxAcel const.maxAcel
-			test.acel[a] = mathClass.randomGenFn -const.maxAcel const.maxAcel
+			test.souPos[a]    =mathClass.randomGenFn -maxD maxD
+			test.souPosPast[a] =mathClass.randomGenFn -maxD maxD
 			
-			test.tiltPred[a] = mathClass.randomGenFn -const.maxTilt const.maxTilt
-			test.tiltPast[a] = mathClass.randomGenFn -const.maxTilt const.maxTilt
-			test.tilt[a] = mathClass.randomGenFn -const.maxTilt const.maxTilt
+			test.tarPos[a]    =mathClass.randomGenFn -maxD maxD
+			test.tarPosPast[a] =mathClass.randomGenFn -maxD maxD
 		)
+
+
 
 		return true
 	),
 
 	private
 	
-	const = constClass(),
-	
-
-	deltaPred = [0,0,0],
-	deltaPast = [0,0,0],
-	delta = [0,0,0],
-	speedPred = [0,0,0],
-	spdPast = [0,0,0],
-	spdNow = [0,0,0],
-	acelPred = [0,0,0],
-	acelPast = [0,0,0],
-	acel = [0,0,0],
-	tiltPred = [0,0,0],
-	tiltPast = [0,0,0],
-	tilt = [0,0,0]
+	const = constClass()
 )
-
 
 fn valueClassTestFn =
 (
-	const = constClass()
-	mathClass = mathClass()
-	valueClassTest = valueClass()
-	valueClassTest.testValues valueClassTest
-	valueClassTest.importVar valueClassTest valueClassTest valueClassTest valueClassTest valueClassTest
+	constClass()
+	mathClass()
 
-	print valueClassTest.deltaPredVal
-	print valueClassTest.deltaPastVal
-	print valueClassTest.deltaActVal
-	print valueClassTest.speedPredVal
-	print valueClassTest.speedPastVal
-	print valueClassTest.speedActVal
-	print valueClassTest.AcelPredVal
-	print valueClassTest.AcelPastVal
-	print valueClassTest.AcelActVal
-	print valueClassTest.tiltPredVal
-	print valueClassTest.tiltPastVal
-	print valueClassTest.tiltActVal
+	valclassTEST = valueClass()
+	
+	valclassTEST.testValues valclassTEST
+	valclassTEST.importVar valclassTEST valclassTEST valclassTEST valclassTEST valclassTEST
+
+	print valclassTEST.wndF
+	print valclassTEST.wndFPast
+	print valclassTEST.wndFPred
+
+	print valclassTEST.dstS
+	print valclassTEST.dstSPast
+	print valclassTEST.dstSPred
+	
+	print valclassTEST.spdS
+	print valclassTEST.spdSPast
+	print valclassTEST.spdSPred
+	
+	print valclassTEST.aclS
+	print valclassTEST.aclSPast
+	print valclassTEST.aclSPred
+	
+	print valclassTEST.tltF
+	print valclassTEST.tltFPast
+	print valclassTEST.tltFPred
+
+	print valclassTEST.dstLc     
+	print valclassTEST.dstLcPast 
+
+	print valclassTEST.tltLc     
+	print valclassTEST.tltLcPast 
+	
+	print valclassTEST.souPos    
+	print valclassTEST.souPosPast
+	
+	print valclassTEST.tarPos    
+	print valclassTEST.tarPosPast
 
 	return true
 )

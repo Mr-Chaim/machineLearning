@@ -12,9 +12,21 @@ struct windClass
 	acelW  = [0,0,0],
 	tiltW  = [0,0,0],
 
-	windforce = 0,
+	wndF = 0,
+	wndFPast = wndF,
 
 	tiltFinal = [0,0,0],
+
+	fn updateValue name valueClass=
+	(
+		name.wndF = valueClass.wndF
+
+	),
+	fn updatePast name = 
+	(
+		name.wndFPast = name.windF
+	),
+
 
 
 	fn importValues name vClass wClass =
@@ -51,19 +63,24 @@ struct windClass
 		tiltCalculate  = [0,0,0]
 		sumation = 0
 		windCalculate  = 0
+		--print name.tiltAbs
 		for a=1 to 3 do
 		(
 			deltaCalculate[a] = mathClass.limitFn (name.deltaAbs[a] * name.deltaCurW[a]) 1 -1
 			speedCalculate[a] = mathClass.limitFn (name.speedAbs[a] * name.speedCurW[a]) 1 -1
 			acelCalculate[a]  = mathClass.limitFn (name.AcelAbs[a] * name.acelCurW[a]) 1 -1
-			sumation = (deltaCalculate[a] + speedCalculate[a] + acelCalculate[a])
-			tiltCalculate[a]  = ((name.tiltAbs[a] + (name.tiltCurW[a]*(sumation/3)) )* name.maxTilt )
+			
+			sumation          = (deltaCalculate[a] + speedCalculate[a] + acelCalculate[a])
+			
+			tiltCalculate[a]  = ((name.tiltAbs[a]))
 			windCalculate    += (sumation/3)
 		)
 
-		name.windforce = mathClass.limitFn ((windCalculate/3) * const.maxWindForce) const.maxWindForce 0 
-		name.tiltFinal = tiltCalculate
-
+		name.windforce    = mathClass.limitFn ((windCalculate/3) * const.maxWindForce) const.maxWindForce 0 
+		name.tiltFinal[1] = tiltCalculate[1]
+		name.tiltFinal[2] = tiltCalculate[2]
+		name.tiltFinal[3] = tiltCalculate[3]
+		--format " TiltDiferences:1-%,2-%,3-% \n" (name.tiltFinal[1] - name.tiltAbs[1]) (name.tiltFinal[2] - name.tiltAbs[2]) (name.tiltFinal[3] - name.tiltAbs[3])
 		return true
 	),
 
@@ -75,6 +92,7 @@ struct windClass
 			name.speedActVal[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
 			name.AcelActVal[a]  = mathClass.randomGenFn -const.maxAcel const.maxAcel
 			name.tiltActVal[a]  = mathClass.randomGenFn -const.maxTilt const.maxTilt
+
 			name.deltaCurW[a]   = mathClass.randomGenFn -1.0 1.0
 			name.speedCurW[a]   = mathClass.randomGenFn -1.0 1.0
 			name.acelCurW[a]    = mathClass.randomGenFn -1.0 1.0

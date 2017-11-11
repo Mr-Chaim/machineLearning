@@ -1,71 +1,131 @@
 struct predClass
 (
 
-	deltaPred = [0,0,0],
-	speedPred = [0,0,0],
-	acelPred  = [0,0,0],
-	tiltPred = [0,0,0],
+	dstSPred = 0,
+	spdSPred = 0,
+	aclSPred = 0,
+	posFPred = [0,0,0],
+	tltFPred = [0,0,0],
+	wndFPred = 0,
 
-	fn updateValues name posClass speedClass acelClass =
+	fn updateValues name =
 	(
+		maxW = const.maxWindForce
+		maxD = const.maxDistance
+		maxS = const.maxSpeed
+		maxA = const.maxAcel
 
-		for a=1 to 3 do 
-		(
-			name.deltaPred[a] = (mathClass.distPredFn posClass.delta[a]  speedClass.spdNow[a] const.maxDistance) as float
-			name.speedPred[a] = (mathClass.speedPredFn acelClass.acel[a]  speedClass.spdNow[a] const.maxSpeed) as float
-			name.acelPred[a] = (mathClass.acelPredFn acelClass.acel[a] posClass.windNow  const.maxWindForce const.maxAcel) as float
-		)
-		name.tiltPred[1] = (mathClass.tiltPredFn name.deltaPred[1]  name.deltaPred[3] ) as float
-		name.tiltPred[2] = (mathClass.tiltPredFn name.deltaPred[2]  name.deltaPred[3] ) as float
-		name.tiltPred[3] = (mathClass.tiltPredFn name.deltaPred[2]  name.deltaPred[1] ) as float
+		wndF  = name.wndF 
+		dstS  = name.dstS 
+		spdS  = name.spdS 
+		aclS  = name.aclS 
 
-		return true
-	),
+		wndFW = name.wndFW 
+		dstSW = name.dstSW 
+		spdSW = name.spdSW 
+		aclSW = name.aclSW
+		
+		tltFlc = name.tltFLc 
+		souPos = name.souPos
+		
+		name.wndFPred = mathClass.wndPredFn wndF dstS spdS aclS wndFW dstSW spdSW aclSW maxW maxD maxS maxA
+		name.dstSPred = mathClass.dstPredFn spdS aclS spdSW aclSW maxD maxS maxA
+		name.spdSPred = mathClass.spdPredFn spdS aclS spdSW aclSW maxS maxA
+		name.aclSPred = mathClass.aclPredFn wndF aclS wndFW aclSW maxW maxA
 
-	fn testValues test= 
-	(
-		for a=1 to 3 do
-		(
-
-			test.deltaPast[a] = (mathClass.randomGenFn -const.maxDistance const.maxDistance) as float
-			test.delta[a] = (mathClass.randomGenFn -const.maxDistance const.maxDistance) as float
-			test.spdPast[a] = (mathClass.randomGenFn -const.maxSpeed const.maxSpeed) as float
-			test.spdNow[a] = (mathClass.randomGenFn -const.maxSpeed const.maxSpeed) as float
-			test.acelPast[a] = (mathClass.randomGenFn -const.maxAcel const.maxAcel) as float
-			test.acel[a] = (mathClass.randomGenFn -const.maxAcel const.maxAcel) as float
-			test.tiltPast[a] = (mathClass.randomGenFn -const.maxTilt const.maxTilt) as float
-			test.tilt[a] = (mathClass.randomGenFn -const.maxTilt const.maxTilt) as float
-
-		)
-		test.windNow = (mathClass.randomGenFn 0.0 const.maxWindForce) as float
+		name.posFPred = mathClass.posPredFn name.dstSPred tltFLc souPos
+		name.tltFPred = mathClass.tltPredFn souPos name.posFPred
 		
 		return true
 	),
+	fn importValues name valueClass= 
+	(
+		name.wndF = valueClass.wndF
+		name.dstS = valueClass.dstS
+		name.spdS = valueClass.spdS
+		name.aclS = valueClass.aclS
+		name.tltF = valueClass.tltF
+
+		name.tltFLc = valueClass.tltFLc
+		name.tarPos = valueClass.tarPos
+		name.souPos = valueClass.souPos
+		
+		return True
+	),
+	fn importWeights name weightClass =
+	(
+		name.wndFW = weightClass.wndFCurW
+		name.dstSW = weightClass.dstSCurW
+		name.spdSW = weightClass.spdSCurW
+		name.aclSW = weightClass.aclSCurW
+		name.tltFW = weightClass.tltFCurW
+		
+		return true
+	),
+	fn testValues test= 
+	(
+
+		rGen = mathClass.randomGenFn
+		maxS = const.maxSpeed
+		maxW = const.maxWindForce
+		maxA = const.maxAcel
+		maxD = const.maxDistance
+		maxT = const.maxTilt
+
+		test.dstS = (rGen -maxD maxD) as float
+		test.spdS = (rGen -maxS maxS) as float
+		test.aclS = (rGen -maxA maxA) as float
+		test.wndF = (rGen 0.0 maxW) as float
+
+		for a=1 to 3 do
+		(
+			test.tltF[a]   = rGen -maxT maxT
+			test.tarPos[a] = rGen -maxD maxD
+			test.souPos[a] = rGen -maxD maxD
+		)
+
+		return true
+	
+	),
 
 	private
+	
+	wndF   = 0,
+	dstS   = 0,
+	spdS   = 0,
+	aclS   = 0,
+	tltF   = [0,0,0],
+	tltFLc = [0,0,0],
+	tarPos = [0,0,0],
+	souPos = [0,0,0],
+	
+	wndFW = 0,
+	dstSW = 0,
+	spdSW = 0,
+	aclSW = 0,
+	tltFW = [0,0,0]
 
-	deltaPast = [0,0,0],
-	delta = [0,0,0],
-	spdPast = [0,0,0],
-	spdNow = [0,0,0],
-	acelPast = [0,0,0],
-	acel = [0,0,0],
-	tiltPast = [0,0,0],
-	tilt = [0,0,0],
-	windNow = 0.0
-	--windDispX = windDispFn deltaDirAbs currentSpdAbs windAbs n acelAbs
 )
+
+
+--test
+
+
 fn testPredClass =
 (
+	math = mathClass()
 	const = constClass()
-	mathClass = mathClass()
-	predClassTest = predClass()
-	predClassTest.testValues predClassTest
-	predClassTest.updateValues predClassTest predClassTest predClassTest predClassTest
+	predClsTst = predClass()
 
-	print predClasstest.deltaPred
-	print predClasstest.speedPred
-	print predClasstest.acelPred
-	print predClasstest.tiltPred
+	predClsTst.testValues predClsTst
+	predClsTst.importValues predClsTst predClsTst predClsTst predClsTst
+	predClsTst.updateValues predClsTst
+	
+	print predClsTst.dstSPred
+	print predClsTst.tltFPred
+	print predClsTst.spdSPred
+	print predClsTst.aclSPred
+
 	return true
 )
+--testPredClass()

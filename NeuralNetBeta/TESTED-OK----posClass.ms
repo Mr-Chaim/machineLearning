@@ -2,78 +2,84 @@
 struct posClass 
 (
 
-	targetPos = [0,0,0],
-	sourcePos = [0,0,0],
-	delta = [0,0,0],
-	tilt = [0,0,0],
-	windNow = 0,
+	tarPos = [0,0,0],
+	souPos = [0,0,0],
 	
+	tltF   = [0,0,0],
+	tltFLc = [0,0,0],
+
+	dstS    = 0,
+	dstSLoc = 0,
 
 	-- Past atributes
 
-	sourcePosPast = [0,0,0],
-	targetPosPast = [0,0,0],
-	deltaPast = [0,0,0],
-	tiltPast = [0,0,0],
-	windPast = 0,
+	souPosPast = [0,0,0],
+	tarPosPast = [0,0,0],
+	tltFLcPast = [0,0,0],
+	tltFPast   = [0,0,0],
 
+	dstSLcPast = 0,
+	dstSPast   = 0,
+	
 
 	fn updatePos name objClass= 
 	(
-		name.targetPos = objClass.targetPos
-		name.sourcePos = objClass.sourcePos
+		name.dstS  = mathClass.dstFfn name.souPos name.tarPos
+		name.dstLc = mathClass.dstFfn name.souPos name.souPosPast
 
-		name.delta[1] = mathClass.deltafn name.sourcePos[1] name.targetPos[1]
-		name.delta[2] = mathClass.deltafn name.sourcePos[2] name.targetPos[2]
-		name.delta[3] = mathClass.deltafn name.sourcePos[3] name.targetPos[3]
+		name.tltF  = mathClass.tltFFn name.souPos name.tarPos
+		name.tltLc = mathClass.tltFFn name.souPos name.souPosPast
 
-		name.tilt[1] = mathClass.tiltfn name.delta[1] name.delta[3]
-		name.tilt[2] = mathClass.tiltfn name.delta[2] name.delta[3]
-		name.tilt[3] = mathClass.tiltfn name.delta[2] name.delta[1]
-
-		name.windNow = objClass.windForce
 		return true
 	),
-
 	fn updatePast name= 
 	(
-		name.sourcePosPast = name.targetPos
-		name.targetPosPast = name.sourcePos
-		name.deltaPast = name.delta
-		name.tiltPast = name.tilt
-		name.windPast = name.windNow
+		name.souPosPast = name.tarPos
+		name.tarPosPast = name.souPos
+
+		name.dstLcPast = name.dstLc
+		name.tltLcPast = name.tltLc
+
+		name.dstSPast = name.dstS
+		name.tltFPast = name.tltF
+
 		return true
 	),
+	fn importValues objClass =
+	(
+		name.tarPos = objClass.tarPos
+		name.souPos = objClass.souPos
 
+		return True
+	),
 	fn testValue test=
 	(
-		dist = const.maxDistance
+		maxD   = const.maxDistance
 		ranGen = mathClass.randomGenFn
 
-		test.targetPos = [(ranGen -dist dist),(ranGen -dist dist),(ranGen -dist dist)]
-		test.sourcePos = [(ranGen -dist dist),(ranGen -dist dist),(ranGen -dist dist)]
+		test.tarPos = [(ranGen -maxD maxD),(ranGen -maxD maxD),(ranGen -maxD maxD)]
+		test.souPos = [(ranGen -maxD maxD),(ranGen -maxD maxD),(ranGen -maxD maxD)]
 
-		test.windForce = ranGen 0 const.maxWindForce
 		return true
 	),
+	
 	private
-	windForce = 0,
 	const = constClass()
 )
 
 fn testPosClassFn =
 (
 
-	const = constClass()
-	mathClass = mathClass()
+	constClass()
+	mathClass()
 	testPos = posClass()
 
 	testPos.testValue testPos
 	testPos.updatePos testPos testPos
 	testPos.updatePast testPos
 
-	print testPos.sourcePosPast
-	print testPos.targetPosPast
+	print testPos.souPosPast
+	print testPos.tarPosPast
 	print testPos.deltaPast
 	print testPos.tiltPast
 	print testPos.windPast
@@ -81,14 +87,11 @@ fn testPosClassFn =
 	testPos.testValue testPos
 	testPos.updatePos testPos testPos
 
-	print testPos.targetPos
-	print testPos.sourcePos
+	print testPos.tarPos
+	print testPos.souPos
 	print testPos.delta
 	print testPos.tilt
 	print testPos.windNow
-
-
-
 
 	return true
 )

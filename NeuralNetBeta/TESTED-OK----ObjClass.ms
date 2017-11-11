@@ -69,7 +69,17 @@ struct objClass
 	fn updateWind name windClass =
 	(
 		name.windObj.pos = name.sourcePos
-		name.windObj.dir = windClass.tiltFinal
+		name.windObj.dir[1] = windClass.tiltFinal[1]
+		name.windObj.dir[2] = windClass.tiltFinal[2]
+		name.windObj.dir[3] = windClass.tiltFinal[3]
+		name.windObj.strength = windClass.windForce
+	),
+	fn updateWindTestMode name windClass =
+	(
+		name.windObj.pos = [0,0,0]
+		name.windObj.dir[1] = windClass.tiltFinal[1]
+		name.windObj.dir[2] = windClass.tiltFinal[2]
+		name.windObj.dir[3] = windClass.tiltFinal[3]
 		name.windObj.strength = windClass.windForce
 	),
 	fn testWind test = 

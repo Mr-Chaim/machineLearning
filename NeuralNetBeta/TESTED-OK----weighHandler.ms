@@ -1,144 +1,133 @@
 -- Weight handler
+
+
 struct weightClass
 (
 
 	public
+	wndFW = 0,
+	dstSW = 0,
+	spdSW = 0,
+	aclSW = 0,
+	tltFW = #(0.0,0.0,0.0),
 
-	deltaW =#([1,2,3],[1,2,3],[1,2,3]),
-	speedW =#([1,2,3],[1,2,3],[1,2,3]),
-	acelW =#([1,2,3],[1,2,3],[1,2,3]),
-	tiltW =#([1,2,3],[1,2,3],[1,2,3]),
+	wndFCurW = 0,
+	dstSCurW = 0,
+	spdSCurW = 0,
+	aclSCurW = 0,
+	tltFCurW = [0,0,0],
 
-	deltaCurW = [0,0,0],
-	speedCurW = [0,0,0],
-	acelCurW = [0,0,0],
-	tiltCurW = [0,0,0],
-
-	wForce = #(),
-
-	fn init name= 
-
+	fn init name=
 	(
+		name.wndFW = mathClass.arrayGenFn 20
+		name.dstSW = mathClass.arrayGenFn 20
+		name.spdSW = mathClass.arrayGenFn 20
+		name.aclSW = mathClass.arrayGenFn 20
+		
 		for a=1 to 3 do
-
 		(
-			name.deltaW[a] = mathClass.arrayCreaFn 20
-			name.speedW[a] = mathClass.arrayCreaFn 20
-			name.acelW[a] = mathClass.arrayCreaFn 20
-			name.tiltW[a] = mathClass.arrayCreaFn 20
-		)
-
-		name.wForce = mathClass.arrayCreaFn 20
+			name.tltFW[a] = mathClass.arrayGenFn 20 --Should be 3 arrays with 20 different numbers each	
+		)	
 
 		return true
 	),
-
-
 	fn updateWeight name=
 	(
-		deltaFoo = [0,0,0]
-		speedFoo = [0,0,0]
-		acelFoo = [0,0,0]
-		tiltFoo = [0,0,0]
+		maxW = const.maxWindForce
+		maxD = const.maxDistance
+		maxS = const.maxSpeed
+		maxA = const.maxacel
+		maxT = const.maxTilt
 
+		name.wndFW = mathClass.wUpdtFn name.wndFW name.wndF name.wndFPred name.wndFPast maxW
+		name.dstSW = mathClass.wUpdtFn name.dstSW name.dstS name.dstSPred name.dstSPast maxD
+		name.spdSW = mathClass.wUpdtFn name.spdSW name.spdS name.spdSPred name.spdSPast maxS
+		name.aclSW = mathClass.wUpdtFn name.aclSW name.aclS name.aclSPred name.aclSPast maxA
+		
 		for a=1 to 3 do 
 		(
-			deltaFoo[1] = mathClass.absFn name.deltaPredVal[a] const.maxDistance
-			deltaFoo[2] = mathClass.absFn name.deltaPastVal[a] const.maxDistance
-			deltaFoo[3] = mathClass.absFn name.deltaActVal[a] const.maxDistance
-
-			speedFoo[1] = mathClass.absFn name.speedPredVal[a] const.maxSpeed
-			speedFoo[2] = mathClass.absFn name.speedPastVal[a] const.maxSpeed
-			speedFoo[3] = mathClass.absFn name.speedActVal[a] const.maxSpeed
-
-			acelFoo[1] = mathClass.absFn name.acelPredVal[a] const.maxacel
-			acelFoo[2] = mathClass.absFn name.acelPastVal[a] const.maxacel
-			acelFoo[3] = mathClass.absFn name.acelActVal[a] const.maxacel
-
-			tiltFoo[1] = mathClass.absFn name.tiltPredVal[a] const.maxTilt
-			tiltFoo[2] = mathClass.absFn name.tiltPastVal[a] const.maxTilt
-			tiltFoo[3] = mathClass.absFn name.tiltActVal[a] const.maxTilt
-			
-
-			deltaPos = mathClass.constrainFn deltaFoo[2]
-			speedPos = mathClass.constrainFn speedFoo[2]
-			acelPos = mathClass.constrainFn acelFoo[2]
-			tiltPos = mathClass.constrainFn tiltFoo[2]
-
-			name.deltaW[a][deltaPos] = mathClass.sigmFn (name.deltaW[a][deltaPos] - ( deltaFoo[3] - deltaFoo[1]))
-			name.speedW[a][speedPos] = mathClass.sigmFn (name.speedW[a][speedPos] - ( speedFoo[3] - speedFoo[1]))
-			name.acelW[a][acelPos] = mathClass.sigmFn (name.acelW[a][acelPos] - ( acelFoo[3] - acelFoo[1]))
-			name.tiltW[a][tiltPos] = mathClass.sigmFn (name.tiltW[a][tiltPos] - ( tiltFoo[3] - tiltFoo[1]))
+			name.tltFW[a] = mathClass.wUpdtFn name.tltFW[a] name.tltF[a] name.tltFPred[a] name.tltFPast[a] maxT
 		)
 		return true
 	),
-
 	fn catchCurrent name= 
 	(
+		maxW = const.maxWindForce
+		maxD = const.maxDistance
+		maxS = const.maxSpeed
+		maxA = const.maxacel
+		maxT = const.maxTilt
+
+		name.wndFCurW = mathClass.getWeightFn name.wndFW name.wndF maxW
+		name.dstSCurW = mathClass.getWeightFn name.dstSW name.dstS maxD
+		name.spdSCurW = mathClass.getWeightFn name.spdSW name.spdS maxS
+		name.aclSCurW = mathClass.getWeightFn name.aclSW name.aclS maxA
+		
 		for a=1 to 3 do 
 		(
-			deltaFoo = mathClass.absFn name.deltaActVal[a] const.maxDistance
-			speedFoo = mathClass.absFn name.speedActVal[a] const.maxSpeed
-			acelFoo = mathClass.absFn name.acelActVal[a] const.maxacel
-			tiltFoo = mathClass.absFn name.tiltActVal[a] const.maxTilt
-			
-
-			deltaPos = mathClass.constrainFn deltaFoo
-			speedPos = mathClass.constrainFn speedFoo
-			acelPos = mathClass.constrainFn acelFoo
-			tiltPos = mathClass.constrainFn tiltFoo
-
-			name.deltaCurW[a] = name.deltaW[a][deltaPos]
-			name.speedCurW[a] = name.speedW[a][speedPos]
-			name.acelCurW[a] = name.acelW[a][acelPos]
-			name.tiltCurW[a] = name.tiltW[a][tiltPos]
+			name.tltFCurW[a] = mathClass.getWeightFn name.tltFW[a] name.tltF[a] maxT
 		)
 		return true
 	),
-
-	fn importVar name vClass = 
+	fn importVar name valueClass = 
 	(
-		name.deltaPredVal = vClass.deltaPredVal
-		name.deltaPastVal = vClass.deltaPastVal
-		name.deltaActVal = vClass.deltaActVal
+		name.wndF     = valueClass.wndF
+		name.wndFPast = valueClass.wndFPast
 
-		name.speedPredVal = vClass.speedPredVal
-		name.speedPastVal = vClass.speedPastVal
-		name.speedActVal = vClass.speedActVal
-
-		name.acelPredVal = vClass.acelPredVal
-		name.acelPastVal = vClass.acelPastVal
-		name.acelActVal = vClass.acelActVal
-
-		name.tiltPredVal = vClass.tiltPredVal
-		name.tiltPastVal = vClass.tiltPastVal
-		name.tiltActVal = vClass.tiltActVal
+		name.dstS     = valueClass.dstS
+		name.dstSPast = valueClass.dstSPast
+		
+		name.spdS     = valueClass.spdS
+		name.spdSPast = valueClass.spdSPast
+		
+		name.aclS     = valueClass.aclS
+		name.aclSPast = valueClass.aclSPast
+		
+		name.tltF     = valueClass.tltF
+		name.tltFPast = valueClass.tltFPast
+		
 		
 		return true
 	),
+	fn importPred name valueClass =
+	(
+		name.wndFPred = valueClass.wndFPred
+		name.dstSPred = valueClass.dstSPred
+		name.spdSPred = valueClass.spdSPred
+		name.aclSPred = valueClass.aclSPred
+		name.tltFPred = valueClass.tltFPred
 
-
+		return True
+	),
 	fn testValues test= 
 	(
+		maxW = const.maxWindForce
+		maxD = const.maxDistance
+		maxS = const.maxSpeed
+		maxA = const.maxacel
+		maxT = const.maxTilt
 
+		test.wndF     = mathClass.randomGenFn -maxW maxW
+		test.wndFPast = mathClass.randomGenFn -maxW maxW
+		test.wndFPred = mathClass.randomGenFn -maxW maxW
+		
+		test.dstS     = mathClass.randomGenFn -maxD maxD
+		test.dstSPast = mathClass.randomGenFn -maxD maxD
+		test.dstSPred = mathClass.randomGenFn -maxD maxD
+
+		test.spdS     = mathClass.randomGenFn -maxS maxS
+		test.spdSPast = mathClass.randomGenFn -maxS maxS
+		test.spdSPred = mathClass.randomGenFn -maxS maxS
+
+		test.aclS     = mathClass.randomGenFn -maxA maxA
+		test.aclSPast = mathClass.randomGenFn -maxA maxA
+		test.aclSPred = mathClass.randomGenFn -maxA maxA
 
 		for a=1 to 3 do
 		(
-			test.deltaPredVal[a] = mathClass.randomGenFn -const.maxDistance const.maxDistance
-			test.deltaPastVal[a] = mathClass.randomGenFn -const.maxDistance const.maxDistance
-			test.deltaActVal[a] = mathClass.randomGenFn -const.maxDistance const.maxDistance
-
-			test.speedPredVal[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
-			test.speedPastVal[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
-			test.speedActVal[a] = mathClass.randomGenFn -const.maxSpeed const.maxSpeed
-
-			test.acelPredVal[a] = mathClass.randomGenFn -const.maxAcel const.maxAcel
-			test.acelPastVal[a] = mathClass.randomGenFn -const.maxAcel const.maxAcel
-			test.acelActVal[a] = mathClass.randomGenFn -const.maxAcel const.maxAcel
-
-			test.tiltPredVal[a] = mathClass.randomGenFn -const.maxTilt const.maxTilt
-			test.tiltPastVal[a] = mathClass.randomGenFn -const.maxTilt const.maxTilt
-			test.tiltActVal[a] = mathClass.randomGenFn -const.maxTilt const.maxTilt
+			test.tltF[a]     = mathClass.randomGenFn -maxT maxT
+			test.tltFPast[a] = mathClass.randomGenFn -maxT maxT
+			test.tltFPred[a] = mathClass.randomGenFn -maxT maxT
 		)
 
 		return true
@@ -148,39 +137,48 @@ struct weightClass
 	private
 	
 	const = constClass(),
+
+	wndF     = 0,
+	wndFPast = 0,
+	wndFPred = 0,
+
+	dstS     = 0,
+	dstSPast = 0,
+	dstSPred = 0,
+
+	spdS     = 0,
+	spdSPast = 0,
+	spdSPred = 0,
 	
-
-	deltaPredVal = [0,0,0],
-	deltaPastVal = [0,0,0],
-	deltaActVal = [0,0,0],
-	speedPredVal = [0,0,0],
-	speedPastVal = [0,0,0],
-	speedActVal = [0,0,0],
-	acelPredVal = [0,0,0],
-	acelPastVal = [0,0,0],
-	acelActVal = [0,0,0],
-	tiltPredVal = [0,0,0],
-	tiltPastVal = [0,0,0],
-	tiltActVal = [0,0,0]
-
-
+	aclS     = 0,
+	aclSPast = 0,
+	aclSPred = 0,
+	
+	tltF     = [0,0,0],
+	tltFPast = [0,0,0],
+	tltFPred = [0,0,0]
 
 )
-fn testWeightClassFn =
+
+
+
+
+fn testWClsFn =
 
 (
-	const = constClass()
 	mathClass()
+	const = constClass()
 	
-	testWeightClass = weightClass()
+	testWCls = weightClass()
 	
-	testWeightClass.init testWeightClass
-	testWeightClass.testValues testWeightClass
-	testWeightClass.updateWeight testWeightClass
-	testWeightClass.catchCurrent testWeightClass
+	testWCls.init testWCls
+	testWCls.testValues testWCls
+	testWCls.updateWeight testWCls
+	testWCls.catchCurrent testWCls
+	
+	print testWCls.dstSCurW
+	print testWCls.spdSCurW
+	print testWCls.aclSCurW
+	print testWCls.tltFCurW
 
-	print testWeightClass.deltaCurW
-	print testWeightClass.speedCurW
-	print testWeightClass.acelCurW
-	print testWeightClass.tiltCurW
 )

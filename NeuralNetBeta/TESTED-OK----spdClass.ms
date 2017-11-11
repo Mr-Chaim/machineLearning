@@ -1,35 +1,34 @@
 struct spdClass
 (
-	spdNow = [0,0,0],
+	spdS = [0,0,0],
+	spdSPast = 0,
 
-	-- Past atributes
-
-	spdPast = [0,0,0],
-
-	fn updateSpd name posClass = 
+	fn updateSpd name = 
 	(
-		for a=1 to 3 do 
-		(
-			name.spdNow[a] = mathClass.spdNowFn posClass.deltaPast[a] posClass.delta[a]
-		)
+		name.spdS = mathClass.spdFn name.dstSPast name.dstS
+		
 		return true
 	),
 
 	fn updatePast name= 
 	(
-		name.spdPast = name.spdNow
-
+		name.spdSPast = name.spdS
+		
 		return true
 	),
-
+	fn importValues name valueClass = 
+	(
+		dstS     = valueClass.dstS
+		dstSPast = valueClass.dstSPast
+	),
 	fn testValue test=
 	(
 
-		dist = const.maxDistance
+		dist   = const.maxDistance
 		ranGen = mathClass.randomGenFn
 
 		test.deltaPast = [(ranGen -dist dist),(ranGen -dist dist),(ranGen -dist dist)]
-		test.delta = [(ranGen -dist dist),(ranGen -dist dist),(ranGen -dist dist)]
+		test.delta     = [(ranGen -dist dist),(ranGen -dist dist),(ranGen -dist dist)]
 
 		return true
 	),
@@ -38,9 +37,9 @@ struct spdClass
 	
 	const = constClass(),
 	
+	dstS = 0,
+	dstSPast = 0,
 
-	deltaPast = [0,0,0],
-	delta = [0,0,0]
 )
 
 fn testSpdClassFn =
