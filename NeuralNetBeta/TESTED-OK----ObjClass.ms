@@ -1,9 +1,5 @@
 struct objClass
 (
-	souObj = undefined,
-	tarObj = undefined,
-	wndObj = undefined,
-
 	souPos = [0,0,0],
 	tarPos = [0,0,0],
 
@@ -66,12 +62,12 @@ struct objClass
 		test.windForce = rGen 0 maxWind
 
 	),
-
 	private
-
+	souObj = undefined,
+	tarObj = undefined,
+	wndObj = undefined,
 	wndFinalF = 0,
 	wndFinalT = [0,0,0]
-
 )
 fn testCurrentObjFn obj1 obj2 objWind= 
 (

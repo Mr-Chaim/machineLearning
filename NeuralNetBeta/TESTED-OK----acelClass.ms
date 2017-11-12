@@ -2,22 +2,26 @@ struct acelClass
 (
 	aclS     = 0,
 	aclSPast = 0,
-
 	fn updateAcel name speedClass =
 	(
-		name.acelSingle = mathClass.acelFn speedClass.spdSPast speedClass.spdS
+		name.acelSingle = mathClass.acelFn name.spdSPast name.spdS
 		
 		return true
 	),
-
-	fn updatePast name= 
+	fn updatePast name = 
 	(
 		name.aclSPast = name.aclS
 		
 		return true
 	),
+	fn importValues name valueClass =
+	(
+		name.spdS = valueClass.spdS
+		name.spdSPast = valueClasss.spdSPast
 
-	fn testValue test=
+		return true
+	),
+	fn testValue test =
 	(
 		maxS   = const.maxSpeed
 		ranGen = mathClass.randomGenFn
@@ -27,13 +31,10 @@ struct acelClass
 		
 		return true
 	),
-	
 	private
-	
 	const    = constClass(),
 	spdS     = 0,
 	spdSPast = 0
-
 )
 
 

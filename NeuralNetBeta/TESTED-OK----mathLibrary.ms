@@ -85,7 +85,7 @@ struct mathClass
 
 		return formatedValue
 	),
--- Weight Functions Start -------------------------------------------------------------------------------------------
+-- Weight Functions -------------------------------------------------------------------------------------------------
 	fn calcWeightFn IcurrVal IpredVal IpastW = ----------------------------------------------------------------------
 	(
 		curVar  = IcurrVal
@@ -196,8 +196,7 @@ struct mathClass
 		
 		return arrVar
 	),
--- Weight Functions End ---------------------------------------------------------------------------------------------
--- Position Functions Start -----------------------------------------------------------------------------------------
+-- Position Functions -----------------------------------------------------------------------------------------------
 	fn dstFfn IsourcePos ItargetPos = -------------------------------------------------------------------------------
 	(
 		deltaX = ItargetPos[1]-IsourcePos[1]
@@ -259,8 +258,7 @@ struct mathClass
 
 		return [angleX,angleY,180]
 	),
--- Position Functions End -------------------------------------------------------------------------------------------
--- Prediction Functions Start ---------------------------------------------------------------------------------------
+-- Prediction Functions ---------------------------------------------------------------------------------------------
 	fn wndPredFn IDst ISpd IAcl IDstWght ISpdWght IAclWght maxWndCnst maxDstCnst maxSpdCnst maxAclCnst = ------------
 	(
 		dstSvar = IDst
@@ -289,6 +287,15 @@ struct mathClass
 
 		return wndFRes
 	),
+
+
+	
+
+
+	----------I have to come back to this to fix the distPred because it might be dealing with local distance and im not sure if i want to be local or not.
+
+
+
 	fn dstPredFn ISpd IAcl ISpdWght IAclWght maxDstCnst maxSpdCnst maxAclCnst = -------------------------------------Predicts the Next delta, or the point in space in the next timestep. Takes current delta and currentSpeed.
 	(
 		spdVar = ISpd
@@ -310,6 +317,11 @@ struct mathClass
 
 		return dstResLmt
 	),
+
+
+
+
+	
 	fn spdPredFn ISpd IAcl ISpdWght IAclWght maxSpdCnst maxAclCnst = ------------------------------------------------Predicts the speed on the next timestep. Takes current aceleration, current speed and MaxSpeed.
 	(
 		spdSVar = ISpd
@@ -330,21 +342,20 @@ struct mathClass
 		
 		return spdResLmt
 	),
-	fn aclPredFn Iwnd IAcl IwindWght IAclWght maxWndCnst maxAclCnst = -----------------------------------------------Predicts the aceleration on the next timestep. Takes current Aceleration and windForce.
+	fn aclPredFn ISpd IAcl IAclWght IspeedPred maxAclCnst = -----------------------------------------------Predicts the aceleration on the next timestep. Takes current Aceleration and windForce.
 	(
-		wndSVar = Iwnd
+		spdSVar = ISpd
 		aclSVar = IAcl
-		
-		wndWVar = IwindWght
 		aclWVar = IAclWght
+		spdPVar = IspeedPred
 
-		maxConstW = maxWndCnst
 		maxConstA = maxAclCnst
 
-		wndARes = mathClass.absFn wndSVar maxConstW
-		aclARes = mathClass.absFn aclSVar maxConstA
+		spdDif = spdPVar - spdSVar
+		aclAdd = spdDif + aclSVar
+		aclARes = mathClass.absFn aclAdd maxConstA
 
-		aclRes = aclARes + aclWVar + (wndARes + wndWVar)
+		aclRes = aclARes + aclWVar
 
 		aclResLmt = mathClass.limitFn aclRes -maxConstA maxConstA
 
@@ -416,9 +427,7 @@ struct mathClass
 
 		return anglesRes
 	),
--- Prediction Functions End -----------------------------------------------------------------------------------------
--- Wind Calculation Functions Start ---------------------------------------------------------------------------------
-
+-- Wind Calculation Functions ---------------------------------------------------------------------------------------
 	fn wndFinlTltFn ItltF ItltFWght maxTltCnst = --------------------------------------------------------------------
 	(
 		
@@ -458,7 +467,6 @@ struct mathClass
 	),
 	fn windDispFn deltaAbs speedAbs maxWind acelerationAbs = --------------------------------------------------------
 	(
-
 		foo1 =  mathClass.binaryFn (abs speedAbs) 0.1 0 0.1 1 -------True only when speed percentage is under 0.1.
 		foo2 =  mathClass.binaryFn (abs acelerationAbs) 0.1 0 0.1 1--True only when aceleration is under 0.1.
 		foo3 =  mathClass.binaryFn (abs deltaAbs) 0.1 1 0.1 0 -------True only when delta percentage is 0.1 or over.
@@ -466,7 +474,6 @@ struct mathClass
 		foo5 = 	(deltaAbs*foo3*foo4)---------------------------------If all previous values are true, it will return the delta to be multiplied as weight to the wind.
 
 		return foo5
-
 	)
 )
 /*

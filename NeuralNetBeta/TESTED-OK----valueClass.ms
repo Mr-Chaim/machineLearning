@@ -24,9 +24,9 @@ struct valueClass
 	aclSW    = 0,
 	
 	tltF     = [0,0,0],
-	tltFPast = [0,0,0],
-	tltFPred = [0,0,0],
-	tltFW    = [0,0,0],
+	tltLPast = [0,0,0],
+	tltLPred = [0,0,0],
+	tltLW    = [0,0,0],
 
 	dstL     = 0,
 	dstLPast = 0,
@@ -50,6 +50,7 @@ struct valueClass
 		name.wndFinalF = windClass.wndFinalF
 		name.wndFinalT = windClass.wndFinalT
 		name.wndFPast  = windClass.wndFPast
+		name.wndPPred  = windClass.wndPPred
 
 		return true
 	),
@@ -89,7 +90,7 @@ struct valueClass
 	),
 	fn importPred name predClass =
 	(
-		name.wndFPred = predClass.wndFPred
+		name.wndCPred = predClass.wndCPred
 		name.dstSPred = predClass.dstSPred
 		name.spdSPred = predClass.spdSPred
 		name.aclSPred = predClass.aclSPred
@@ -107,15 +108,19 @@ struct valueClass
 		
 		return true
 	),
-	fn importPos name objClass posClass=
+	fn importObjPos name objClass posClass=
 	(
 		name.tarPos = objClass.tarPos
 		name.souPos = objClass.souPos
 
+		return True
+	),
+	fn importPastPos name posClass
+	(
 		name.souPosPast = posClass.souPosPast
 		name.tarPosPast = posClass.tarPosPast
 
-		return True
+		return true
 	),
 	fn testValues test= 
 	(
@@ -165,7 +170,6 @@ struct valueClass
 
 		return true
 	),
-
 	private
 	
 	const = constClass()

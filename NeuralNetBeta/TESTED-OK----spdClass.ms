@@ -1,15 +1,13 @@
 struct spdClass
 (
-	spdS = [0,0,0],
+	spdS     = 0,
 	spdSPast = 0,
-
 	fn updateSpd name = 
 	(
 		name.spdS = mathClass.spdFn name.dstSPast name.dstS
 		
 		return true
 	),
-
 	fn updatePast name= 
 	(
 		name.spdSPast = name.spdS
@@ -23,23 +21,18 @@ struct spdClass
 	),
 	fn testValue test=
 	(
-
-		dist   = const.maxDistance
+		maxD   = const.maxDistance
 		ranGen = mathClass.randomGenFn
 
-		test.deltaPast = [(ranGen -dist dist),(ranGen -dist dist),(ranGen -dist dist)]
-		test.delta     = [(ranGen -dist dist),(ranGen -dist dist),(ranGen -dist dist)]
+		test.deltaPast = [(ranGen -maxD maxD),(ranGen -maxD maxD),(ranGen -maxD maxD)]
+		test.delta     = [(ranGen -maxD maxD),(ranGen -maxD maxD),(ranGen -maxD maxD)]
 
 		return true
 	),
-
 	private
-	
 	const = constClass(),
-	
 	dstS = 0,
-	dstSPast = 0,
-
+	dstSPast = 0
 )
 
 fn testSpdClassFn =

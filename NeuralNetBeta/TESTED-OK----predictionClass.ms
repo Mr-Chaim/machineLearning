@@ -1,14 +1,14 @@
 struct predClass
 (
 
-	wndFPred = 0,
+	wndCPred = 0,
 	dstSPred = 0,
 	spdSPred = 0,
 	aclSPred = 0,
 	posFPred = [0,0,0],
 	tltLPred = [0,0,0],
 
-	fn updateValues name =
+	fn updatePrimaryPred name =
 	(
 		maxW = const.maxWindForce
 		maxD = const.maxDistance
@@ -37,12 +37,13 @@ struct predClass
 
 		return true
 	),
-	fn updateFinalPred name =
+	fn updateComplexPred name =
 	(
-		name.wndFPred = mathClass.wndPredFn dstS spdS aclS dstSW spdSW aclSW maxW maxD maxS maxA
+		name.wndCPred = mathClass.wndPredFn dstS spdS aclS dstSW spdSW aclSW maxW maxD maxS maxA
 		name.posFPred = mathClass.posPredFn name.dstSPred tltL souPos
 		name.tltLPred = mathClass.tltPredFn souPos name.posFPred
 		
+		return true
 	),
 	fn importValues name valueClass= 
 	(
@@ -52,7 +53,7 @@ struct predClass
 		name.aclS     = valueClass.aclS
 		name.tltF     = valueClass.tltF
 
-		name.tltFL = valueClass.tltFL
+		name.tltL   = valueClass.tltL
 		name.tarPos = valueClass.tarPos
 		name.souPos = valueClass.souPos
 		
@@ -70,7 +71,6 @@ struct predClass
 	),
 	fn testValues test= 
 	(
-
 		rGen = mathClass.randomGenFn
 		maxS = const.maxSpeed
 		maxW = const.maxWindForce
@@ -91,7 +91,6 @@ struct predClass
 		)
 
 		return true
-	
 	),
 
 	private
@@ -110,7 +109,6 @@ struct predClass
 	spdSW = 0,
 	aclSW = 0,
 	tltLW = [0,0,0]
-
 )
 
 
