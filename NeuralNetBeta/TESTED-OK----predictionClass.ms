@@ -1,12 +1,12 @@
 struct predClass
 (
 
+	wndFPred = 0,
 	dstSPred = 0,
 	spdSPred = 0,
 	aclSPred = 0,
 	posFPred = [0,0,0],
-	tltFPred = [0,0,0],
-	wndFPred = 0,
+	tltLPred = [0,0,0],
 
 	fn updateValues name =
 	(
@@ -15,50 +15,56 @@ struct predClass
 		maxS = const.maxSpeed
 		maxA = const.maxAcel
 
-		wndF  = name.wndF 
-		dstS  = name.dstS 
-		spdS  = name.spdS 
-		aclS  = name.aclS 
+		dstS = name.dstS 
+		spdS = name.spdS 
+		aclS = name.aclS 
 
 		wndFW = name.wndFW 
 		dstSW = name.dstSW 
 		spdSW = name.spdSW 
 		aclSW = name.aclSW
 		
-		tltFlc = name.tltFLc 
+		tltL   = name.tltL 
 		souPos = name.souPos
 		
-		name.wndFPred = mathClass.wndPredFn wndF dstS spdS aclS wndFW dstSW spdSW aclSW maxW maxD maxS maxA
+		wndFPast = name.wndFPast 
+		
+		
 		name.dstSPred = mathClass.dstPredFn spdS aclS spdSW aclSW maxD maxS maxA
 		name.spdSPred = mathClass.spdPredFn spdS aclS spdSW aclSW maxS maxA
-		name.aclSPred = mathClass.aclPredFn wndF aclS wndFW aclSW maxW maxA
+		name.aclSPred = mathClass.aclPredFn wndFPast aclS wndFW aclSW maxW maxA
 
-		name.posFPred = mathClass.posPredFn name.dstSPred tltFLc souPos
-		name.tltFPred = mathClass.tltPredFn souPos name.posFPred
-		
+
 		return true
+	),
+	fn updateFinalPred name =
+	(
+		name.wndFPred = mathClass.wndPredFn dstS spdS aclS dstSW spdSW aclSW maxW maxD maxS maxA
+		name.posFPred = mathClass.posPredFn name.dstSPred tltL souPos
+		name.tltLPred = mathClass.tltPredFn souPos name.posFPred
+		
 	),
 	fn importValues name valueClass= 
 	(
-		name.wndF = valueClass.wndF
-		name.dstS = valueClass.dstS
-		name.spdS = valueClass.spdS
-		name.aclS = valueClass.aclS
-		name.tltF = valueClass.tltF
+		name.wndFPast = valueClass.wndFPast
+		name.dstS     = valueClass.dstS
+		name.spdS     = valueClass.spdS
+		name.aclS     = valueClass.aclS
+		name.tltF     = valueClass.tltF
 
-		name.tltFLc = valueClass.tltFLc
+		name.tltFL = valueClass.tltFL
 		name.tarPos = valueClass.tarPos
 		name.souPos = valueClass.souPos
 		
 		return True
 	),
-	fn importWeights name weightClass =
+	fn importWeights name valueClass =
 	(
-		name.wndFW = weightClass.wndFCurW
-		name.dstSW = weightClass.dstSCurW
-		name.spdSW = weightClass.spdSCurW
-		name.aclSW = weightClass.aclSCurW
-		name.tltFW = weightClass.tltFCurW
+		name.wndFW = valueClass.wndFCurW
+		name.dstSW = valueClass.dstSCurW
+		name.spdSW = valueClass.spdSCurW
+		name.aclSW = valueClass.aclSCurW
+		name.tltLW = valueClass.tltLCurW
 		
 		return true
 	),
@@ -75,7 +81,7 @@ struct predClass
 		test.dstS = (rGen -maxD maxD) as float
 		test.spdS = (rGen -maxS maxS) as float
 		test.aclS = (rGen -maxA maxA) as float
-		test.wndF = (rGen 0.0 maxW) as float
+		test.wndFPast = (rGen 0.0 maxW) as float
 
 		for a=1 to 3 do
 		(
@@ -90,20 +96,20 @@ struct predClass
 
 	private
 	
-	wndF   = 0,
 	dstS   = 0,
 	spdS   = 0,
 	aclS   = 0,
 	tltF   = [0,0,0],
-	tltFLc = [0,0,0],
+	tltL   = [0,0,0],
 	tarPos = [0,0,0],
 	souPos = [0,0,0],
+	wndFPast = 0,
 	
 	wndFW = 0,
 	dstSW = 0,
 	spdSW = 0,
 	aclSW = 0,
-	tltFW = [0,0,0]
+	tltLW = [0,0,0]
 
 )
 

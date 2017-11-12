@@ -1,94 +1,66 @@
 struct objClass
 (
-	source = undefined,
-	target = undefined,
-	windObj = undefined,
-	
-	sourcePos = [0,0,0],
-	targetPos = [0,0,0],
-	windPos = [0,0,0],
+	souObj = undefined,
+	tarObj = undefined,
+	wndObj = undefined,
 
-	sourceTilt = [0,0,0],
-	targetTilt = [0,0,0],
-	windTilt = [0,0,0],
-
-	windForce = 0,
+	souPos = [0,0,0],
+	tarPos = [0,0,0],
 
 	fn initSource name objName= 
 	(
-		name.source = objName
-		name.sourcePos = objName.pos
-		name.sourceTilt = objName.dir
+		name.souObj = objName
+		name.souPos = objName.pos
+
 		return true
 	),
-
 	fn initTarget name objName=
 	(
-		name.target = objName
-		name.targetPos = objName.pos
-		name.targetTilt = objName.dir
+		name.tarObj = objName
+		name.tarPos = objName.pos
+
 		return true
 	),
-
 	fn initWind name objName= 
 	(
 		if classof objName == Wind then
 		(
-			name.windObj = objName
-
-			name.windPos = objName.pos
-			name.windTilt = objName.dir
-			name.windForce = objName.strength
+			name.wndObj = objName
 		)
 		else (format "Error, no Wind object on %, Obj is : %" objName (classof objName))
 		return true
 	),
-
 	fn updateValue name =
 	(
-		name.sourcePos = name.source.pos
-		name.targetPos = name.target.pos
-		name.windPos = name.windObj.pos
-
-		name.sourceTilt = name.source.dir
-		name.targetTilt = name.target.dir
-		name.windTilt = name.windObj.dir
-
-		name.windForce = name.windObj.strength
+		name.souPos = name.souObj.pos
+		name.tarPos = name.tarObj.pos
 
 		return true
 	),
-
-	fn initAll name source target windObj=
+	fn initAll name sourObj targObj windObj=
 	(
-		name.initSource name source 
-		name.initTarget name target
-		name.initWind name windObj
+		name.initSource name sourObj 
+		name.initTarget name targObj
+		name.initWind   name windObj
 	),
-
-	fn updateWind name windClass =
+	fn outputWind name valueClass =
 	(
-		name.windObj.pos = name.sourcePos
-		name.windObj.dir[1] = windClass.tiltFinal[1]
-		name.windObj.dir[2] = windClass.tiltFinal[2]
-		name.windObj.dir[3] = windClass.tiltFinal[3]
-		name.windObj.strength = windClass.windForce
-	),
-	fn updateWindTestMode name windClass =
-	(
-		name.windObj.pos = [0,0,0]
-		name.windObj.dir[1] = windClass.tiltFinal[1]
-		name.windObj.dir[2] = windClass.tiltFinal[2]
-		name.windObj.dir[3] = windClass.tiltFinal[3]
-		name.windObj.strength = windClass.windForce
+		name.wndObj.pos      = valueClass.souPos
+		name.wndObj.strength = valueClass.wndFinalF
+		
+		name.wndObj.rotate.X_rotation = valueClass.wndFinalT[1]
+		name.wndObj.rotate.Y_rotation = valueClass.wndFinalT[2]
+		name.wndObj.rotate.Z_rotation = valueClass.wndFinalT[3]
+		
+		return true
 	),
 	fn testWind test = 
 	(
-		const = constClass()
+		const       = constClass()
 		maxDistance = const.maxDistance
-		maxTilt = const.maxTilt
-		maxWind = const.maxWindForce
-		rGen = mathClass.randomGenFn
+		maxTilt     = const.maxTilt
+		maxWind     = const.maxWindForce
+		rGen        = mathClass.randomGenFn
 
 		test.tiltFinal = [(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt)]
 		test.windForce = rGen 0 maxWind
@@ -96,17 +68,19 @@ struct objClass
 	),
 
 	private
-	tiltFinal = [0,0,0]
+
+	wndFinalF = 0,
+	wndFinalT = [0,0,0]
 
 )
 fn testCurrentObjFn obj1 obj2 objWind= 
 (
 	objClassTest = objClass()
 
-	const = constClass()
+	const       = constClass()
+	maxTilt     = const.maxTilt
+	maxWind     = const.maxWindForce
 	maxDistance = const.maxDistance
-	maxTilt = const.maxTilt
-	maxWind = const.maxWindForce
 
 	rGen = mathClass.randomGenFn
 

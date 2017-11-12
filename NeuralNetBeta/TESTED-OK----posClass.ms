@@ -5,30 +5,31 @@ struct posClass
 	tarPos = [0,0,0],
 	souPos = [0,0,0],
 	
-	tltF   = [0,0,0],
-	tltFLc = [0,0,0],
+	tltF = [0,0,0],
+	tltL = [0,0,0],
 
-	dstS    = 0,
-	dstSLoc = 0,
+	dstS = 0,
+	dstL = 0,
 
 	-- Past atributes
 
 	souPosPast = [0,0,0],
 	tarPosPast = [0,0,0],
-	tltFLcPast = [0,0,0],
-	tltFPast   = [0,0,0],
 
-	dstSLcPast = 0,
-	dstSPast   = 0,
+	tltLPast = [0,0,0],
+	tltFPast = [0,0,0],
+
+	dstLPast = 0,
+	dstSPast = 0,
 	
 
-	fn updatePos name objClass= 
+	fn updatePos name = 
 	(
-		name.dstS  = mathClass.dstFfn name.souPos name.tarPos
-		name.dstLc = mathClass.dstFfn name.souPos name.souPosPast
+		name.dstS = mathClass.dstFfn name.souPos name.tarPos
+		name.dstL = mathClass.dstFfn name.souPos name.souPosPast
 
-		name.tltF  = mathClass.tltFFn name.souPos name.tarPos
-		name.tltLc = mathClass.tltFFn name.souPos name.souPosPast
+		name.tltF = mathClass.tltFFn name.souPos name.tarPos
+		name.tltL = mathClass.tltFFn name.souPos name.souPosPast
 
 		return true
 	),
@@ -37,18 +38,18 @@ struct posClass
 		name.souPosPast = name.tarPos
 		name.tarPosPast = name.souPos
 
-		name.dstLcPast = name.dstLc
-		name.tltLcPast = name.tltLc
+		name.dstLPast = name.dstL
+		name.tltLPast = name.tltL
 
 		name.dstSPast = name.dstS
 		name.tltFPast = name.tltF
 
 		return true
 	),
-	fn importValues objClass =
+	fn importValues name valueClass =
 	(
-		name.tarPos = objClass.tarPos
-		name.souPos = objClass.souPos
+		name.tarPos = valueClass.tarPos
+		name.souPos = valueClass.souPos
 
 		return True
 	),
@@ -62,7 +63,6 @@ struct posClass
 
 		return true
 	),
-	
 	private
 	const = constClass()
 )

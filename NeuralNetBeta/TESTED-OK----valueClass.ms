@@ -2,31 +2,37 @@ struct valueClass
 (
 	public
 
-	wndF     = 0,
-	wndFPast = 0,
-	wndFPred = 0,
+	wndFPast  = 0,
+	wndFPred  = 0,
+	wndFW     = 0,
+	wndFinalF = 0,
+	wndFinalT = [0,0,0],
 	
 	dstS     = 0,
 	dstSPast = 0,
 	dstSPred = 0,
+	dstSW    = 0,
 	
 	spdS     = 0,
 	spdSPast = 0,
 	spdSPred = 0,
+	spdSW    = 0,
 	
 	aclS     = 0,
 	aclSPast = 0,
 	aclSPred = 0,
+	aclSW    = 0,
 	
 	tltF     = [0,0,0],
 	tltFPast = [0,0,0],
 	tltFPred = [0,0,0],
+	tltFW    = [0,0,0],
 
-	dstLc     = 0,
-	dstLcPast = 0,
+	dstL     = 0,
+	dstLPast = 0,
 
-	tltLc     = [0,0,0],
-	tltLcPast = [0,0,0],
+	tltL     = [0,0,0],
+	tltLPast = [0,0,0],
 	
 	souPos     = [0,0,0],
 	souPosPast = [0,0,0],
@@ -34,9 +40,15 @@ struct valueClass
 	tarPos     = [0,0,0],
 	tarPosPast = [0,0,0],
 
+	tarObjPos = [0,0,0],
+	souObjPos = [0,0,0],
+
+	
+
 	fn importWnd name windClass =
 	(
-		name.wndF      = windClass.wndF    
+		name.wndFinalF = windClass.wndFinalF
+		name.wndFinalT = windClass.wndFinalT
 		name.wndFPast  = windClass.wndFPast
 
 		return true
@@ -46,8 +58,8 @@ struct valueClass
 		name.dstS      = posClass.dstS
 		name.dstSPast  = posClass.dstSPast
 
-		name.dstLc     = posClass.dstLc
-		name.dstLcPast = posClass.dstLcPast
+		name.dstL     = posClass.dstL
+		name.dstLPast = posClass.dstLPast
 
 		return true
 	),
@@ -67,20 +79,11 @@ struct valueClass
 	),
 	fn importTlt name posClass =
 	(
-		name.tltF      = posClass.tltF
-		name.tltFPast  = posClass.tltFPast
-		name.tltLc     = posClass.tltLc
-		name.tltLcPast = posClass.tltLcPast
+		name.tltF     = posClass.tltF
+		name.tltFPast = posClass.tltFPast
 
-		return true
-	),
-	fn importPos name posClass =
-	(
-		name.souPos     = posClass.souPos
-		name.souPosPast = posClass.souPosPast
-
-		name.tarPos     = posClass.tarPos
-		name.tarPosPast = posClass.tarPosPast
+		name.tltL     = posClass.tltL
+		name.tltLPast = posClass.tltLPast
 
 		return true
 	),
@@ -90,7 +93,27 @@ struct valueClass
 		name.dstSPred = predClass.dstSPred
 		name.spdSPred = predClass.spdSPred
 		name.aclSPred = predClass.aclSPred
-		name.tltFPred = predClass.tltFPred
+		name.tltLPred = predClass.tltFPred
+
+		return True
+	),
+	fn importWeights name weightClass =
+	(
+		name.wndFW = weightClass.wndFCurW
+		name.dstSW = weightClass.dstSCurW
+		name.spdSW = weightClass.spdSCurW
+		name.aclSW = weightClass.aclSCurW
+		name.tltLW = weightClass.tltLCurW
+		
+		return true
+	),
+	fn importPos name objClass posClass=
+	(
+		name.tarPos = objClass.tarPos
+		name.souPos = objClass.souPos
+
+		name.souPosPast = posClass.souPosPast
+		name.tarPosPast = posClass.tarPosPast
 
 		return True
 	),
@@ -128,8 +151,8 @@ struct valueClass
 			test.tltFPast[a] = mathClass.randomGenFn -maxT maxT
 			test.tltFPred[a] = mathClass.randomGenFn -maxT maxT
 			
-			test.tltLc[a]     =mathClass.randomGenFn -maxT maxT
-			test.tltLcPast[a] =mathClass.randomGenFn -maxT maxT
+			test.tltL[a]     =mathClass.randomGenFn -maxT maxT
+			test.tltLPast[a] =mathClass.randomGenFn -maxT maxT
 			
 			test.souPos[a]    =mathClass.randomGenFn -maxD maxD
 			test.souPosPast[a] =mathClass.randomGenFn -maxD maxD
@@ -181,8 +204,8 @@ fn valueClassTestFn =
 	print valclassTEST.dstLc     
 	print valclassTEST.dstLcPast 
 
-	print valclassTEST.tltLc     
-	print valclassTEST.tltLcPast 
+	print valclassTEST.tltL     
+	print valclassTEST.tltLPast 
 	
 	print valclassTEST.souPos    
 	print valclassTEST.souPosPast
