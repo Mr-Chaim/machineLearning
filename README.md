@@ -129,12 +129,12 @@ Issues:
 
                 Acronym---|---------Variable-------|--Range of Value------|----Weight Acronym-----Weight Range
                           |                        |                      |                  
-                --Ad      |     Absolute Distance  |     0 - 1.0          |         ---                ---
-                --ld      |     local Distance     |  -1.0 - 1.0          |         ldW            -1.0 - 1.0
-                --Sp      |     Speed              |  -1.0 - 1.0          |         SpW            -1.0 - 1.0
-                --Al      |     Aceleration        |  -1.0 - 1.0          |         AlW            -1.0 - 1.0
-                --wp      |     Past Wind force    |     0 - 1.0          |         ---                ---
-                --WF      |     Present Wind Force |     0 - 1.0          |         wpW            -1.0 - 1.0
+                  Ad      |     Absolute Distance  |     0 - 1.0          |         ---                ---
+                  ld      |     local Distance     |  -1.0 - 1.0          |         ldW            -1.0 - 1.0
+                  Sp      |     Speed              |  -1.0 - 1.0          |         SpW            -1.0 - 1.0
+                  Al      |     Aceleration        |  -1.0 - 1.0          |         AlW            -1.0 - 1.0
+                  wp      |     Past Wind force    |     0 - 1.0          |         ---                ---
+                  WF      |     Present Wind Force |     0 - 1.0          |         wpW            -1.0 - 1.0
 
                 WF = (wp * Wpw) + (Ad - ((ld*ldw)/3 + (Sp * Spw)/3 + (Al * Alw)/3)
 
