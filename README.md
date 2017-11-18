@@ -6,7 +6,11 @@ using one emiter which will change direction, compensating for tilt, inertia and
 
 
 
+
 11/18/2017---------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 Main algorithm has been finished, the classes are all working and a clock class has been added in order to have 
 more control over time intervals between runs.
@@ -164,7 +168,14 @@ Future:
         The other plans for the future are still in place when the current issues are solved.
 
 
+
+
+
+
 -------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 
 11/04/2017---------------------------------------------------------------------------------------------------------------------------
@@ -199,7 +210,13 @@ Future:
         -Build interface - this will be done before or after the translation, or maybe during. 
 
 
+
+
+
 -------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 
 10/30/2017---------------------------------------------------------------------------------------------------------------------------
