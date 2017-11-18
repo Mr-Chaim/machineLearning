@@ -24,13 +24,7 @@ struct objClass
 			name.wndObj = objName
 		)
 		else (format "Error, no Wind object on %, Obj is : %" objName (classof objName))
-		return true
-	),
-	fn updateValue name =
-	(
-		name.souPos = name.souObj.pos
-		name.tarPos = name.tarObj.pos
-
+		
 		return true
 	),
 	fn initAll name sourObj targObj windObj=
@@ -38,79 +32,53 @@ struct objClass
 		name.initSource name sourObj 
 		name.initTarget name targObj
 		name.initWind   name windObj
+
+		return true
 	),
-	fn outputWind name valueClass =
+	fn updateValues name =
 	(
-		name.wndObj.pos      = valueClass.souPos
-		name.wndObj.strength = valueClass.wndFinalF
-		
-		name.wndObj.rotate.X_rotation = valueClass.wndFinalT[1]
-		name.wndObj.rotate.Y_rotation = valueClass.wndFinalT[2]
-		name.wndObj.rotate.Z_rotation = valueClass.wndFinalT[3]
+		name.souPos = name.souObj.pos
+		name.tarPos = name.tarObj.pos
+
+		return true
+	),
+	fn importValues name valueClass =
+	(
+		--name.souPos = valueClass.souPos
+		name.wndF   = valueClass.wndF
+		name.wndT   = valueClass.wndT
+		name.tltF   = valueClass.tltF
+		name.dstF   = valueClass.dstF
+
+		return true
+	),
+	fn outputWind name =
+	(
+		name.wndObj.pos      = name.souPos
+		name.wndObj.strength = name.wndF
+		name.wndObj.dir = [0,0,1]
+		if name.dstF < 10000 then
+		(
+			name.wndObj.rotation.X_rotation = name.wndT[1]
+			name.wndObj.rotation.Y_rotation = name.wndT[2]
+		)
+		else
+		(
+			name.wndObj.rotation.X_rotation = name.tltF[1]
+			name.wndObj.rotation.Y_rotation = name.tltF[2]
+		)
 		
 		return true
 	),
-	fn testWind test = 
-	(
-		const       = constClass()
-		maxDistance = const.maxDistance
-		maxTilt     = const.maxTilt
-		maxWind     = const.maxWindForce
-		rGen        = mathClass.randomGenFn
+	
 
-		test.tiltFinal = [(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt)]
-		test.windForce = rGen 0 maxWind
-
-	),
 	private
+	
 	souObj = undefined,
 	tarObj = undefined,
 	wndObj = undefined,
-	wndFinalF = 0,
-	wndFinalT = [0,0,0]
-)
-fn testCurrentObjFn obj1 obj2 objWind= 
-(
-	objClassTest = objClass()
-
-	const       = constClass()
-	maxTilt     = const.maxTilt
-	maxWind     = const.maxWindForce
-	maxDistance = const.maxDistance
-
-	rGen = mathClass.randomGenFn
-
-	obj1.pos = [(rGen 0 maxDistance),(rGen 0 maxDistance),(rGen 0 maxDistance)]
-	obj2.pos = [(rGen 0 maxDistance),(rGen 0 maxDistance),(rGen 0 maxDistance)]
-
-	obj1.dir = [(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt)]
-	obj2.dir = [(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt),(rGen -maxTilt maxTilt)]
-
-	
-
-	objClassTest.initSource objClassTest obj1
-	objClassTest.initTarget objClassTest obj2
-	objClassTest.initWind objClassTest objWind
-	objClassTest.testWind objClassTest
-	objClassTest.updateWind objClassTest objClassTest
-
-
-	objClassTest.updateValue objClassTest
-
-	print objClassTest.source.name
-	print objClassTest.target.name
-	print objClassTest.windObj.name
-
-
-	print objClassTest.sourcePos
-	print objClassTest.targetPos
-	print objClassTest.windPos
-
-	print objClassTest.sourceTilt
-	print objClassTest.targetTilt
-	print objClassTest.windTilt
-
-	print objClassTest.windForce
-
-	return true
+	wndF = 0,
+	dstF = 0,
+	tltF = [0,0,0],
+	wndT = [0,0,0]
 )

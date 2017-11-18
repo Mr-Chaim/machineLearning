@@ -1,102 +1,141 @@
 struct valueClass
 (
 	public
+	-- Constant Values -----------------
+		maxAbs = 0,
+		maxW = 0,
+		maxD = 0,
+		maxS = 0,
+		maxA = 0,
+		maxT = 0,
 
-	wndFPast  = 0,
-	wndFPred  = 0,
-	wndFW     = 0,
-	wndFinalF = 0,
-	wndFinalT = [0,0,0],
+	---Wind Values----------------------
 	
-	dstS     = 0,
-	dstSPast = 0,
-	dstSPred = 0,
-	dstSW    = 0,
-	
-	spdS     = 0,
-	spdSPast = 0,
-	spdSPred = 0,
-	spdSW    = 0,
-	
-	aclS     = 0,
-	aclSPast = 0,
-	aclSPred = 0,
-	aclSW    = 0,
-	
-	tltF     = [0,0,0],
-	tltLPast = [0,0,0],
-	tltLPred = [0,0,0],
-	tltLW    = [0,0,0],
-
-	dstL     = 0,
-	dstLPast = 0,
-
-	tltL     = [0,0,0],
-	tltLPast = [0,0,0],
-	
-	souPos     = [0,0,0],
-	souPosPast = [0,0,0],
-	
-	tarPos     = [0,0,0],
-	tarPosPast = [0,0,0],
-
-	tarObjPos = [0,0,0],
-	souObjPos = [0,0,0],
+		wndF     = 0,
+		wndT     = [0,0,0],
+		
+		wndFEst  = 0,
+		wndFPast = 0,
+		
+		wndFW       = 0,
+		wndFPWeight = 0,
+		
+		wndFWpos = [1,1],
+		wndPWpos = [1,1],
 
 	
+	---Distance Values------------------
 
-	fn importWnd name windClass =
+		dstS     = 0,
+		dstSPast = 0,
+
+		dstF     = 0,
+		dstFPast = 0,
+	
+		dstSPred  = 0,
+		dstSPPred = 0,
+	
+		dstSW       = 0,
+		dstSPWeight = 0,
+	
+		dstSWpos    = [1,1],
+		dstPWPos    = [1,1],
+	
+	---Speed Values---------------------
+
+		spdS      = 0,
+		spdSPast  = 0,
+	
+		spdSPred  = 0,
+		spdSPPred = 0,
+	
+		spdSW       = 0,
+		spdSPWeight = 0,
+	
+		spdSWpos = [1,1],
+		spdPWPos = [1,1],
+	
+	---Aceleration Values---------------
+
+		aclS     = 0,
+		aclSPast = 0,
+	
+		aclSPred  = 0,
+		aclSPPred = 0,
+	
+		aclSW       = 0,
+		aclSPWeight = 0,
+	
+		aclSWpos = [1,1],
+		aclPWPos = [1,1],
+
+	---Tilt Values----------------------
+	
+		tltL        = [0,0,0],
+		tltF        = [0,0,0],
+
+		tltLPast    = [0,0,0],
+		tltFPast    = [0,0,0],
+	
+		tltLPred    = [0,0,0],
+		tltLPPred   = [0,0,0],
+	
+		tltLW       = [0,0,0],
+		tltLPWeight = [0,0,0],
+	
+		tltLWpos     = #([1,1],[1,1],[1,1]),
+		tltPWPos    = #([1,1],[1,1],[1,1]),
+
+	---Position Values------------------
+
+		posFPred  = [0,0,0],
+		posFPPred = [0,0,0],
+
+		souPos     = [0,0,0],
+		souPosPast = [0,0,0],
+	
+		tarPos     = [0,0,0],
+		tarPosPast = [0,0,0],
+		
+		tarObjPos = [0,0,0],
+		souObjPos = [0,0,0],
+	
+	fn importConst name constClass =
 	(
-		name.wndFinalF = windClass.wndFinalF
-		name.wndFinalT = windClass.wndFinalT
-		name.wndFPast  = windClass.wndFPast
-		name.wndPPred  = windClass.wndPPred
+		name.maxAbs = constClass.maxAbs
+		name.maxW   = constClass.maxWindForce
+		name.maxD   = constClass.maxDistance
+		name.maxS   = constClass.maxSpeed
+		name.maxA   = constClass.maxacel
+		name.maxT   = constClass.maxTilt
 
 		return true
 	),
-	fn importDist name posClass =
+	fn importObjPos name objClass=
 	(
-		name.dstS      = posClass.dstS
-		name.dstSPast  = posClass.dstSPast
-
-		name.dstL     = posClass.dstL
-		name.dstLPast = posClass.dstLPast
-
-		return true
-	),
-	fn importSpd name spdClass =
-	(
-		name.spdS      = spdClass.spdS
-		name.spdSPast  = spdClass.spdSPast
-
-		return true
-	),
-	fn importAcl name acelClass =
-	(
-		name.aclS      = acelClass.aclS
-		name.aclSPast  = acelClass.aclSPast
-
-		return true
-	),
-	fn importTlt name posClass =
-	(
-		name.tltF     = posClass.tltF
-		name.tltFPast = posClass.tltFPast
-
-		name.tltL     = posClass.tltL
-		name.tltLPast = posClass.tltLPast
-
-		return true
-	),
-	fn importPred name predClass =
-	(
-		name.wndCPred = predClass.wndCPred
-		name.dstSPred = predClass.dstSPred
-		name.spdSPred = predClass.spdSPred
-		name.aclSPred = predClass.aclSPred
-		name.tltLPred = predClass.tltFPred
+		name.tarPos = objClass.tarPos
+		name.souPos = objClass.souPos
 
 		return True
+	),
+	fn importPos name posClass =
+	(
+		name.dstS = posClass.dstS
+		name.dstF = posClass.dstF
+		name.spdS = posClass.spdS
+		name.aclS = posClass.aclS
+		name.tltF = posClass.tltF
+		name.tltL = posClass.tltL
+
+		return true
+	),
+	fn importWnd name windClass =
+	(
+		name.wndFEst = windClass.wndFEst
+		name.wndF    = windClass.wndF
+		name.wndT    = windClass.wndT
+		
+		return true
 	),
 	fn importWeights name weightClass =
 	(
@@ -105,24 +144,68 @@ struct valueClass
 		name.spdSW = weightClass.spdSCurW
 		name.aclSW = weightClass.aclSCurW
 		name.tltLW = weightClass.tltLCurW
+
+		name.wndFWpos = weightClass.wndFWpos
+		name.dstSWpos = weightClass.dstSWpos
+		name.spdSWpos = weightClass.spdSWpos
+		name.aclSWpos = weightClass.aclSWpos
+		name.tltLWpos = weightClass.tltLWpos
 		
 		return true
 	),
-	fn importObjPos name objClass posClass=
+	fn importPred name predClass =
 	(
-		name.tarPos = objClass.tarPos
-		name.souPos = objClass.souPos
+		name.dstSPred = predClass.dstSPred
+		name.spdSPred = predClass.spdSPred
+		name.aclSPred = predClass.aclSPred
+		name.tltLPred = predClass.tltLPred
+		name.posFPred = predClass.posFPred
 
 		return True
 	),
-	fn importPastPos name posClass
+	fn updatePast name =
 	(
-		name.souPosPast = posClass.souPosPast
-		name.tarPosPast = posClass.tarPosPast
+		-- Prediction Values --
 
+			name.dstSPPred = name.dstSPred
+			name.spdSPPred = name.spdSPred
+			name.aclSPPred = name.aclSPred
+			name.tltLPPred = name.tltLPred
+			name.posFPPred = name.posFPred
+		
+		-- Position Values --
+		
+			name.wndFpast = name.wndF
+			name.dstSPast = name.dstS     
+			name.dstFPast = name.dstF
+			name.spdSPast = name.spdS     
+			name.aclSPast = name.aclS     
+			name.tltFPast = name.tltF
+			name.tltLPast = name.tltL
+		
+		-- Weight Values --
+			name.wndFPWeight = name.wndFW
+			name.dstSPWeight = name.dstSW 
+			name.spdSPWeight = name.spdSW
+			name.aclSPWeight = name.aclSW
+			name.tltLPWeight = name.tltLW
+			
+		-- Weight Position --
+
+			name.wndPWpos = name.wndFWpos
+			name.dstPWPos = name.dstSWPos
+			name.spdPWPos = name.spdSWPos
+			name.aclPWPos = name.aclSWPos
+			name.tltPWPos = name.tltLWPos
+
+		-- Object Position --
+		
+			name.souPosPast = name.souPos     
+			name.tarPosPast = name.tarPos     
+		
 		return true
 	),
-	fn testValues test= 
+	fn testValues test = 
 	(
 		
 		maxW = const.maxWindForce
@@ -147,8 +230,8 @@ struct valueClass
 		test.aclSPast = mathClass.randomGenFn -maxA maxA
 		test.aclSPred = mathClass.randomGenFn -maxA maxA
 		
-		test.dstLc     = mathClass.randomGenFn -maxD maxD
-		test.dstLcPast = mathClass.randomGenFn -maxD maxD
+		test.dstFc     = mathClass.randomGenFn -maxD maxD
+		test.dstFcPast = mathClass.randomGenFn -maxD maxD
 		
 		for a=1 to 3 do
 		(
@@ -169,12 +252,9 @@ struct valueClass
 
 
 		return true
-	),
-	private
-	
-	const = constClass()
+	)
 )
-
+/*
 fn valueClassTestFn =
 (
 	constClass()
@@ -205,8 +285,8 @@ fn valueClassTestFn =
 	print valclassTEST.tltFPast
 	print valclassTEST.tltFPred
 
-	print valclassTEST.dstLc     
-	print valclassTEST.dstLcPast 
+	print valclassTEST.dstFc     
+	print valclassTEST.dstFcPast 
 
 	print valclassTEST.tltL     
 	print valclassTEST.tltLPast 
@@ -219,3 +299,4 @@ fn valueClassTestFn =
 
 	return true
 )
+*/

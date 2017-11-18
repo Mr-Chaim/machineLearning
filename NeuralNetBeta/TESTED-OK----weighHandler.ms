@@ -3,8 +3,9 @@
 
 struct weightClass
 (
-
 	public
+	
+	--- Current Weight ------------------------------------
 
 	wndFCurW = 0,
 	dstSCurW = 0,
@@ -12,143 +13,152 @@ struct weightClass
 	aclSCurW = 0,
 	tltLCurW = [0,0,0],
 
-	fn init name=
+	--- Current weight Position ---------------------------
+	
+	wndFWpos = [1,1],
+	dstSWpos = [1,1],
+	spdSWpos = [1,1],
+	aclSWpos = [1,1],
+	tltLWpos = #([1,1],[1,1],[1,1]),
+
+	-- Functions ------------------------------------------
+
+	fn init name =-----------------------------------------
 	(
-		name.wndFWarr = mathClass.arrayGenFn 20
-		name.dstSWarr = mathClass.arrayGenFn 20
-		name.spdSWarr = mathClass.arrayGenFn 20
-		name.aclSWarr = mathClass.arrayGenFn 20
+		name.wndFWarr = mathClass.arrayGenFn 100
+		name.dstSWarr = mathClass.arrayGenFn 100
+		name.spdSWarr = mathClass.arrayGenFn 100
+		name.aclSWarr = mathClass.arrayGenFn 100
 		
 		for a=1 to 3 do
 		(
-			name.tltLW[a] = mathClass.arrayGenFn 20 --Should be 3 arrays with 20 different numbers each	
+			name.tltLWarr[a] = mathClass.arrayGenFn 5100 --Should be 3 arrays with 20 different numbers each	
 		)	
-
 		return true
 	),
-	fn updateWeight name=
+	fn updateWeights name = -------------------------------This will be used in the midle, when looking at past predictions after the wind estimate is complete.
 	(
-		maxD = const.maxDistance
-		maxS = const.maxSpeed
-		maxA = const.maxacel
-
-		name.dstSWarr = mathClass.weightUpdtFn name.dstSWarr name.dstS name.dstSPred name.dstSPast maxD
-		name.spdSWarr = mathClass.weightUpdtFn name.spdSWarr name.spdS name.spdSPred name.spdSPast maxS
-		name.aclSWarr = mathClass.weightUpdtFn name.aclSWarr name.aclS name.aclSPred name.aclSPast maxA
-
+		name.wndFWarr = mathClass.wndWUpdateFn name.wndFWarr name.dstF name.dstS      name.tltF      name.wndFPast    name.dstFPast name.maxW name.maxAbs name.maxT name.wndFPWeight name.wndPWpos
+		name.dstSWarr = mathClass.weightUpdtFn name.dstSWarr name.dstS name.dstSPPred name.dstSPWeight name.dstPWpos name.maxD
+		name.spdSWarr = mathClass.weightUpdtFn name.spdSWarr name.spdS name.spdSPPred name.spdSPWeight name.spdPWpos name.maxS
+		name.aclSWarr = mathClass.weightUpdtFn name.aclSWarr name.aclS name.aclSPPred name.aclSPWeight name.aclPWpos name.maxA
+		
+		for a=1 to 3 do 
+		(
+			name.tltLWarr[a] = mathClass.tltWeightUpdateFn name.tltLWarr[a] name.tltL[a] name.tltF[a] name.tltLPPred[a] name.tltLPWeight[a] name.tltPWPos[a] name.maxT
+		)
 		return true
 	),
-	fn updateFinalWeights name=
+	fn catchWeights name = --------------------------------This will be in the midle in order to catch the weights to be used in the wind calculation and then the predictions
 	(
-		maxW = const.maxWindForce
-		maxT = const.maxTilt
+		name.wndFWpos = mathClass.getWindWeightPosFn name.dstF name.tltF    name.maxAbs name.maxT   name.wndFWarr.count
+		name.dstSWpos = mathClass.getWeightPosFn     name.dstS name.spdS    name.maxD   name.maxS   name.dstSWarr.count
+		name.spdSWpos = mathClass.getWeightPosFn     name.spdS name.aclS    name.maxS   name.maxA   name.spdSWarr.count
+		name.aclSWpos = mathClass.getWeightPosFn     name.aclS name.wndFEst name.maxA   name.maxW   name.aclSWarr.count
+		
+		name.wndFCurW = mathClass.getWeightFn name.wndFWarr name.wndFWpos
+		name.dstSCurW = mathClass.getWeightFn name.dstSWarr name.dstSWpos
+		name.spdSCurW = mathClass.getWeightFn name.spdSWarr name.spdSWpos
+		name.aclSCurW = mathClass.getWeightFn name.aclSWarr name.aclSWpos
 
 		for a=1 to 3 do 
 		(
-			name.tltLWarr[a] = mathClass.tltWeightUpdateFn name.tltLWarr[a] name.tltL[a] name.tltF[a] name.tltLPred[a] name.tltLPast[a] maxT
+			name.tltLWpos[a] = mathClass.getWeightPosFn name.tltL[a]     name.tltF[a]     name.maxT name.maxT name.tltLWarr[a].count
+			name.tltLCurW[a] = mathClass.getWeightFn    name.tltLWarr[a] name.tltLWpos[a]
 		)
 		
-		name.wndFWarr = mathClass.wndWeightUpdateFn name.wndFWarr name.wndFPast name.dstS name.wndFPred name.dstSPred name.dstSPast maxW
-		
 		return true
 	),
-	fn catchCurrent name= 
+	fn importValues name valueClass = ---------------------
 	(
-		maxD = const.maxDistance
-		maxS = const.maxSpeed
-		maxA = const.maxacel
-		
-		name.dstSCurW = mathClass.getWeightFn name.dstSWarr name.dstS maxD
-		name.spdSCurW = mathClass.getWeightFn name.spdSWarr name.spdS maxS
-		name.aclSCurW = mathClass.getWeightFn name.aclSWarr name.aclS maxA
-		
-		return true
-	),
-	fn catchFinalWeights name=
-	(
-		maxW = const.maxWindForce
-		maxT = const.maxTilt
+		-- Current Values --
 
-		for a=1 to 3 do 
-		(
-			name.tltLCurW[a] = mathClass.getWeightFn name.tltLWarr[a] name.tltL[a] maxT
-		)
-		
-		name.wndFCurW = mathClass.getWeightFn name.wndFWarr name.wndFPred maxW
-
-		return true
-	),
-	fn importVar name valueClass = 
-	(
-		name.wndFPred = valueClass.wndFPred
-		name.wndFPast = valueClass.wndFPast
-
+		name.wndFEst  = valueClass.wndFEst
 		name.dstS     = valueClass.dstS
-		name.dstSPast = valueClass.dstSPast
-		
+		name.dstF     = valueClass.dstF
 		name.spdS     = valueClass.spdS
-		name.spdSPast = valueClass.spdSPast
-		
 		name.aclS     = valueClass.aclS
-		name.aclSPast = valueClass.aclSPast
-		
+		name.tltL     = valueClass.tltL
 		name.tltF     = valueClass.tltF
+		
+		-- Past Values --
+		
+		name.wndFPast = valueClass.wndFPast
+		name.dstSPast = valueClass.dstSPast
+		name.dstFPast = valueClass.dstFPast
+		name.spdSPast = valueClass.spdSPast
+		name.aclSPast = valueClass.aclSPast
+		name.tltLPast = valueClass.tltLPast
 		name.tltFPast = valueClass.tltFPast
 		
-		name.tltL     = valueClass.tltL
-		name.tltLPast = valueClass.tltLPast
-		
-		
+		--Past weights --
+
+		name.wndFPWeight = valueClass.wndFPWeight
+		name.dstSPWeight = valueClass.dstSPWeight
+		name.spdSPWeight = valueClass.spdSPWeight
+		name.aclSPWeight = valueClass.aclSPWeight
+		name.tltLPWeight = valueClass.tltLPWeight
+
+		-- Past weight Position --
+
+		name.wndPWpos = valueClass.wndPWpos
+		name.dstPWPos = valueClass.dstPWPos
+		name.spdPWPos = valueClass.spdPWPos
+		name.aclPWPos = valueClass.aclPWPos
+		name.tltPWPos = valueClass.tltPWPos
+
+		-- Constant Values --
+
+		name.maxAbs = valueClass.maxAbs
+		name.maxD = valueClass.maxD
+		name.maxS = valueClass.maxS
+		name.maxA = valueClass.maxA
+		name.maxW = valueClass.maxW
+		name.maxT = valueClass.maxT
+
 		return true
 	),
-	fn importPred name valueClass =
+	fn importPastPred name valueClass =--------------------
 	(
-		name.wndFPred = valueClass.wndFPred
-		name.dstSPred = valueClass.dstSPred
-		name.spdSPred = valueClass.spdSPred
-		name.aclSPred = valueClass.aclSPred
-		name.tltLPred = valueClass.tltLPred
+		--name.wndFPPred = valueClass.wndFPPred
+		name.dstSPPred = valueClass.dstSPPred
+		name.spdSPPred = valueClass.spdSPPred
+		name.aclSPPred = valueClass.aclSPPred
+		name.tltLPPred = valueClass.tltLPPred
 
 		return True
 	),
-	fn testValues test= 
-	(
-		maxW = const.maxWindForce
-		maxD = const.maxDistance
-		maxS = const.maxSpeed
-		maxA = const.maxacel
-		maxT = const.maxTilt
 
-		test.wndF     = mathClass.randomGenFn -maxW maxW
-		test.wndFPast = mathClass.randomGenFn -maxW maxW
-		test.wndFPred = mathClass.randomGenFn -maxW maxW
-		
-		test.dstS     = mathClass.randomGenFn -maxD maxD
-		test.dstSPast = mathClass.randomGenFn -maxD maxD
-		test.dstSPred = mathClass.randomGenFn -maxD maxD
-
-		test.spdS     = mathClass.randomGenFn -maxS maxS
-		test.spdSPast = mathClass.randomGenFn -maxS maxS
-		test.spdSPred = mathClass.randomGenFn -maxS maxS
-
-		test.aclS     = mathClass.randomGenFn -maxA maxA
-		test.aclSPast = mathClass.randomGenFn -maxA maxA
-		test.aclSPred = mathClass.randomGenFn -maxA maxA
-
-		for a=1 to 3 do
-		(
-			test.tltF[a]     = mathClass.randomGenFn -maxT maxT
-			test.tltFPast[a] = mathClass.randomGenFn -maxT maxT
-			test.tltFPred[a] = mathClass.randomGenFn -maxT maxT
-		)
-
-		return true
-	),
-
-
+	--- Hidden Variables ----------------------------------
+	
 	private
 	
-	const = constClass(),
+	--- Constant Values -----------------------------------
+
+	maxAbs = 0,
+	maxD = 0,
+	maxS = 0,
+	maxA = 0,
+	maxW = 0,
+	maxT = 0,
+	
+	--- Past predictions ----------------------------------
+	
+	--wndFPpred = 0,
+	dstSPPred = 0,
+	spdSPPred = 0,
+	aclSPPred = 0,
+	tltLPPred = [0,0,0],
+	
+	--- Current Predictions -------------------------------
+
+	dstSPred = 0,
+	spdSPred = 0,
+	aclSPred = 0,
+	tltFPred = [0,0,0],
+	tltLPred = [0,0,0],
+
+	--- Weight array --------------------------------------
 
 	wndFWarr = 0,
 	dstSWarr = 0,
@@ -156,47 +166,39 @@ struct weightClass
 	aclSWarr = 0,
 	tltLWarr = #(0.0,0.0,0.0),
 
+	-- Past Weights ---------------------------------------
+
+	wndFPWeight = 0,
+	dstSPWeight = 0,
+	spdSPWeight = 0,
+	aclSPWeight = 0,
+	tltLPWeight = [0,0,0],
+
+	-- Past Weight Position -------------------------------
+	
+	wndPWpos = [1,1],
+	dstPWPos = [1,1],
+	spdPWPos = [1,1],
+	aclPWPos = [1,1],
+	tltPWPos = #([1,1],[1,1],[1,1]),
+
+	-- Current Position Values ----------------------------
+	
+	wndFEst = 0,
+	dstS    = 0,
+	dstF    = 0,
+	spdS    = 0,
+	aclS    = 0,
+	tltF    = [0,0,0],
+	tltL    = [0,0,0],
+
+	-- Past Position Values -------------------------------
+
 	wndFPast = 0,
-	wndFPred = 0,
-
-	dstS     = 0,
 	dstSPast = 0,
-	dstSPred = 0,
-
-	spdS     = 0,
+	dstFPast = 0,
 	spdSPast = 0,
-	spdSPred = 0,
-	
-	aclS     = 0,
 	aclSPast = 0,
-	aclSPred = 0,
-	
-	tltF     = [0,0,0],
-	tltL     = [0,0,0],
-	tltLPast = [0,0,0],
-	tltLPred = [0,0,0]
-
-)
-
-
-
-
-fn testWClsFn =
-
-(
-	mathClass()
-	const = constClass()
-	
-	testWCls = weightClass()
-	
-	testWCls.init testWCls
-	testWCls.testValues testWCls
-	testWCls.updateWeight testWCls
-	testWCls.catchCurrent testWCls
-	
-	print testWCls.dstSCurW
-	print testWCls.spdSCurW
-	print testWCls.aclSCurW
-	print testWCls.tltFCurW
-
+	tltFPast = [0,0,0],
+	tltLPast = [0,0,0]
 )

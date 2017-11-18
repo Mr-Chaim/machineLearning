@@ -1,11 +1,9 @@
 struct clockClass
-(
-	functionName = undefined,
-	
+(	
 	fn create name func=
 	(	
 		name.theTimer = dotNetObject "System.Windows.Forms.Timer"
-		name.theTimer.interval = 500
+		name.theTimer.interval = 1
 		dotnet.addEventHandler name.theTimer "tick" func
 	),
 	fn start name=
@@ -17,10 +15,6 @@ struct clockClass
 	(
 		name.theTimer.stop()
 		return True
-	),
-	fn reload name func=
-	(
-		functionName = name
 	),
 	theTimer = undefined
 )

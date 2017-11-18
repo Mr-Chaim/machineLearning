@@ -27,33 +27,53 @@ struct mathClass
 
 		return [sideCres , sideBres]
 	),
-	fn arrayGenFn InputVar = ----------------------------------------------------------------------------------------Creates an array with Input number of interactions of value -1.0 to 1.0
+	fn arrayGenFn InputValue = --------------------------------------------------------------------------------------Creates an array with Input number of interactions of value -1.0 to 1.0
 	(
+		arrCount = InputValue
 		arr = #()
-		for a=1 to InputVar do
+		for a = 1 to arrCount do 
 		(
-			foo = mathClass.randomGenFn -1.0 1.0
-			append arr foo
+			arr2 = #()
+			for b=1 to arrCount do
+			(
+				--foo = 0
+				foo = mathClass.randomGenFn -1.0 1.0
+				append arr2 foo
+			)
+			append arr arr2
 		)
+
 		return arr
 	),
-	fn binaryFn InputVar bolVar1 bolvar2 bolvar3 bolvar4 = ----------------------------------------------------------Binary function, it takes the input value and returns the one of the bolVal. If input is Bigger than Var1, it will turn into val 2, if is smaller than var3 it will turn into val4
+	fn binaryFn InputVaL LowVal highVal = ---------------------------------------------------------------------------Binary function, it takes the input value and returns the one of the bolVal. If input is Bigger than Var1, it will turn into val 2, if is smaller than var3 it will turn into val4
 	(
-		if InputVar >= bolVar1 do
+		foo=0
+
+		if InputVaL >= LowVal and InputVaL <= highVal do
 		(
-			foo = bolvar2
+			foo = 1
 		)
-		if InputVar < bolvar3 do
-		(
-			foo = bolvar4
-		)
-		return foo
+		return (foo)
 	),
-	fn constrainFn InputVar = ---------------------------------------------------------------------------------------Constrains the value into a Int between 1 and 20, it will take normaly values betwen -1.0 and 1.0
+	fn binary2Fn InputVaL LowVal highVal = ---------------------------------------------------------------------------Binary function, it takes the input value and returns the one of the bolVal. If input is Bigger than Var1, it will turn into val 2, if is smaller than var3 it will turn into val4
 	(
-		InputVar = mathClass.limitFn InputVar -1 1
-		foo = ((InputVar * 10)+10) as integer
-		mathClass.limitFn foo 1 20
+		foo=0
+
+		if InputVaL >= LowVal and InputVaL <= highVal do
+		(
+			foo = InputVaL
+		)
+		return (foo)
+	),
+	fn constrainFn InputVar nLayers= --------------------------------------------------------------------------------Constrains the value into a Int between 1 and 20, it will take normaly values betwen -1.0 and 1.0
+	(
+		Ivar = InputVar
+		halfL = (nLayers/2) as integer
+		lmtRes = mathClass.limitFn Ivar -1 1
+		intRes = ((lmtRes * halfL)+halfL) as integer
+		finalRes = mathClass.limitFn intRes 1 nLayers
+
+		return finalRes
 	),
 	fn limitFn InputVar minValue maxValue = -------------------------------------------------------------------------Limits the value between the the maxValue and the minValue, Atention, it will not calculate new values, any value over the max or under the min will be changed to the max or the min.
 	(
@@ -76,10 +96,14 @@ struct mathClass
 		
 		return valRes
 	),
-	fn twoDecFn InputVal IntVal= ------------------------------------------------------------------------------------Return a "IntVar" number of decimals float
+	fn sigmoidFn inputVar = -----------------------------------------------------------------------------------------
+	(
+		1/(1+(e^-InputVar))
+	),
+	fn twoDecFn InputVal= ------------------------------------------------------------------------------------Return a "IntVar" number of decimals float
 	(
 		InputVar = InputVaL
-		intVar = IntVal
+		intVar = 2
 		
 		formatedValue = (formattedprint InputVar format:("#."+ (intVar as string) +"f"))
 
@@ -92,107 +116,144 @@ struct mathClass
 		predVar = IpredVal
 		pastW   = IpastW
 
-		newWRes = mathClass.limitFn (pastW + (curVar - predVar)) -1.0 1.0
+		newWRes = mathClass.limitFn (pastW + (predVar-curVar)) -1.0 1.0
 		
 		return newWRes
 	),
-	fn getWeightPosFn IcurrVal ImaxValue = --------------------------------------------------------------------------
+	fn getWeightPosFn IPrimaryValue IsecondaryValue ImaxPrimaryValue ImaxSecondaryValue nLayers= --------------------------------------------------------------------------
 	(
-		curVar = IcurrVal
-		maxVar = ImaxValue
-
-		absRes = mathClass.absFn curVar maxVar
-		posRes = mathClass.constrainFn absRes
+		curVar = IPrimaryValue
+		secVar = IsecondaryValue
 		
-		return posRes
+		maxPCnst = ImaxPrimaryValue
+		maxSCnst = ImaxSecondaryValue
+
+		absPrimRes = mathClass.absFn curVar maxPCnst
+		absSecRes = mathClass.absFn secVar maxSCnst
+
+		posPrimRes = mathClass.constrainFn absPrimRes nLayers
+		posSecRes = mathClass.constrainFn absSecRes nLayers
+		
+		return [posPrimRes,posSecRes]
 	),
-	fn getWeightFn Iarray IcurrVal ImaxValue = ----------------------------------------------------------------------
+	fn getWindWeightPosFn IsecValue IterValue ImaxSecValue ImaxTerValue nLayers= --------------------------------------------------------------------------
 	(
-		curVar   = IcurrVal
-		maxVar   = ImaxValue
-		arrayVar = Iarray
+		secVar = IsecValue
+		terVar = IterValue[2]
 
-		posRes = mathClass.getWeightPosFn curVar maxVar
+		mSCnst = ImaxSecValue
+		mTCnst = ImaxTerValue
+
+		absSecRes = mathClass.absFn secVar mSCnst
+		absTerRes = mathClass.absFn terVar mTCnst
+
+		limTerRes = mathClass.binary2Fn absTerRes -1.0 1.0
 		
-		wVar = arrayVar[posRes]
+		difRes = mathClass.binary2Fn (absSecRes * (abs limTerRes)) -1.0 1.0
+
+		posPRes = mathClass.constrainFn absSecRes nLayers
+		posSRes = mathClass.constrainFn limTerRes nLayers
+		
+		return [posPRes,posSRes]
+	),
+	fn getWeightFn Iarray IweightPos = ----------------------------------------------------------------------
+	(
+		arrayVar = Iarray
+		pos1Var = IweightPos[1]
+		pos2Var = IweightPos[2]
+
+		wVar = arrayVar[pos1Var][pos2Var]
 		
 		return wVar
 	),
-	fn weightUpdtFn Iarray IcurrVal IpredVal IpastVal ImaxValue = ---------------------------------------------------
+	fn weightUpdtFn Iarray IcurrVal IpredVal IpastWeight IweightPos ImaxValue = ---------------------------------------------------
 	(
-		arrVar  = Iarray
-		mVar    = ImaxValue
+		arrVar = Iarray
+		mVar   = ImaxValue
+
 		curVar  = IcurrVal
 		predVar = IpredVal
-		pastVar = IpastVal
+
+		pastWVar = IpastWeight
+		pos1Var = IweightPos[1]
+		pos2Var = IweightPos[2]
 
 		curRes  = mathClass.absFn curVar mVar
 		predRes = mathClass.absFn predVar mVar
-
-		posRes   = mathClass.getWeightPosFn pastVar mVar
-		pastWVar = arrVar[posRes]
 		
 		newWRes = mathClass.calcWeightFn curRes predRes pastWVar
 		
-		arrVar[posRes] = newWRes
+		arrVar[pos1Var][pos2Var] = newWRes
 		
 		return arrVar
 	),
-	fn tltWeightUpdateFn Iarray ItltL ItltF ItltLPred ItltLPast maxTltcnst = ----------------------------------------
+	fn tltWeightUpdateFn Iarray ItltL ItltF ItltLPPred IpastWeight IweightPos maxTltcnst = ----------------------------------------
 	(
 		arrVar      = Iarray
 		tltLVar     = ItltL
 		tltFVar     = ItltF
-		tltLPredVar = ItltLPred
-		tltLPastVar = ItltLPast
+		tltLPredVar = ItltLPPred
+		tiltPastW   = IpastWeight
+		weightPos1  = IweightPos[1]
+		weightPos2  = IweightPos[2]
 
-		maxTCnst = maxTltCnst
+		maxTCnst = maxTltcnst
 
-		tltLA    = mathClass.absFn (tltLVar     - tltFVar) maxT 
-		tltLPrdA = mathClass.absFn (tltLPredVar - tltFVar) maxT 
-		tltLPstR = tltLPastVar - tltFVar
+		tltLA    = mathClass.absFn (tltLVar     - tltFVar) maxTCnst 
+		tltLPrdA = mathClass.absFn (tltLPredVar - tltFVar) maxTCnst 
 		
-		posRes   = mathClass.getWeightPosFn tltLPast maxTCnst
-		pastWVar = arrVar[posRes]
+		newWRes = mathClass.calcWeightFn tltLA tltLPrdA tiltPastW
 
-		newWRes = mathClass.calcWeightFn tltLA tltLPrdA pastWVar
-
-		arrVar[posRes] = newWRes
+		arrVar[weightPos1][weightPos2] = newWRes
 
 		return arrVar
 	),
-	fn wndWeightUpdateFn Iarray IwndFPast IDstS IwndFPred IdstSPred IDstSPast maxWCnst = ----------------------------
+	fn wndWUpdateFn Iarray IDstF IdstS ItltF IwndFPast IDstFPast maxWCnst maxABSD maxTlt IpastWeight IweightPos= ----------------------------
 	(
 		arrVar  = Iarray 
+		wndPVar = IwndFPast
+		dstSVar = IdstS
+		dstFVar = IDstF
+		tltYVar = ItltF[2]
+		dstPVar = IDstFPast
 		
-		dstSVar = IDstS 
-		
-		dstSPredVar = IdstSPred
-		wndFPredVar = IwndFPred 
-		
-		wndFPastVar = IwndFPast 
-		dstSPastVar = IDstSPast 
+		maxW   = maxWCnst
+		maxAbs = maxABSD
+		maxT   = 90
 
-		maxWCnst = maxWCnst
-		
-		dstSPredA = mathClass.absFn (dstSPastVar - dstSPredVar) dstSPastVar
-		dstSAbs   = mathClass.absFn (dstSPastVar - dstSVar) dstSPastVar
-		
-		dstSRes = dstSPredA - dstSAbs
-		
-		pastAbs = mathClass.absFn wndFPastVar maxWCnst
-		
-		currAbs = pastAbs + dstSRes
-		
-		predAbs = mathClass.absFn wndFPredVar maxWCnst
+		pWeight = IpastWeight
 
-		posRes  = mathClass.getWeightPosFn wndFPastVar maxWCnst
+		pos1 = IweightPos[1]
+		pos2 = IweightPos[2]
 
-		pastWVar = arrVar[posRes]
+		wndPAbs = mathClass.absFn wndPVar maxW
+		dstFAbs = mathClass.absFn (dstFVar+dstSVar) maxAbs
+		tltYAbs = mathClass.absFn tltYVar maxT
+		dstPabs = mathClass.absFn (dstPVar) maxAbs
 
-		newWRes = mathClass.calcWeightFn currAbs predAbs pastWVar
+		currRes = (dstPabs - dstFAbs) * abs (1 - abs tltYAbs)
+		predRes = (dstPabs - dstFAbs) 
 
-		arrVar[posRes] = newWRes
+		newWRes = mathClass.calcWeightFn currRes predRes pWeight
+
+		/*
+		twoDec = mathClass.twoDecFn 
+	 	seconds = (getLocalTime())
+		if (seconds[8] >= 50 and seconds[8] < 100) do
+	 	(
+	 		clearListener()
+	 		format "wndPAbs------: %  Max: %\n" (twoDec wndPAbs) (maxABSD)
+	 		format "dstFAbs------: %  Max: %\n" (twoDec dstFAbs) (maxABSD)
+	 		format "tltYAbs------: %  Max: %\n" (twoDec tltYAbs) (maxT)
+	 		format "dstPabs------: %  Max: %\n" (twoDec dstPabs) (maxABSD)
+	 		format "currRes------: %\n" (twoDec currRes)
+	 		format "predRes------: %\n" (twoDec predRes)
+	 		format "pWeight------: %\n" pWeight 		
+	 		format "newWRes------: %\n" newWRes	 		
+	 	)
+		*/
+
+		arrVar[pos1][pos2] = newWRes
 		
 		return arrVar
 	),
@@ -230,98 +291,65 @@ struct mathClass
 	(
 		pastPosVar = IpastVal
 		currPosVar = IcurrVal
-		
-		deltaX = pastPosVar[1] - currPosVar[1]
-		deltaY = pastPosVar[2] - currPosVar[2]
-		deltaZ = pastPosVar[3] - currPosVar[3]
 
-		deltaXZ = sqrt(deltaX^2 + deltaZ^2)
-		angleY  = acos(deltaX / deltaXZ)
+		deltaX = currPosVar[1] - pastPosVar[1]
+		deltaY = currPosVar[2] - pastPosVar[2]
+		deltaZ = currPosVar[3] - pastPosVar[3]
+		
+		deltaXZ    = sqrt(deltaX^2 + deltaZ^2)
+		angleYRes  = acos(deltaX/deltaXZ)
 		
 		if (deltaX > 0) or (deltaZ > 0) do 
 		(
-			if deltaX < 0 do (angleY = 270 - angleY)
-			if deltaZ < 0 do (angleY = angleY - 90)
+			if deltaX < 0 do (angleYRes = angleYRes-180)
+			if deltaZ < 0 do (angleYRes = angleYRes+90)
 		)
-		
-		if (deltaX < 0) and (deltaZ < 0) do (angleY = angleY - 90)
-		if (deltaX > 0) and (deltaZ > 0) do	(angleY = 270 - angleY)
+		if (deltaX < 0) and (deltaZ < 0) do (angleYRes = -angleYRes)
 		
 		deltaFinal = sqrt(deltaXZ^2+deltaY^2)
-		angleX     = acos(deltaXZ/deltaFinal)
+		angleXRes  = acos(deltaXZ/deltaFinal)
 		
-		if deltaXZ > 0 or deltaY > 0 do 
-		(
-			if deltaXZ < 0 do (angleX = angleX-360)
-			if deltaY < 0 do  (angleX = -angleX)
-		)
+		if deltaY > 0 do (angleXRes = -angleXRes)
 
-		return [angleX,angleY,180]
+		return [angleXRes,angleYRes,0]
 	),
 -- Prediction Functions ---------------------------------------------------------------------------------------------
-	fn wndPredFn IDst ISpd IAcl IDstWght ISpdWght IAclWght maxWndCnst maxDstCnst maxSpdCnst maxAclCnst = ------------
+	fn PredFn IprimaryVal IsecondVal IPrimaryWght maxPrimaryCnst maxSecondCnst= -------------------------------------Predicts the Next delta, or the point in space in the next timestep. Takes current delta and currentSpeed.
 	(
-		dstSvar = IDst
-		spdSVar = ISpd
-		aclSVar = IAcl
+		primarVar   = IprimaryVal
+		secondVar   = IsecondVal
+
+		primaryWVar = IPrimaryWght
+
+		maxPCnst = maxPrimaryCnst
+		maxSCnst = maxSecondCnst
+
+		primarAres = mathClass.absFn primarVar maxPCnst
+		secondARes = mathClass.absFn secondVar maxSCnst
+
+		primaryRes = (secondARes+(primarAres * primaryWVar))*maxPCnst
+
+		primaryResLmt = mathClass.limitFn primaryRes -maxPCnst maxPCnst
+
+		return primaryRes
+	),
+	fn dstPredFn ISpd IDstWght ISpdWght maxDstCnst maxSpdCnst= -------------------------------------Predicts the Next delta, or the point in space in the next timestep. Takes current delta and currentSpeed.
+	(
+		spdVar  = ISpd
 
 		dstWVar = IDstWght
-		spdWVar = ISpdWght
-		aclWVar = IAclWght
 
-		maxWConst = maxWndCnst
-		maxDConst = maxDstCnst
-		maxSConst = maxSpdCnst
-		maxAConst = maxAclCnst
-
-		dstAbsRes = mathClass.absFn dstSvar maxDConst
-		spdAbsRes = mathClass.absFn spdSVar maxSConst
-		aclAbsRes = mathClass.absFn aclSVar maxAConst
-
-	
-		dstFinal = (mathClass.limitFn (dstAbsRes + dstWVar) 0 1.0)/4
-		spdFinal = (mathClass.limitFn (spdAbsRes + spdWVar) 0 1.0)/4
-		aclFinal = (mathClass.limitFn (aclAbsRes + aclWVar) 0 1.0)/4
-
-		wndFRes = (dstFinal+spdFinal+aclFinal)*maxWConst
-
-		return wndFRes
-	),
-
-
-	
-
-
-	----------I have to come back to this to fix the distPred because it might be dealing with local distance and im not sure if i want to be local or not.
-
-
-
-	fn dstPredFn ISpd IAcl ISpdWght IAclWght maxDstCnst maxSpdCnst maxAclCnst = -------------------------------------Predicts the Next delta, or the point in space in the next timestep. Takes current delta and currentSpeed.
-	(
-		spdVar = ISpd
-		aclVar = IAcl
-
-		spdWVar = ISpdWght
-		aclWVar = IAclWght
-		
 		maxDCnst = maxDstCnst
 		maxSCnst = maxSpdCnst
-		maxACnst = maxAclCnst
 
 		spdARes = mathClass.absFn spdVar maxSCnst
-		aclARes = mathClass.absFn aclVar maxACnst
 
-		dstRes = spdARes+(aclARes+aclWVar)+spdWVar
+		dstRes = (spdARes+dstWVar)*maxDCnst
 
-		distResLmt = mathClass.limitFn distRes -maxDCnst maxDCnst
+		dstResLmt = mathClass.limitFn dstRes -maxDCnst maxDCnst
 
 		return dstResLmt
 	),
-
-
-
-
-	
 	fn spdPredFn ISpd IAcl ISpdWght IAclWght maxSpdCnst maxAclCnst = ------------------------------------------------Predicts the speed on the next timestep. Takes current aceleration, current speed and MaxSpeed.
 	(
 		spdSVar = ISpd
@@ -361,19 +389,19 @@ struct mathClass
 
 		return aclResLmt
 	),
-	fn posPredFn IpredDist IpredAngles IcurrPos = -------------------------------------------------------------------
+	fn posPredFn ItltL IcurrPos IpredDist  = -------------------------------------------------------------------
 	(
 		posXvar       = IcurrPos[1]
 		posYvar       = IcurrPos[2]
 		posZvar       = IcurrPos[3]
-		knownAngleVar = IpredAngles
+		knownAngleVar = ItltL
 		hipVar        = IpredDist
 
 		deltasVar   = [0,0,0] 
 		finalposRes = [0,0,0]
 
-		deltYRes  = mathClass.angleTriFn hipVar knownAngleVar[1]
-		deltXZRes = mathClass.angleTriFn deltYRes[2] -knownAngleVar[2]
+		deltYRes  = mathClass.angleTriFn hipVar -knownAngleVar[1]
+		deltXZRes = mathClass.angleTriFn deltYRes[2] knownAngleVar[2]
 
 		deltaRes = [deltXZRes[1],deltYRes[1],deltXZRes[2]] 
 		
@@ -386,7 +414,7 @@ struct mathClass
 	fn tltPredFn IpresentPos IfuturePos = ---------------------------------------------------------------------------I will get the angle of the source to the target and use that as prediction.
 	(
 		presentVar = IpresentPos
-		futureVar = IfuturePos
+		futureVar  = IfuturePos
 
 		delVarX = futureVar[1]-presentVar[1]
 		delVarY = futureVar[2]-presentVar[2]
@@ -397,40 +425,26 @@ struct mathClass
 		
 		if (delVarX > 0) or (delVarZ > 0) do 
 		(
-			if delVarX < 0 do 
-			(
-				angYRes = 270-angYRes
-			)
-			if delVarZ < 0 do 
-			(
-				angYRes = angYRes-90
-			)
+			if delVarX < 0 do (angYRes = angYRes-180)
+			if delVarZ < 0 do (angYRes = angYRes+90)
 		)
-		if (delVarX < 0) and (delVarZ < 0) do 
-		(
-			angYRes = angYRes-90 
-		)
-		if (delVarX > 0) and (delVarZ > 0) do 
-		(
-			angYRes = angYRes-90
-		)
+		if (delVarX < 0) and (delVarZ < 0) do (angYRes = -angYRes)
 		
 		hiYRes  = sqrt(hipXZRes^2+delVarY^2)
 		angXRes = acos(hipXZRes/hiYRes)
 		
-		if delVarY < 0 do  
-		(
-			angXRes = angXRes
-		)
+		if delVarY > 0 do (angXRes = -angXRes)
 
-		anglesRes = [angXRes,angYRes,180]
+		anglesRes = [angXRes,angYRes,0]
 
 		return anglesRes
 	),
 -- Wind Calculation Functions ---------------------------------------------------------------------------------------
-	fn wndFinlTltFn ItltF ItltFWght maxTltCnst = --------------------------------------------------------------------
+	fn wndFinlTltFn ItltL ItltF ItltFWght maxTltCnst = --------------------------------------------------------------------
 	(
-		
+		tltLXvar = ItltL[1]
+		tltLYvar = ItltL[2]
+
 		tltFXvar = ItltF[1]
 		tltFYvar = ItltF[2]
 		
@@ -438,6 +452,9 @@ struct mathClass
 		tltWYvar = ItltFWght[2]
 
 		maxTcnst = maxTltCnst
+		
+		tltLAbsXRes = mathClass.absFn tltLXvar maxTcnst
+		tltLAbsYRes = mathClass.absFn tltLYvar maxTcnst
 
 		tltAbsXRes = mathClass.absFn tltFXvar maxTcnst
 		tltAbsYRes = mathClass.absFn tltFYvar maxTcnst
@@ -445,250 +462,96 @@ struct mathClass
 		wndFTltXRes = (tltAbsXRes + tltWXvar) * maxTcnst
 		wndFTltYRes = (tltAbsYRes + tltWYvar) * maxTcnst
 
-		finalTlt = [wndFTltXRes,wndFTltYRes,180]
+		wndFTltXLmt = mathClass.limitFn wndFTltXRes -maxTcnst maxTcnst
+		wndFTltYLmt = mathClass.limitFn wndFTltYRes -maxTcnst maxTcnst
+
+		finalTlt = [wndFTltXLmt,wndFTltYLmt,0]
 
 		return finalTlt
 	),
-	fn wndFinlFn IwndFPred IwindWght maxWndCnst = -------------------------------------------------------------------
+	fn wndFinlFn IdstF IDst ISpd IAcl Itltl ItltF IwndFPast IwndWght IDstWght ISpdWght IAclWght maxAbsCnst maxWndCnst maxDstCnst maxSpdCnst maxAclCnst maxTltCnst = -------------------------------------------------------------------
 	(
-		wndSVar = Iwnd
+		dstFVar = IdstF
+		dstSvar = IDst
+		spdSVar = ISpd
+		aclSVar = IAcl
 
-		wndWVar = IwindWght
+		wndPVar = IwndFPast
+
+		maxTcnst = maxTltCnst
+
+		wndWVar = IwndWght
+		dstWVar = IDstWght
+		spdWVar = ISpdWght
+		aclWVar = IAclWght
 
 		maxWConst = maxWndCnst
+		maxDConst = maxDstCnst
+		maxSConst = maxSpdCnst
+		maxAConst = maxAclCnst
+		maxWConst = maxWndCnst
+		maxABSD   = maxAbsCnst
 
-		wndAbsRes = mathClass.absFn wndSVar maxWConst
-
-		wndFnlLmt = mathClass.limitFn (wndAbsRes + wndWVar) 0 1.0
+		wndAbsRes = (mathClass.absFn wndPVar (maxWConst))
+		dstFAbRes = (mathClass.absFn dstFvar (maxABSD))
+		dstAbsRes = (mathClass.absFn dstSvar (maxDConst))
+		spdAbsRes = (mathClass.absFn spdSVar (maxSConst))
+		aclAbsRes = (mathClass.absFn aclSVar (maxAConst))
 		
-		wndFRes = wndFnlLmt*maxWConst
+		
+		dstAFinal = (mathClass.limitFn ((dstFAbRes)) -1.0 1.0)
+		wndFinal  = (mathClass.limitFn ((wndAbsRes-wndWVar)) -1.0 1.0)
+		dstFinal  = (mathClass.limitFn ((dstAbsRes-dstWVar)) -1.0 1.0)
+		spdFinal  = (mathClass.limitFn ((spdAbsRes-spdWVar)) -1.0 1.0)
+		aclFinal  = (mathClass.limitFn ((aclAbsRes-aclWVar)) -1.0 1.0)
+		
+		dstFTest  = dstAFinal-(wndFinal+dstFinal+spdFinal+aclFinal)	
+		
+		wndFRes = (mathClass.limitFn (dstFTest-wndWVar) 0 1.0 )*(maxWConst)
+		--/*
+		twoDec = mathClass.twoDecFn 
+	 	seconds = (getLocalTime())
+		if (seconds[8] >= 50 and seconds[8] < 100) do
+	 	(
+	 		clearListener()
+	 		format "dstFTest------: %  -------------Weight: % Max: %\n" (twoDec dstFTest) wndWVar  (maxABSD)
+	 		format "wndP----------: %  Abs Value: % Weight: % Max: %\n" (twoDec wndPVar) wndAbsRes wndWVar  (maxWConst)
+	 		format "dstF----------: %  Abs Value: % Weight: % Max: %\n" (twoDec dstFVar) dstFAbRes dstWVar (maxABSD)
+	 		format "dstS----------: %  Abs Value: % Weight: % Max: %\n" (twoDec dstSvar) dstAbsRes dstWVar  (maxDConst)
+	 		format "spdS----------: %  Abs Value: % Weight: % Max: %\n" (twoDec spdSVar) spdAbsRes spdWVar  (maxSConst)
+	 		format "aclS----------: %  Abs Value: % Weight: % Max: %\n" (twoDec aclSVar) aclAbsRes aclWVar  (maxAConst)
+	 		format "wndFRes-------: %\n" (twoDec wndFRes)	 		
+	 	)
+		--*/
+
+		
 
 		return wndFRes
 	),
-	fn windDispFn deltaAbs speedAbs maxWind acelerationAbs = --------------------------------------------------------
+	fn windEstimateFn IdstF IDst ISpd IAcl maxWndCnst maxDstCnst maxSpdCnst maxAclCnst = --------------------------------------------------------
 	(
-		foo1 =  mathClass.binaryFn (abs speedAbs) 0.1 0 0.1 1 -------True only when speed percentage is under 0.1.
-		foo2 =  mathClass.binaryFn (abs acelerationAbs) 0.1 0 0.1 1--True only when aceleration is under 0.1.
-		foo3 =  mathClass.binaryFn (abs deltaAbs) 0.1 1 0.1 0 -------True only when delta percentage is 0.1 or over.
-		foo4 = 	mathClass.binaryFn (foo1 + foo2) 1 0 1 1 ------------True only when both speed and acel are True.
-		foo5 = 	(deltaAbs*foo3*foo4)---------------------------------If all previous values are true, it will return the delta to be multiplied as weight to the wind.
+		dstFVar = IdstF
+		dstSvar = IDst
+		spdSVar = ISpd
+		aclSVar = IAcl
+		
+		maxWConst = maxWndCnst
+		maxDConst = maxDstCnst
+		maxSConst = maxSpdCnst
+		maxAConst = maxAclCnst
 
-		return foo5
+		dstFAbsRes = mathClass.absFn dstFvar maxDConst 
+		dstAbsRes  = mathClass.absFn dstSvar maxDConst
+		spdAbsRes  = mathClass.absFn spdSVar maxSConst
+		aclAbsRes  = mathClass.absFn aclSVar maxAConst
+		
+		dstFFinal = (mathClass.limitFn (dstFAbsRes) 0 1.0)/4 	
+		dstFinal  = (mathClass.limitFn (dstAbsRes) 0 1.0)/4
+		spdFinal  = (mathClass.limitFn (spdAbsRes) 0 1.0)/4
+		aclFinal  = (mathClass.limitFn (aclAbsRes) 0 1.0)/4
+
+		wndFRes = (dstFFinal+dstFinal+spdFinal+aclFinal)*maxWConst
+
+		return wndFRes
 	)
 )
-/*
-	fn testMathClass = 
-	(
-		testMathClass = mathClass()
-		rgen = testMathClass.randomGenFn
-		testWindNow = (rgen 0.0 1000.0)
-		testMaxWind = testWindNow
-
-
-
-		
-		movingObj = (rgen -1000 1000) 
-		staticObj = (rgen -1000 1000)
-
-		result = testMathClass.deltaFn movingObj staticObj
-		
-		format "\n------------------------\n\ndeltaFn movingObj staticObj: % , % , %\n" result movingObj staticObj
-
-
-
-		
-		deltaPast = (rgen -1000 1000) 
-		deltaPresent = (rgen -1000 1000)
-
-		result = testMathClass.spdNowFn deltaPast deltaPresent
-		
-		format "\n------------------------\n\nspdNowFn deltaPast deltaPresent: % , % , %\n" result deltaPast deltaPresent
-
-
-
-		
-		windForce = (rgen 0 testWindNow) 
-		maxWindSpd = testMaxWind
-
-		result = testMathClass.windAbsFn windForce maxWindSpd
-		
-		format "\n------------------------\n\nwindAbsFn windForce maxWindSpd: % , % , %\n" result windForce maxWindSpd
-
-
-
-		
-		maxAcel = (rgen 0 100)
-
-		result = testMathClass.maxAcelFn maxAcel
-		
-		format "\n------------------------\n\nmaxAcelFn maxAcel: % , %\n" result maxAcel
-
-
-
-		
-		spdPast  = (rgen 0 100) 
-		speedNow = (rgen 0 100) 
-
-		result = testMathClass.acelfn spdPast speedNow
-		
-		format "\n------------------------\n\nacelfn spdPast speedNow: % , % , %\n" result spdPast speedNow
-
-
-
-		
-		var1 = (rgen 0 100) 
-		var2 = (rgen 0 100) 
-		var3 = (rgen 0 100)
-
-		result = testMathClass.rectifierFn var1 var2 var3
-		
-		format "\n------------------------\n\nrectifierFn var1 var2 var3: % , % , % , %\n" result var1 var2 var3
-
-
-
-		
-		InputVar = (rgen 0.0 100.0)
-		
-		result = testMathClass.twoDecFn InputVar
-		
-		format "\n------------------------\n\ntwoDecFn InputVar: % , %\n" result InputVar
-
-
-
-		
-		maxVar = (rgen 0 1000) 
-		
-		InputVar = (rgen 0 maxVar) 
-		
-		result = testMathClass.absFn InputVar maxVar
-		
-		format "\n------------------------\n\nabsFn InputVar maxVar: % , % , %\n" result InputVar maxVar
-
-
-
-
-		InputVar = (rgen -1.0 1.0)
-
-		result = testMathClass.sigmFn InputVar
-		
-		format "\n------------------------\n\nsigmFn InputVar: % , %\n" result InputVar
-
-
-
-		varOposite = (rgen -180 180)
-		varAdj = (rgen -180 180)
-
-		result = testMathClass.tiltFn varOposite varAdj
-		
-		format "\n------------------------\n\ntiltFn varOposite varAdj: % , % , %\n" result varOposite varAdj
-
-
-
-		
-		windNow = (rgen 0 testWindNow)
-		maxWindSpd = testMaxWind
-
-		result = testMathClass.windForceFn windNow maxWindSpd
-		
-		format "\n------------------------\n\nwindForceFn windNow maxWindSpd: % , % , %\n" result windNow maxWindSpd
-
-
-
-
-
-		InputVar = (rgen -10.0 10.0)
-		bolVar1 = (rgen -1.0 1.0)
-		bolvar2 = (rgen -1.0 1.0)
-		bolvar3 = (rgen -1.0 1.0)
-		bolvar4 = (rgen -1.0 1.0)
-
-		result = testMathClass.binaryFn InputVar bolVar1 bolvar2 bolvar3 bolvar4
-		
-		format "\n------------------------\n\nbinaryFn InputVar bolVar1 bolvar2 bolvar3 bolvar4: % , % , % , % , % , %\n" result InputVar bolVar1 bolvar2 bolvar3 bolvar4
-
-
-
-		
-		InputVar = (rgen 1 5)
-
-		result = testMathClass.arrayGenFn InputVar
-		
-		format "\n------------------------\n\narrayGenFn InputVar: % , %\n" result InputVar
-
-
-
-
-		InputVar = (rgen -1.0 1.0)
-		
-		result = testMathClass.constrainFn InputVar
-		
-		format "\n------------------------\n\nconstrainFn InputVar: % , %\n" result InputVar
-
-
-
-		
-		InputVar = (rgen -5.0 5.0)
-		maxValue = (rgen 0 2.0)
-		minValue = (rgen -2.0 0)
-
-		result = testMathClass.limitFn InputVar minValue maxValue
-		
-		format "\n------------------------\n\nlimitFn InputVar minValue maxValue : % , % , % , %\n" result InputVar  minValue maxValue
-
-
-
-
-		maxSpeed = (rgen -200 200)
-		acel = (rgen -(maxSpeed/50) (maxSpeed/50))
-		currentSpd = (rgen -maxSpeed maxSpeed)
-		
-		result = testMathClass.speedPredFn acel currentSpd maxSpeed
-		
-		format "\n------------------------\n\nspeedPredFn acel currentSpd maxSpeed: % , % , % , %\n" result acel currentSpd maxSpeed
-
-
-
-
-		acel = (rgen -(maxSpeed/50) (maxSpeed/50))
-		maxAcel = (maxSpeed/50)
-		windNow = (rgen 0 testWindNow)
-		windMax = testMaxWind
-		
-		result = testMathClass.acelPredFn acel windNow windMax maxAcel
-		
-		format "\n------------------------\n\nacelPredFn acel windNow windMax maxAcel: % , % , % , % , %\n" result acel windNow windMax maxAcel
-
-
-
-
-		maxDistance = (rgen -maxSpeed maxSpeed)
-		delta = (rgen -maxDistance maxDistance)
-		
-		result = testMathClass.distPredFn delta currentSpd maxDistance
-		
-		format "\n------------------------\n\ndistPredFn delta currentSpd maxDistance: % , % , % , %\n" result delta currentSpd maxDistance
-
-
-
-		
-		deltaPredOpos = (rgen -maxDistance maxDistance)
-		deltaPredAdj = (rgen -maxDistance maxDistance)
-
-		result = testMathClass.tiltPredFn deltaPredOpos deltaPredAdj
-		
-		format "\n------------------------\n\ntiltPredFn deltaPredOpos deltaPredAdj: % , % , %\n" result deltaPredOpos deltaPredAdj
-
-
-
-
-		deltaAbs = (rgen -1.0 1.0)
-		speedAbs = (rgen -1.0 1.0)
-		maxWind = maxWindSpd
-		acelerationAbs = (rgen -1.0 1.0)
-		
-		result = testMathClass.windDispFn deltaAbs speedAbs maxWind acelerationAbs
-		
-		format "\n------------------------\n\nwindDispFn deltaAbs speedAbs maxWind acelerationAbs: % , % , % , % , %\n" result deltaAbs speedAbs maxWind acelerationAbs
-
-	)
-*/

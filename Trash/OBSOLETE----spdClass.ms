@@ -8,12 +8,6 @@ struct spdClass
 		
 		return true
 	),
-	fn updatePast name= 
-	(
-		name.spdSPast = name.spdS
-		
-		return true
-	),
 	fn importValues name valueClass = 
 	(
 		dstS     = valueClass.dstS

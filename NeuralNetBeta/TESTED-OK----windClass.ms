@@ -2,63 +2,80 @@ struct windClass
 (
 	public
 
-	wndFinalF = 0,
-	wndFinalT = [0,0,0],
-	
-	wndFPast = 0,
-	wndPPred = 0,
-	wndTpast = [0,0,0],
+	wndFEst = 0,
+	wndF    = 0,
+	wndT    = [0,0,0],
 
-	fn updateValue name =
+	fn updateValues name =
 	(
-		maxW = const.maxWindForce
-		maxT = const.maxTilt
+		name.wndT = mathClass.wndFinlTltFn name.tltL name.tltf name.tltLW name.maxT
+		name.wndF = mathClass.wndFinlFn name.dstF name.dstS name.spdS name.aclS name.tltL name.tltF name.wndP name.wndFw name.dstSW name.spdSW name.aclSW name.maxAbs name.maxW name.maxD name.maxS name.maxA name.maxT
 		
-		tltL = name.tltL
-		tltLW = name.tltLW
-
-		wndCPred = name.wndCPred
-		wndFW = name.wndFW
-		
-		name.wndFinalF = mathClass.wndFinlFn wndCPred wndFW maxW
-		name.wndFinalT = mathClass.wndFinlTltFn tltL tltLW maxT
-
 		return true
 	),
-	fn updatePast name = 
+	fn displacement name =
 	(
-		name.wndPPred = name.wndCPred
-		name.wndFPast = name.wndFinalF
-		name.wndTpast = name.wndFinalT
-
-		return true
+		name.wndFEst = mathClass.wndFinlFn name.dstF name.dstS name.spdS name.aclS name.tltL name.tltF name.wndP 0 0 0 0 name.maxAbs name.maxW name.maxD name.maxS name.maxA name.maxT
+		--name.wndFEst = mathClass.windEstimateFn name.dstF name.dstS name.spdS name.aclS name.maxW name.maxD name.maxS name.maxA
+		name.wndF = 0
+		name.wndT = 0
+		
+		return True
 	),
 	fn importValues name valueClass =
 	(
-		name.tltL    = valueClass.tltL
-		name.tltLW   = valueClass.tltLW
-		
-		name.wndFW    = valueClass.wndFW
-		name.wndCPred = valueClass.wndCPred
+		name.dstS = valueClass.dstS
+		name.spdS = valueClass.spdS
+		name.aclS = valueClass.aclS
+		name.dstF = valueClass.dstF
+		name.tltL = valueClass.tltL 
+		name.tltF = valueClass.tltF
+		name.wndP = valueClass.wndFPast
+
+		-- Constant Values --
+		name.maxAbs = valueClass.maxAbs
+		name.maxD = valueClass.maxD
+		name.maxS = valueClass.maxS
+		name.maxA = valueClass.maxA
+		name.maxW = valueClass.maxW
+		name.maxT = valueClass.maxT
+
+		return true
+	),
+	fn importWeights name valueClass =
+	(
+		name.wndFw = valueClass.wndFw
+		name.dstSW = valueClass.dstSW
+		name.spdSW = valueClass.spdSW
+		name.aclSW = valueClass.aclSW
+		name.tltLW = valueClass.tltLW
 
 		return true
 	),
 
 	private
 
-	wndCPred = 0,
-	tltL     = [0,0,0],
-	tltLW    = [0,0,0],
+			-- Constant Values --
+	maxAbs = 0,
+	maxD = 0,
+	maxS = 0,
+	maxA = 0,
+	maxW = 0,
+	maxT = 0,
+
+	dstS = 0,
+	dstF = 0,
+	spdS = 0,
+	aclS = 0,
+	tltL = [0,0,0],
+	tltF = [0,0,0],
+	wndP = 0,
+
+	wndFW = 0,
+	dstSW = 0,
+	spdSW = 0,
+	aclSW = 0,
+	tltLW = [0,0,0],
+
 	const    = constClass()
 )
-
-
-fn testWindClassFn = 
-(
-	const = constClass()
-	mathClass = mathClass()
-	windClassTest = windClass()
-
-	return true
-)
---testWindClassFn()
