@@ -49,25 +49,30 @@ struct objClass
 		name.wndT   = valueClass.wndT
 		name.tltF   = valueClass.tltF
 		name.dstF   = valueClass.dstF
+		name.maxW   = valueClass.maxW
 
 		return true
 	),
 	fn outputWind name =
 	(
-		name.wndObj.pos      = name.souPos
+		name.wndObj.pos = name.souPos
+		--print name.wndF
+		--name.wndObj.dir = [0,0,1]
 		name.wndObj.strength = name.wndF
-		name.wndObj.dir = [0,0,1]
-		if name.dstF < 10000 then
+		--/*
+		if name.dstF < 2000 then
 		(
+			name.wndObj.dir = [0,0,1]
 			name.wndObj.rotation.X_rotation = name.wndT[1]
 			name.wndObj.rotation.Y_rotation = name.wndT[2]
 		)
 		else
 		(
+			name.wndObj.dir = [0,0,1]
 			name.wndObj.rotation.X_rotation = name.tltF[1]
 			name.wndObj.rotation.Y_rotation = name.tltF[2]
 		)
-		
+		--*/
 		return true
 	),
 	
@@ -77,6 +82,7 @@ struct objClass
 	souObj = undefined,
 	tarObj = undefined,
 	wndObj = undefined,
+	maxW = 0,
 	wndF = 0,
 	dstF = 0,
 	tltF = [0,0,0],

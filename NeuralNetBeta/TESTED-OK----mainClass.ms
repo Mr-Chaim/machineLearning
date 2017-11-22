@@ -1,4 +1,5 @@
---maintTestTimer.stop maintTestTimer
+clearListener()
+maintTestTimer.stop maintTestTimer
 /*
 
 
@@ -46,7 +47,7 @@ clockClass()---include "C:\Users\Samir\Documents\GitHub\MachineLearningMax\machi
 	12)-Update tilt values in PosClass.------------------------------------------
 	13)-Import Dist, Spd, acl and Tlt to ValueClass from PosClass.---------------
 	14)-Import Dist, Spd, acl and Tlt to WndClass from ValueClass.---------------
-	15)-Calculate displacement in WndClass.--------------------------------------
+	-- Removed 15)-Calculate displacement in WndClass.--------------------------------------
 	16)-Import wind estimate to ValueClass.--------------------------------------
 	17)-Import Dist,Spd,acl,Tlt and WndEst into weightClass from ValueClass.-----
 	18)-Catch weight Values for each current Value, and its Position.------------
@@ -153,11 +154,11 @@ struct mainClass
 	
 	 	name.lvalCs.importPos name.lvalCs name.lposCs-------13) Import Dist, Spd, acl and Tlt to ValueClass from PosClass.----------------
 
-	 	name.lwndCs.importValues name.lwndCs name.lvalCs----14) Import Dist, Spd, acl and Tlt to WndClass from ValueClass.----------------
+	 	--name.lwndCs.importValues name.lwndCs name.lvalCs--Removed---- 14) Import Dist, Spd, acl and Tlt to WndClass from ValueClass.----------------
 
-	 	name.lwndCs.displacement name.lwndCs----------------15) Calculate displacement in WndClass.---------------------------------------
+	 	--name.lwndCs.displacement name.lwndCs--------------Removed---- 15) Calculate displacement in WndClass.-------------------------
 
-	 	name.lvalCs.importWnd name.lvalCs name.lwndCs-------16) Import wind estimate to ValueClass.---------------------------------------
+	 	--name.lvalCs.importWnd name.lvalCs name.lwndCs-----Removed---- 16) Import wind estimate to ValueClass.-------------------------
 
 	 	name.lweiCs.importValues name.lweiCs name.lvalCs----17) Import Dist,Spd,acl,Tlt and WndEst into weightClass from ValueClass.------
 
@@ -165,7 +166,7 @@ struct mainClass
 
 	 	name.lvalCs.importWeights name.lvalCs name.lweiCs---19) Import weight values and position from Weight class to value class.-------
 
-	 	name.lwndCs.importWeights name.lwndCs name.lvalCs---20) Import weight Values from ValueClass to WndClass.-------------------------
+	 	name.lwndCs.importValues name.lwndCs name.lvalCs----20) Import weight Values from ValueClass to WndClass.-------------------------
 
 	 	name.lwndCs.updateValues name.lwndCs----------------21) Calculate Final wind and Tilt in WndClass.--------------------------------
 
@@ -194,77 +195,109 @@ struct mainClass
 	 	
 
 	 	----------------------------------------------------Test--------------------------------------------------------------------------
-	 	
+		 	
 
 
-	 	name.lvalCs.tltL 
-	 	name.lvalCs.tltF 
-	 	name.lvalCs.tltLPred
-	 	TltTARGET = [(name.lvalCs.tltF[1]),(name.lvalCs.tltF[2])]
-	 	tiltFinal = [(name.lvalCs.wndT[1]),(name.lvalCs.wndT[2])]
-	 	tiltPred  = [name.lvalCs.tltLPred[1],name.lvalCs.tltLPred[2]]
-	 	twoDec = mathClass.twoDecFn 
-	 	seconds = (getLocalTime())
-		/*
-	 	if (seconds[8] >= 50 and seconds[8] < 100) do
-	 	(
-	 		clearListener()
-	 		format "WndForc: %\n" (twoDec name.lvalCs.wndF )
-	 		format "WndPast: %\n" (twoDec name.lvalCs.wndFpast)
-	 		format "WndPred: %\n" (twoDec name.lvalCs.wndFest)
-	 		format "\n"
-	 		format "DstTarg: %\n" (twoDec name.lvalCs.dstF)
-	 		format "DstSing: %\n" (twoDec name.lvalCs.dstS)
-	 		format "DstPast: %\n" (twoDec name.lvalCs.dstSPast)
-	 		format "DstPred: %\n" (twoDec name.valCs.dstSPred)
-	 		format "\n"
-	 		format "SpdSing: %\n" (twoDec name.lvalCs.spdS)
-	 		format "SpdPast: %\n" (twoDec name.lvalCs.spdSPast)
-	 		format "SpdPred: %\n" (twoDec name.valCs.spdSPred)
-	 		format "\n"
-	 		format "AclSing: %\n" (twoDec name.lvalCs.AclS)
-	 		format "AclPast: %\n" (twoDec name.lvalCs.AclSPast)
-	 		format "AclPred: %\n" (twoDec name.valCs.AclSPred)
-	 		format "\n"
-	 		format "tltL---: [%,%]\n" (twoDec (name.lvalCs.tltL[1])) (twoDec (name.lvalCs.tltL[2]))
-	 		format "tltF---: [%,%]\n" (twoDec (name.lvalCs.tltF[1])) (twoDec (name.lvalCs.tltF[2]))
-	 		format "tltP---: [%,%]\n" (twoDec (name.lvalCs.tltLPred[1])) (twoDec (name.lvalCs.tltLPred[2]))
-	 		format "\n"
-	 		format "WndWeig: % --- Position : %\n" (twoDec name.lvalCs.wndFw) name.lvalCs.wndFWpos
-	 		format "DstWeig: % --- Position : %\n" (twoDec name.lvalCs.dstSW) name.lvalCs.dstSWpos
-	 		format "SpdWeig: % --- Position : %\n" (twoDec name.lvalCs.spdSW) name.lvalCs.spdSWpos
-	 		format "AclWeig: % --- Position : %\n" (twoDec name.lvalCs.aclSW) name.lvalCs.aclSWpos
-	 		format "TltWeiX: % --- Position : %\n" (twoDec (name.lvalCs.tltLW[1])) name.lvalCs.tltLWpos[1]
-	 		format "TltWeiY: % --- Position : %\n" (twoDec (name.lvalCs.tltLW[2])) name.lvalCs.tltLWpos[2]
-	 		format "\n"
-	 		format "MaxAbs-: %\n" name.lvalCs.maxAbs
-	 		format "MaxWind: %\n" name.lvalCs.MaxW
-	 		format "MaxDist: %\n" name.lvalCs.maxD
-	 		format "MaxSpdS: %\n" name.lvalCs.maxS
-	 		format "MaxAclS: %\n" name.lvalCs.maxA
-	 		format "MaxTltL: %\n" name.lvalCs.maxt
-	 		
-	 	)
-		*/
-	 	$tltFObjBLU.pos = name.lvalCs.tarPos
-	 	$tltFObjBLU.height = 100
-	 	$tltFObjBLU.dir = [0,0,1]
-		$tltFObjBLU.rotation.X_rotation = name.lvalCs.tltF[1]
-		$tltFObjBLU.rotation.Y_rotation = name.lvalCs.tltF[2]
+		 	name.lvalCs.tltL 
+		 	name.lvalCs.tltF 
+		 	name.lvalCs.tltLPred
+		 	
+		 	TltTARGET = [(name.lvalCs.tltF[1]),(name.lvalCs.tltF[2])]
+		 	tiltFinal = [(name.lvalCs.wndT[1]),(name.lvalCs.wndT[2])]
+		 	tiltPred  = [name.lvalCs.tltLPred[1],name.lvalCs.tltLPred[2]]
+			
+			--/*
+		 		twoDec = mathClass.twoDecFn 
+		 		seconds = (getLocalTime())
+		 		if (seconds[8] >= 50 and seconds[8] < 100) do
+		 		(
+		 			clearListener()
+		 			format "WndForc: %\n" (twoDec name.lvalCs.wndF )
+		 			format "WndPast: %\n" (twoDec name.lvalCs.wndFpast)
+		 			format "\n"
+		 			format "DstTarg: %\n" (twoDec name.lvalCs.dstF)
+		 			format "DstSing: %\n" (twoDec name.lvalCs.dstS)
+		 			format "DstPast: %\n" (twoDec name.lvalCs.dstSPast)
+		 			format "DstPred: %\n" (twoDec name.valCs.dstSPred)
+		 			format "\n"
+		 			format "SpdSing: %\n" (twoDec name.lvalCs.spdS)
+		 			format "SpdPast: %\n" (twoDec name.lvalCs.spdSPast)
+		 			format "SpdPred: %\n" (twoDec name.valCs.spdSPred)
+		 			format "\n"
+		 			format "AclSing: %\n" (twoDec name.lvalCs.AclS)
+		 			format "AclPast: %\n" (twoDec name.lvalCs.AclSPast)
+		 			format "AclPred: %\n" (twoDec name.valCs.AclSPred)
+		 			format "\n"
+		 			format "tltL---: [%,%]\n" (twoDec (name.lvalCs.tltL[1])) (twoDec (name.lvalCs.tltL[2]))
+		 			format "tltF---: [%,%]\n" (twoDec (name.lvalCs.tltF[1])) (twoDec (name.lvalCs.tltF[2]))
+		 			format "tltP---: [%,%]\n" (twoDec (name.lvalCs.tltLPred[1])) (twoDec (name.lvalCs.tltLPred[2]))
+		 			format "\n"
+		 			format "SouPos--:%\n" name.valCs.souPos
+		 			format "TarPos--:%\n" name.valCs.TarPos
+		 			format "\n"
+		 			format "WndFWeig: % --- Position : %\n" (twoDec name.lvalCs.wndFw) name.lvalCs.wndFWpos
+		 			format "DstFWeig: % --- Position : %\n" (twoDec name.lvalCs.dstFW) name.lvalCs.dstFWpos
+		 			format "DstSWeig: % --- Position : %\n" (twoDec name.lvalCs.dstSW) name.lvalCs.dstSWpos
+		 			format "SpdSWeig: % --- Position : %\n" (twoDec name.lvalCs.spdSW) name.lvalCs.spdSWpos
+		 			format "AclSWeig: % --- Position : %\n" (twoDec name.lvalCs.aclSW) name.lvalCs.aclSWpos
+		 			format "TltLWeiX: % --- Position : %\n" (twoDec (name.lvalCs.tltLW[1])) name.lvalCs.tltLWpos[1]
+		 			format "TltLWeiY: % --- Position : %\n" (twoDec (name.lvalCs.tltLW[2])) name.lvalCs.tltLWpos[2]
+		 			format "\n"
+		 			format "MaxWind: %\n" name.lvalCs.MaxW
+		 			format "MaxAbs-: %\n" name.lvalCs.maxAbs
+		 			format "MaxDist: % -- currentMaxD: %\n" name.lvalCs.maxD name.lvalCs.currentMaxD
+		 			format "MaxSpdS: % -- currentMaxS: %\n" name.lvalCs.maxS name.lvalCs.currentMaxS
+		 			format "MaxAclS: % -- currentMaxA: %\n" name.lvalCs.maxA name.lvalCs.currentMaxA
+		 			format "MaxTltL: %\n" name.lvalCs.maxt
+			 		
+		 		)
+			--*/
 
-		$tltLObjGRE.pos = name.lvalCs.tarPos
-		$tltLObjGRE.height = 100
-	 	$tltLObjGRE.dir = [0,0,1]
-		$tltLObjGRE.rotation.X_rotation = name.lvalCs.tltL[1]
-		$tltLObjGRE.rotation.Y_rotation = name.lvalCs.tltL[2]
+			if name.lvalCs.dstF <= name.lvalCs.maxAbs do
+			(
+				name.lvalCs.maxAbs = name.lvalCs.maxAbs/2
+				name.lvalCs.maxD = name.lvalCs.currentMaxD
+				--name.lvalCs.maxS = name.lvalCs.currentMaxS
+				--name.lvalCs.maxA = name.lvalCs.currentMaxA
 
-		$predObjRED.pos = name.lvalCs.tarPos
-		$predObjRED.height = 100
-		$predObjRED.dir = [0,0,1]
-		$predObjRED.rotation.X_rotation = name.lvalCs.tltLPred[1]
-		$predObjRED.rotation.Y_rotation = name.lvalCs.tltLPred[2]
+				name.lvalCs.currentMaxD = 0
+				--name.lvalCs.currentMaxS = 0
+				--name.lvalCs.currentMaxA = 0
 
-		$posPred.pos = name.lvalCs.posFPred
+			)
+			if name.lvalCs.dstS > name.lvalCs.currentMaxD do
+			(
+				name.lvalCs.currentMaxD = name.lvalCs.dstS
+			)
+			if name.lvalCs.spdS > name.lvalCs.currentMaxS do
+			(
+				name.lvalCs.currentMaxS = name.lvalCs.spdS
+			)
+			if name.lvalCs.AclS > name.lvalCs.currentMaxA do
+			(
+				name.lvalCs.currentMaxA = name.lvalCs.AclS
+			)
+		 	
+		 	$tltFObjBLU.pos = name.lvalCs.souPos
+		 	$tltFObjBLU.height = name.lvalCs.dstF
+		 	$tltFObjBLU.dir = [0,0,1]
+			$tltFObjBLU.rotation.X_rotation = name.lvalCs.tltF[1]
+			$tltFObjBLU.rotation.Y_rotation = name.lvalCs.tltF[2]
+
+			$tltLObjGRE.pos = name.lvalCs.souPos
+			$tltLObjGRE.height = 100
+		 	$tltLObjGRE.dir = [0,0,1]
+			$tltLObjGRE.rotation.X_rotation = name.lvalCs.tltL[1]
+			$tltLObjGRE.rotation.Y_rotation = name.lvalCs.tltL[2]
+
+			$predObjRED.pos = name.lvalCs.souPos
+			$predObjRED.height = 100
+			$predObjRED.dir = [0,0,1]
+			$predObjRED.rotation.X_rotation = name.lvalCs.tltLPred[1]
+			$predObjRED.rotation.Y_rotation = name.lvalCs.tltLPred[2]
+
+			$posPred.pos = name.lvalCs.posFPred
+			
 		----------------------------------------------------End of test-------------------------------------------------------------------
 	 	return true
 	),
@@ -289,5 +322,28 @@ fn mainTest = (testClass.updateValues testClass)
 
 maintTestTimer = clockClass()
 maintTestTimer.create maintTestTimer mainTest
---maintTestTimer.start  maintTestTimer
+maintTestTimer.start  maintTestTimer
 --maintTestTimer.stop   maintTestTimer
+
+/*
+
+$windObj.dir = [0,0,1]
+testClass.valCs.currentMaxD =0
+testClass.valCs.currentMaxS =0
+testClass.valCs.currentMaxA =0
+
+testClass.valCs.MaxW   = 10
+testClass.valCs.MaxAbs = 10
+testClass.valCs.maxD   = 10
+testClass.valCs.MaxS   = 2
+testClass.valCs.MaxA   = 10
+testClass.valCs.MaxT   = 35
+
+testClass.init testClass $sourceBox $targetBox $windObj
+
+animationRange = interval 0 100
+animationRange = interval 0 500
+animationRange = interval 0 1000
+animationRange = interval 0 5000
+
+*/

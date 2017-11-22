@@ -3,7 +3,7 @@ struct clockClass
 	fn create name func=
 	(	
 		name.theTimer = dotNetObject "System.Windows.Forms.Timer"
-		name.theTimer.interval = 1
+		name.theTimer.interval = 10
 		dotnet.addEventHandler name.theTimer "tick" func
 	),
 	fn start name=

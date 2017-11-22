@@ -4,7 +4,32 @@ Machine Learning Algoritm with NN inside max.
 Demonstration of a neural network that will identify an location on a 3d space and learn to move an object to that location 
 using one emiter which will change direction, compensating for tilt, inertia and gravity.
 
+11/22/2017---------------------------------------------------------------------------------------------------------------------------
 
+Part - 1
+
+Fixing some of the previous stated issues and added new some new modules. Code still contains testing modules which will be removed after testing.
+
+What is new:
+    
+        Issues Fixed:-------------------------------------------------------------------------------------------------------------
+
+        Emiter sending object flying away when above the target.
+        Emiter using maximum force.
+        Issue of rogue weights being miscalculated. 
+
+        MathLibrary Class:--------------------------------------------------------------------------------------------------------
+
+        Weight calculation has been adjusted. - Note, it is not perfect yet. 
+
+        Wind force calculation adjusted. - Working well enought, but still facing the problem of turning off 
+        when getting close to target.
+
+        Prediction Class:---------------------------------------------------------------------------------------------------------
+
+        Changes on the acl and speed pred secondary inputs in order to fix the predictions.
+
+...
 
 
 11/18/2017---------------------------------------------------------------------------------------------------------------------------
