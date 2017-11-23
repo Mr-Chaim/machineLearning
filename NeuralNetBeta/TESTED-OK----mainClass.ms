@@ -255,14 +255,14 @@ struct mainClass
 
 			if name.lvalCs.dstF <= name.lvalCs.maxAbs do
 			(
-				name.lvalCs.maxAbs = name.lvalCs.maxAbs/2
-				name.lvalCs.maxD = name.lvalCs.currentMaxD
+				--name.lvalCs.maxAbs = name.lvalCs.maxAbs/2
+				--name.lvalCs.maxD = name.lvalCs.currentMaxD
 				--name.lvalCs.maxS = name.lvalCs.currentMaxS
 				--name.lvalCs.maxA = name.lvalCs.currentMaxA
 
 				name.lvalCs.currentMaxD = 0
-				--name.lvalCs.currentMaxS = 0
-				--name.lvalCs.currentMaxA = 0
+				name.lvalCs.currentMaxS = 0
+				name.lvalCs.currentMaxA = 0
 
 			)
 			if name.lvalCs.dstS > name.lvalCs.currentMaxD do
@@ -326,18 +326,18 @@ maintTestTimer.start  maintTestTimer
 --maintTestTimer.stop   maintTestTimer
 
 /*
-
+$windObj.strength = 500
 $windObj.dir = [0,0,1]
 testClass.valCs.currentMaxD =0
 testClass.valCs.currentMaxS =0
 testClass.valCs.currentMaxA =0
 
-testClass.valCs.MaxW   = 10
-testClass.valCs.MaxAbs = 10
+testClass.valCs.MaxW   = 20
+testClass.valCs.MaxAbs = 50
 testClass.valCs.maxD   = 10
 testClass.valCs.MaxS   = 2
 testClass.valCs.MaxA   = 10
-testClass.valCs.MaxT   = 35
+testClass.valCs.MaxT   = 360
 
 testClass.init testClass $sourceBox $targetBox $windObj
 

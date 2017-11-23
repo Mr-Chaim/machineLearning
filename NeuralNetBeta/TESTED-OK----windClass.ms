@@ -58,8 +58,8 @@ struct windClass
 				nWindRes = mathClass.wndFinlFn wFp wFW layersArr mW
 				if dFV >= mAb and dSV <= 0.05 and sSV <= 0.05 and aSV >= 0.05 do
 				(
-					nWindRes = mW *5 
-					print "true"
+					nWindRes = mW *5
+					print "Bump!"
 				)
 		
 				name.wndF = nWindRes

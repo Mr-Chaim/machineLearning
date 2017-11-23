@@ -37,17 +37,17 @@ struct weightClass
 
 		fn init name =-------------------------------------Initiate the Weights.
 		(
-			name.WndFWarr = mathClass.arrayGenFn 30
-			name.dstFWarr = mathClass.arrayGenFn 30
-			name.dstSWarr = mathClass.arrayGenFn 30
-			name.spdSWarr = mathClass.arrayGenFn 30
-			name.aclSWarr = mathClass.arrayGenFn 30
+			name.WndFWarr = mathClass.arrayGenFn 10
+			name.dstFWarr = mathClass.arrayGenFn 10
+			name.dstSWarr = mathClass.arrayGenFn 10
+			name.spdSWarr = mathClass.arrayGenFn 10
+			name.aclSWarr = mathClass.arrayGenFn 10
 			
 			for a=1 to 3 do
 			(
 				--name.wndTWarr[a] = mathClass.arrayGenFn 200 --Should be 2 arrays with 20 different numbers each	
 				--name.tltFWarr[a] = mathClass.arrayGenFn 200 --Should be 2 arrays with 20 different numbers each	
-				name.tltLWarr[a] = mathClass.arrayGenFn 30 --Should be 2 arrays with 20 different numbers each	
+				name.tltLWarr[a] = mathClass.arrayGenFn 10 --Should be 2 arrays with 20 different numbers each	
 			)	
 			return true
 		),
@@ -70,8 +70,8 @@ struct weightClass
 			name.wndFWpos = mathClass.getWndFWeightPosFn name.dstF name.dstS name.tltF   name.maxAbs name.maxD   name.WndFWarr.count
 			name.dstFWpos = mathClass.getDstFWeightPosFn name.dstF name.tltF name.maxAbs name.maxT   name.dstFWarr.count
 			name.dstSWpos = mathClass.getWeightPosFn     name.dstS name.dstF name.maxD   name.maxAbs name.dstSWarr.count
-			name.spdSWpos = mathClass.getWeightPosFn     name.spdS name.dstS name.maxS   name.maxD name.spdSWarr.count
-			name.aclSWpos = mathClass.getWeightPosFn     name.aclS name.spdS name.maxA   name.maxS name.aclSWarr.count
+			name.spdSWpos = mathClass.getWeightPosFn     name.spdS name.dstF name.maxS   name.maxAbs name.spdSWarr.count
+			name.aclSWpos = mathClass.getWeightPosFn     name.aclS name.dstF name.maxA   name.maxAbs name.aclSWarr.count
 			
 			name.wndFCurW = mathClass.getWeightFn name.WndFWarr name.wndFWpos
 			name.dstFCurW = mathClass.getWeightFn name.dstFWarr name.dstFWpos

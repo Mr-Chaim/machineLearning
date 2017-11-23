@@ -15,7 +15,7 @@ struct constClass
 	fn init name =
 	(
 		name.maxWindForce = 10.0
-		name.maxAbs       = 6.0
+		name.maxAbs       = 25.0
 		name.maxDistance  = 21.0
 		name.maxSpeed     = 5.0
 		name.maxAcel      = 20.0
