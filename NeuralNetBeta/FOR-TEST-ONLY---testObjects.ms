@@ -1,4 +1,8 @@
+/*
 
+	This code will create the Objects inside 3ds max and assign them the names to be used on the main Class. 
+
+*/
 struct CreateObj
 (
 	sourcebox = undefined,
