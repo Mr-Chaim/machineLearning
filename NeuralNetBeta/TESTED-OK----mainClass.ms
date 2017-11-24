@@ -206,7 +206,7 @@ struct mainClass
 		 	tiltFinal = [(name.lvalCs.wndT[1]),(name.lvalCs.wndT[2])]
 		 	tiltPred  = [name.lvalCs.tltLPred[1],name.lvalCs.tltLPred[2]]
 			
-			--/*
+			/*
 		 		twoDec = mathClass.twoDecFn 
 		 		seconds = (getLocalTime())
 		 		if (seconds[8] >= 5 and seconds[8] < 100) do
@@ -258,7 +258,7 @@ struct mainClass
 		 			format "MaxTltL: %\n" name.lvalCs.maxt
 			 		
 		 		)
-			--*/
+			*/
 
 			if name.lvalCs.dstF <= name.lvalCs.maxAbs do
 			(
@@ -355,5 +355,5 @@ animationRange = interval 0 1000
 animationRange = interval 0 5000
 
 testClass.init testClass $sourceBox $targetBox $windObj
-testClass.weiCs.dstFWarr[16][19]
+testClass.weiCs.dstFWarr.count
 */

@@ -51,7 +51,7 @@ struct weightClass
 			name.spdSWarr = mathClass.arrayGenFn 20 --(name.maxAbs as integer)
 			name.aclSWarr = mathClass.arrayGenFn 20 --(name.maxAbs as integer)
 			
-			for a=1 to 3 do
+			for a=1 to 2 do
 			(	
 				name.tltLWarr[a] = mathClass.arrayGenFn 360 --(name.maxT as integer)	
 				name.dstTWarr[a] = mathClass.arrayGenFn 360 --(name.maxT as integer)
@@ -72,7 +72,7 @@ struct weightClass
 			name.spdSWarr = mathClass.weightUpdtFn 	name.spdSWarr name.spdS     name.tltF[2]   name.spdSPPred   name.spdSPWeight name.spdSPWpos   name.maxS     name.maxT
 			name.aclSWarr = mathClass.weightUpdtFn 	name.aclSWarr name.aclS     name.tltF[2]   name.aclSPPred   name.aclSPWeight name.aclSPWpos   name.maxA     name.maxT
 			
-			for a=1 to 3 do 
+			for a=1 to 2 do 
 			(
 				-----------------------------------------------1----------------2------------3------------4-----------------5-------------------6-----------------7-----------8--------
 				--Weight Array     Update Function             Curr array       Primary Val  Second Val   Prediction Value  Past Weight         Past Weight pos   Max Val 1   Max Val 2
@@ -104,7 +104,7 @@ struct weightClass
 			name.aclSCurW = mathClass.getWeightFn name.aclSWarr name.aclSWpos
 
 			
-			for a=1 to 3 do 
+			for a=1 to 2 do 
 			(
 				--------------------------------------------1------------2------------3-----------4---------5---------------------
 				--Current Pos      Method Function          Primary Val  Second Val   Max Prim    Max Sec   Number of Nodes
@@ -112,7 +112,7 @@ struct weightClass
 				name.dstTWpos[a] = mathClass.getWeightPosFn name.dstF    name.tltF[a] name.maxAbs name.maxT name.dstTWarr[a].count
 				name.spdTWpos[a] = mathClass.getWeightPosFn name.spdS    name.tltF[a] name.maxS   name.maxT name.spdTWarr[a].count
 			)
-			for a=1 to 3 do 
+			for a=1 to 2 do 
 			(
 				-----------------------------------------1----------------2-------
 				--Current Weight   Method Function       Curr Array       Curr Position
