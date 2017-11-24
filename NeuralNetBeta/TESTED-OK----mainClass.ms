@@ -1,5 +1,5 @@
 clearListener()
-maintTestTimer.stop maintTestTimer
+--maintTestTimer.stop maintTestTimer
 /*
 
 
@@ -209,45 +209,52 @@ struct mainClass
 			--/*
 		 		twoDec = mathClass.twoDecFn 
 		 		seconds = (getLocalTime())
-		 		if (seconds[8] >= 50 and seconds[8] < 100) do
+		 		if (seconds[8] >= 5 and seconds[8] < 100) do
 		 		(
 		 			clearListener()
-		 			format "WndForc: %\n" (twoDec name.lvalCs.wndF )
-		 			format "WndPast: %\n" (twoDec name.lvalCs.wndFpast)
+		 			format "WndForc: %\n" (twoDec (mathClass.absFn name.lvalCs.wndF     name.lvalCs.MaxW))
+		 			format "WndPast: %\n" (twoDec (mathClass.absFn name.lvalCs.wndFpast name.lvalCs.MaxW))
 		 			format "\n"
-		 			format "DstTarg: %\n" (twoDec name.lvalCs.dstF)
-		 			format "DstSing: %\n" (twoDec name.lvalCs.dstS)
-		 			format "DstPast: %\n" (twoDec name.lvalCs.dstSPast)
-		 			format "DstPred: %\n" (twoDec name.valCs.dstSPred)
+		 			format "DstTarg: %\n" (twoDec (mathClass.absFn name.lvalCs.dstF     name.lvalCs.maxAbs))
+		 			format "DstSing: %\n" (twoDec (mathClass.absFn name.lvalCs.dstS     name.lvalCs.maxD))
+		 			format "DstPast: %\n" (twoDec (mathClass.absFn name.lvalCs.dstSPast name.lvalCs.maxD))
+		 			format "DstPred: %\n" (twoDec (mathClass.absFn name.lvalCs.dstSPred name.lvalCs.maxD))
 		 			format "\n"
-		 			format "SpdSing: %\n" (twoDec name.lvalCs.spdS)
-		 			format "SpdPast: %\n" (twoDec name.lvalCs.spdSPast)
-		 			format "SpdPred: %\n" (twoDec name.valCs.spdSPred)
+		 			format "SpdSing: %\n" (twoDec (mathClass.absFn name.lvalCs.spdS     name.lvalCs.maxS))
+		 			format "SpdPast: %\n" (twoDec (mathClass.absFn name.lvalCs.spdSPast name.lvalCs.maxS))
+		 			format "SpdPred: %\n" (twoDec (mathClass.absFn name.lvalCs.spdSPred name.lvalCs.maxS))
 		 			format "\n"
-		 			format "AclSing: %\n" (twoDec name.lvalCs.AclS)
-		 			format "AclPast: %\n" (twoDec name.lvalCs.AclSPast)
-		 			format "AclPred: %\n" (twoDec name.valCs.AclSPred)
+		 			format "AclSing: %\n" (twoDec (mathClass.absFn name.lvalCs.AclS     name.lvalCs.maxA))
+		 			format "AclPast: %\n" (twoDec (mathClass.absFn name.lvalCs.AclSPast name.lvalCs.maxA))
+		 			format "AclPred: %\n" (twoDec (mathClass.absFn name.lvalCs.AclSPred name.lvalCs.maxA))
 		 			format "\n"
-		 			format "tltL---: [%,%]\n" (twoDec (name.lvalCs.tltL[1])) (twoDec (name.lvalCs.tltL[2]))
-		 			format "tltF---: [%,%]\n" (twoDec (name.lvalCs.tltF[1])) (twoDec (name.lvalCs.tltF[2]))
-		 			format "tltP---: [%,%]\n" (twoDec (name.lvalCs.tltLPred[1])) (twoDec (name.lvalCs.tltLPred[2]))
+		 			format "tltL---: [%,%]\n" (twoDec (name.lvalCs.tltL[1])    ) (twoDec (name.lvalCs.tltL[2])    )
+		 			format "tltF---: [%,%]\n" (twoDec (name.lvalCs.tltF[1])    ) (twoDec (name.lvalCs.tltF[2])    )
+		 			format "WndT---: [%,%]\n" (twoDec (name.lvalCs.wndT[1])) (twoDec (name.lvalCs.wndT[2]))
 		 			format "\n"
 		 			format "SouPos--:%\n" name.valCs.souPos
 		 			format "TarPos--:%\n" name.valCs.TarPos
 		 			format "\n"
-		 			format "WndFWeig: % --- Position : %\n" (twoDec name.lvalCs.wndFw) name.lvalCs.wndFWpos
-		 			format "DstFWeig: % --- Position : %\n" (twoDec name.lvalCs.dstFW) name.lvalCs.dstFWpos
-		 			format "DstSWeig: % --- Position : %\n" (twoDec name.lvalCs.dstSW) name.lvalCs.dstSWpos
-		 			format "SpdSWeig: % --- Position : %\n" (twoDec name.lvalCs.spdSW) name.lvalCs.spdSWpos
-		 			format "AclSWeig: % --- Position : %\n" (twoDec name.lvalCs.aclSW) name.lvalCs.aclSWpos
-		 			format "TltLWeiX: % --- Position : %\n" (twoDec (name.lvalCs.tltLW[1])) name.lvalCs.tltLWpos[1]
-		 			format "TltLWeiY: % --- Position : %\n" (twoDec (name.lvalCs.tltLW[2])) name.lvalCs.tltLWpos[2]
+		 			format "WndFWeig: % --- Position : %\n" (name.lvalCs.wndFw) name.lvalCs.wndFWpos
+		 			format "DstFWeig: % --- Position : %\n" (name.lvalCs.dstFW) name.lvalCs.dstFWpos
+		 			format "DstSWeig: % --- Position : %\n" (name.lvalCs.dstSW) name.lvalCs.dstSWpos
+		 			format "SpdSWeig: % --- Position : %\n" (name.lvalCs.spdSW) name.lvalCs.spdSWpos
+		 			format "AclSWeig: % --- Position : %\n" (name.lvalCs.aclSW) name.lvalCs.aclSWpos
+		 			format "\n"
+		 			format "dstTWeiX: % --- Position : %\n" ((name.lvalCs.dstTW[1])) name.lvalCs.dstTWpos[1]
+					format "spdTWeiX: % --- Position : %\n" ((name.lvalCs.spdTW[1])) name.lvalCs.spdTWpos[1]
+		 			format "TltLWeiX: % --- Position : %\n" ((name.lvalCs.tltLW[1])) name.lvalCs.tltLWpos[1]
+		 			format "\n"
+		 			format "dstTWeiY: % --- Position : %\n" ((name.lvalCs.dstTW[2])) name.lvalCs.dstTWpos[2]
+					format "spdTWeiY: % --- Position : %\n" ((name.lvalCs.spdTW[2])) name.lvalCs.spdTWpos[2]
+		 			format "TltLWeiY: % --- Position : %\n" ((name.lvalCs.tltLW[2])) name.lvalCs.tltLWpos[2]
 		 			format "\n"
 		 			format "MaxWind: %\n" name.lvalCs.MaxW
 		 			format "MaxAbs-: %\n" name.lvalCs.maxAbs
 		 			format "MaxDist: % -- currentMaxD: %\n" name.lvalCs.maxD name.lvalCs.currentMaxD
 		 			format "MaxSpdS: % -- currentMaxS: %\n" name.lvalCs.maxS name.lvalCs.currentMaxS
 		 			format "MaxAclS: % -- currentMaxA: %\n" name.lvalCs.maxA name.lvalCs.currentMaxA
+		 			format "MaxWt  : %\n" name.lvalCs.maxWT
 		 			format "MaxTltL: %\n" name.lvalCs.maxt
 			 		
 		 		)
@@ -260,9 +267,9 @@ struct mainClass
 				--name.lvalCs.maxS = name.lvalCs.currentMaxS
 				--name.lvalCs.maxA = name.lvalCs.currentMaxA
 
-				name.lvalCs.currentMaxD = 0
-				name.lvalCs.currentMaxS = 0
-				name.lvalCs.currentMaxA = 0
+				--name.lvalCs.currentMaxD = 0
+				--name.lvalCs.currentMaxS = 0
+				--name.lvalCs.currentMaxA = 0
 
 			)
 			if name.lvalCs.dstS > name.lvalCs.currentMaxD do
@@ -277,12 +284,12 @@ struct mainClass
 			(
 				name.lvalCs.currentMaxA = name.lvalCs.AclS
 			)
-		 	
 		 	$tltFObjBLU.pos = name.lvalCs.souPos
 		 	$tltFObjBLU.height = name.lvalCs.dstF
 		 	$tltFObjBLU.dir = [0,0,1]
 			$tltFObjBLU.rotation.X_rotation = name.lvalCs.tltF[1]
 			$tltFObjBLU.rotation.Y_rotation = name.lvalCs.tltF[2]
+		 	/*
 
 			$tltLObjGRE.pos = name.lvalCs.souPos
 			$tltLObjGRE.height = 100
@@ -297,7 +304,7 @@ struct mainClass
 			$predObjRED.rotation.Y_rotation = name.lvalCs.tltLPred[2]
 
 			$posPred.pos = name.lvalCs.posFPred
-			
+			*/
 		----------------------------------------------------End of test-------------------------------------------------------------------
 	 	return true
 	),
@@ -322,28 +329,31 @@ fn mainTest = (testClass.updateValues testClass)
 
 maintTestTimer = clockClass()
 maintTestTimer.create maintTestTimer mainTest
-maintTestTimer.start  maintTestTimer
---maintTestTimer.stop   maintTestTimer
+
 
 /*
-$windObj.strength = 500
-$windObj.dir = [0,0,1]
+maintTestTimer.start  maintTestTimer
+maintTestTimer.stop   maintTestTimer
+$windObj.strength = 10
+$wjuindObj.dir = [0,0,1]
 testClass.valCs.currentMaxD =0
 testClass.valCs.currentMaxS =0
 testClass.valCs.currentMaxA =0
 
-testClass.valCs.MaxW   = 20
-testClass.valCs.MaxAbs = 50
-testClass.valCs.maxD   = 10
-testClass.valCs.MaxS   = 2
+testClass.valCs.MaxW   = 15
+testClass.valCs.MaxAbs = 200
+testClass.valCs.maxD   = 200
+testClass.valCs.MaxS   = 5
 testClass.valCs.MaxA   = 10
-testClass.valCs.MaxT   = 360
+testClass.valCs.MaxT   = 90
+testClass.valCs.maxWt  = 90
 
-testClass.init testClass $sourceBox $targetBox $windObj
 
 animationRange = interval 0 100
 animationRange = interval 0 500
 animationRange = interval 0 1000
 animationRange = interval 0 5000
 
+testClass.init testClass $sourceBox $targetBox $windObj
+testClass.weiCs.dstFWarr[16][19]
 */

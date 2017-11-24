@@ -30,19 +30,19 @@ struct posClass
 	fn updateDst name = 
 	(
 		name.dstF = mathClass.dstFfn name.souPos name.tarPos
-		name.dstS = mathClass.dstFfn name.souPos name.souPosPast
+		name.dstS = name.dstFPast - name.dstF 
 		--print name.souPosPast
 		return true
 	),
 	fn updateSpd name = 
 	(
-		name.spdS = mathClass.spdFn name.dstSPast name.dstS
+		name.spdS = abs name.dstSPast - abs name.dstS
 		
 		return true
 	),
 	fn updateAcl name =
 	(
-		name.aclS = mathClass.acelFn name.spdSPast name.spdS
+		name.aclS = abs name.spdSPast - abs name.spdS
 		
 		return true
 	),

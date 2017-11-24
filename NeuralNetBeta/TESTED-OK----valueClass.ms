@@ -10,6 +10,7 @@ struct valueClass
 		maxS   = 0,
 		maxA   = 0,
 		maxT   = 0,
+		maxWT  = 0,
 		currentMaxD  = 0,
 		CurrentMaxS  = 0,
 		CurrentMaxA  = 0,
@@ -47,6 +48,12 @@ struct valueClass
 	
 		dstFWpos    = [1,1],
 		dstFPWpos   = [1,1],
+		
+		dstTW       = [0,0,0],
+		dstTPWeight = [0,0,0],
+
+		dstTWpos    = #([1,1],[1,1],[1,1]),
+		dstTPWPos   = #([1,1],[1,1],[1,1]),
 
 	---Local Distance Values------------------
 
@@ -73,8 +80,14 @@ struct valueClass
 		spdSW       = 0,
 		spdSPWeight = 0,
 	
-		spdSWpos  = [1,1],
-		spdSPWPos = [1,1],
+		spdSWpos    = [1,1],
+		spdSPWPos   = [1,1],
+
+		spdTW       = [0,0,0],
+		spdTPWeight = [0,0,0],
+		
+		spdTWpos    = #([1,1],[1,1],[1,1]),
+		spdTPWPos   = #([1,1],[1,1],[1,1]),
 	
 	---Aceleration Values---------------
 
@@ -89,7 +102,7 @@ struct valueClass
 	
 		aclSWpos  = [1,1],
 		aclSPWPos = [1,1],
-	
+
 	---Absolute Tilt Values----------------------
 	
 		tltF        = [0,0,0],
@@ -133,6 +146,8 @@ struct valueClass
 			name.maxS   = constClass.maxSpeed
 			name.maxA   = constClass.maxacel
 			name.maxT   = constClass.maxTilt
+			name.maxWT  = constClass.maxWndT
+
 			name.currentMaxD = constClass.currentMaxD
 			name.CurrentMaxS = constClass.CurrentMaxS
 			name.CurrentMaxA = constClass.CurrentMaxA
@@ -152,6 +167,7 @@ struct valueClass
 			name.dstS = posClass.dstS
 			name.spdS = posClass.spdS
 			name.aclS = posClass.aclS
+
 			name.tltF = posClass.tltF
 			name.tltL = posClass.tltL
 
@@ -166,32 +182,29 @@ struct valueClass
 		),
 		fn importWeights name weightClass =
 		(
+			-- Weight Values 
+			
 			name.wndFW = weightClass.wndFCurW
 			name.dstFW = weightClass.dstFCurW
 			name.dstSW = weightClass.dstSCurW
 			name.spdSW = weightClass.spdSCurW
 			name.aclSW = weightClass.aclSCurW
-			name.tltLW = weightClass.tltLCurW
 
+			name.tltLW = weightClass.tltLCurW
+			name.dstTW = weightClass.dstTCurW
+			name.spdTW = weightClass.spdTCurW
+
+			-- Weight Positions
+			
 			name.wndFWpos = weightClass.wndFWpos
 			name.dstFWpos = weightClass.dstFWpos
 			name.dstSWpos = weightClass.dstSWpos
 			name.spdSWpos = weightClass.spdSWpos
 			name.aclSWpos = weightClass.aclSWpos
-			name.tltLWpos = weightClass.tltLWpos
 
-			/*
-			seconds = (getLocalTime())
-			if (seconds[8] >= 50 and seconds[8] < 100) do
-		 	(
-		 		clearListener()
-				format "dstFW: %  dstFCurW: %  dstFWpos: %  \n" name.dstFW weightClass.dstFCurW weightClass.dstFWpos
-				format "dstSW: %  dstSCurW: %  dstSWpos: %  \n" name.dstSW weightClass.dstSCurW weightClass.dstSWpos
-				format "spdSW: %  spdSCurW: %  spdSWpos: %  \n" name.spdSW weightClass.spdSCurW weightClass.spdSWpos
-				format "aclSW: %  aclSCurW: %  aclSWpos: %  \n" name.aclSW weightClass.aclSCurW weightClass.aclSWpos
-				format "tltLW: %  tltLCurW: %  tltLWpos: %  \n" name.tltLW weightClass.tltLCurW weightClass.tltLWpos
-			)
-			*/
+			name.tltLWpos = weightClass.tltLWpos
+			name.dstTWpos = weightClass.dstTWpos
+			name.spdTWpos = weightClass.spdTWpos
 			
 			return true
 		),
@@ -224,7 +237,8 @@ struct valueClass
 				name.dstFPast = name.dstF
 				name.dstSPast = name.dstS     
 				name.spdSPast = name.spdS     
-				name.aclSPast = name.aclS     
+				name.aclSPast = name.aclS 
+
 				name.tltFPast = name.tltF
 				name.tltLPast = name.tltL
 			
@@ -236,7 +250,10 @@ struct valueClass
 				name.dstSPWeight = name.dstSW 
 				name.spdSPWeight = name.spdSW
 				name.aclSPWeight = name.aclSW
+				
 				name.tltLPWeight = name.tltLW
+				name.dstTPWeight = name.dstTW
+				name.spdTPWeight = name.spdTW
 				
 			-- Weight Position --
 				
@@ -246,7 +263,10 @@ struct valueClass
 				name.dstSPWPos = name.dstSWPos
 				name.spdSPWPos = name.spdSWPos
 				name.aclSPWPos = name.aclSWPos
+
 				name.tltLPWPos = name.tltLWPos
+				name.dstTPWpos = name.dstTWpos
+				name.spdTPWpos = name.spdTWpos
 
 			-- Object Position --
 			

@@ -55,7 +55,7 @@ struct objClass
 	),
 	fn outputWind name =
 	(
-		name.wndObj.pos = name.souPos
+		name.wndObj.pos = name.tarPos
 		--print name.wndF
 		--name.wndObj.dir = [0,0,1]
 		name.wndObj.strength = name.wndF
@@ -63,8 +63,8 @@ struct objClass
 		if name.dstF < 2000 then
 		(
 			name.wndObj.dir = [0,0,1]
-			name.wndObj.rotation.X_rotation = name.wndT[1]
-			name.wndObj.rotation.Y_rotation = name.wndT[2]
+			name.wndObj.rotation.X_rotation = name.wndT[1] 
+			name.wndObj.rotation.Y_rotation = name.wndT[2] 
 		)
 		else
 		(
