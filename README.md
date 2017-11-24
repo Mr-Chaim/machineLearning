@@ -31,24 +31,31 @@ What is new:
             2 - Direction-1
             3 - Direction-2
 
-        Added speed and distance layers to each of the directions networks in order to precisely predict the angle it should be used.
+        Added speed and distance layers to each of the directions networks in order to precisely predict the 
+        angle it should be used.
     
-        Removed the Absolute tilt layer as it should not have weights for it being an Input value - Noting that the distance still has weights for it still takes in consideration the general angle in which the source is from the target, as example, the Absolute distance should not have the same weight for being 10 meters above as it has for being below the target. It is a cheat to save weight space and nodes. 
+        Removed the Absolute tilt layer as it should not have weights for it being an Input value 
+        - Noting that the distance still has weights for it still takes in consideration the general angle in which 
+        the source is from the target, as example, the Absolute distance should not have the same weight for being 
+        10 meters above as it has for being below the target. It is a cheat to save weight space and nodes. 
 
         Many functions in the mathLybrary have been revisited and fixed.
 
         General polish and the addition of comments to the code itself.
     
-        Issues Fixed:------------------------------------------------------------------------------------------------------------
+        Issues Fixed:------------------------------------------------------------------------------------------------
 
         Emiter not leting object reach "Infinitesly small" distance. 
     
-        Absolute distance getting getting infinitesly small or large, sending object flying away and breaking the algoritm. 
-            - This problem was avoided by not having conflicts between Absolute maximum distances and maximum Delta being equal.
+        Absolute distance getting getting infinitesly small or large, sending object flying away and breaking 
+        the algoritm. 
+            - This problem was avoided by not having conflicts between Absolute maximum distances and maximum 
+            Delta being equal.
 
         Rogue weights have been, for the most part, fixed.
-            - I will work on the optimization algorithm, for the most part is working with a sigmoid Function and depending on the layer,
-             a Binary rectifier function, but the training is quite slow and the results are not as precise as i would like them to be.
+            - I will work on the optimization algorithm, for the most part is working with a sigmoid Function 
+            and depending on the layer, a Binary rectifier function, but the training is quite slow and the results 
+            are not as precise as i would like them to be.
 
         Orientation issue has been fixed, now the source is going in the right direction.
             - This was one of the math calculations re-writen with a better optimization method.
@@ -59,19 +66,28 @@ Needs:
         Problems described above are the main issues still looming.
 
         I have to come with a solution for the node distribution taking in consideration maximum and minimum values. 
-        Example, speed values will have nodes representing values between the Maximum value and the negative Maximum value or the minimum value. The issue I have to fix right now is for distributing the nodes also for values like absolute distance which the minimum value is 0, so the first node should be equivalent to 0, not the Negative of the maximum value. 
+        Example, speed values will have nodes representing values between the Maximum value and the negative Maximum 
+        value or the minimum value. The issue I have to fix right now is for distributing the nodes also for values 
+        like absolute distance which the minimum value is 0, so the first node should be equivalent to 0, 
+        not the Negative of the maximum value. 
 
-        The node distribution is a big problem for the direction as well. While the first node would be equivalent to a negative of the maximum tilt, the values can range from 0 to 360 degree, whith that, I am losing quite a bit of information, and have to compress that information even more when going to the wind tilt which is even more limited.
+        The node distribution is a big problem for the direction as well. While the first node would be equivalent to 
+        a negative of the maximum tilt, the values can range from 0 to 360 degree, whith that, 
+        I am losing quite a bit of information, and have to compress that information even more when going to 
+        the wind tilt which is even more limited.
 
-        To solve the two above issues, the solution i have been using is to add more nodes, but it has its limitations as it drasticaly reduces preformance as well as increasing training time. 
+        To solve the two above issues, the solution i have been using is to add more nodes, but it has its limitations 
+        as it drasticaly reduces preformance as well as increasing training time. 
 
         Code needs some cleaning to be done. Main algorithm is very much done, now it needs to be organized.
 
 Future:
 
-        I diddled around creating a layer class in order to deal with each of the layers and hold its parameters and methods,
-        this seems like a good solution for the next interation of the algorithm, as it will require major re-writing.
-        Doing that will allow add and removal of layers to the network much easier. Right now i have to go into almost every class to remove it manualy.
+        I diddled around creating a layer class in order to deal with each of the layers and hold its parameters and 
+        methods, this seems like a good solution for the next interation of the algorithm, as it will require major 
+        re-writing.
+        Doing that will allow add and removal of layers to the network much easier. Right now i have to go into almost 
+        every class to remove it manualy.
 
         The other plans for the future are still in place when the current issues are solved.
 
@@ -85,20 +101,20 @@ Fixing some of the previous stated issues and added new some new modules. Code s
 
 What is new:
     
-        Issues Fixed:------------------------------------------------------------------------------------------------------------
+        Issues Fixed:------------------------------------------------------------------------------------------------
 
         Emiter sending object flying away when above the target.
         Emiter using maximum force.
         Issue of rogue weights being miscalculated. 
 
-        MathLibrary Class:-------------------------------------------------------------------------------------------------------
+        MathLibrary Class:-------------------------------------------------------------------------------------------
 
         Weight calculation has been adjusted. - Note, it is not perfect yet. 
 
         Wind force calculation adjusted. - Working well enought, but still facing the problem of turning off 
         when getting close to target.
 
-        Prediction Class:--------------------------------------------------------------------------------------------------------
+        Prediction Class:--------------------------------------------------------------------------------------------
 
         Changes on the acl and speed pred secondary inputs in order to fix the predictions.
 
