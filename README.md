@@ -65,28 +65,28 @@ Needs:
 
         Problems described above are the main issues still looming.
 
-        I have to come with a solution for the node distribution taking in consideration maximum and minimum values. 
-        Example, speed values will have nodes representing values between the Maximum value and the negative Maximum 
-        value or the minimum value. The issue I have to fix right now is for distributing the nodes also for values 
+        I have to come with a solution for the node distribution taking in consideration maximum and minimum values.
+        Example, speed values will have nodes representing values between the Maximum value and the negative Maximum
+        value or the minimum value. The issue I have to fix right now is for distributing the nodes also for values
         like absolute distance which the minimum value is 0, so the first node should be equivalent to 0, 
         not the Negative of the maximum value. 
 
-        The node distribution is a big problem for the direction as well. While the first node would be equivalent to 
+        The node distribution is a big problem for the direction as well. While the first node would be equivalent to
         a negative of the maximum tilt, the values can range from 0 to 360 degree, whith that, 
         I am losing quite a bit of information, and have to compress that information even more when going to 
         the wind tilt which is even more limited.
 
-        To solve the two above issues, the solution i have been using is to add more nodes, but it has its limitations 
+        To solve the two above issues, the solution i have been using is to add more nodes, but it has its limitations
         as it drasticaly reduces preformance as well as increasing training time. 
 
         Code needs some cleaning to be done. Main algorithm is very much done, now it needs to be organized.
 
 Future:
 
-        I diddled around creating a layer class in order to deal with each of the layers and hold its parameters and 
+        I diddled around creating a layer class in order to deal with each of the layers and hold its parameters and
         methods, this seems like a good solution for the next interation of the algorithm, as it will require major 
         re-writing.
-        Doing that will allow add and removal of layers to the network much easier. Right now i have to go into almost 
+        Doing that will allow add and removal of layers to the network much easier. Right now i have to go into almost
         every class to remove it manualy.
 
         The other plans for the future are still in place when the current issues are solved.
