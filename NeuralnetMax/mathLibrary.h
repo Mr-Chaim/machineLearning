@@ -252,7 +252,7 @@ public:
 		float pPrLmt = binaryRectFn(pPrA, -1.0, 1.0);
 		
 		float resCurr = priA;
-		float resPred = (abs secA - 1) - pPrA;
+		float resPred = ( abs(secA) - 1) - pPrA;
 		
 		float newWRes = calcWeightFn(resCurr, resPred, PastW);
 
