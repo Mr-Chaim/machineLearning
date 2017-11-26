@@ -228,6 +228,7 @@ public:
 		
 		int position1 = Iposition[1];
 		int position2 = Iposition[2];
+
 		float weightVar = IWeightArr[position1][position2];
 
 		return weightVar;
@@ -266,8 +267,8 @@ public:
 		float pPredVar = IValPPred;
 		float PastW    = IpastWeight;
 
-		float maxPri = maxVal1
-		float maxSec = maxVal2
+		float maxPri = maxVal1;
+		float maxSec = maxVal2;
 
 		float priA = absFn(priVar, maxPri);
 		float secA = absFn(SecVar, maxSec);
@@ -298,7 +299,7 @@ public:
 		float maxD   = maxD;
 		float maxT   = maxT;
 
-		float wndPW = IpastWeight
+		float wndPW = IpastWeight;
 
 		float wndPAbs = absFn(wndPVar, maxW);
 
@@ -312,7 +313,7 @@ public:
 		float tltYLmt = binaryRectFn(tltYAbs, -1.1, 1.1);
 
 		float currRes = ((dstFLmt+dstPLmt)/2);
-		float predRes = ((dstFLmt+dstPLmt)/2) - (abs tltYLmt);
+		float predRes = ((dstFLmt+dstPLmt)/2) - (abs(tltYLmt));
 
 		float newWRes = calcWeightFn(currRes, predRes, wndPW);
 		
@@ -347,10 +348,10 @@ public:
 		float deltaY = IcurrVal[1] - IpastVal[1];
 		float deltaZ = IcurrVal[2] - IpastVal[2];
 		
-		float deltaXY    = sqrt(pow(deltaX, 2) + pow(deltaZ, 2));
+		float deltaXZ    = sqrt(pow(deltaX, 2) + pow(deltaZ, 2));
 		float angleYRes  = acos(deltaX/deltaXZ);
 		
-		if (deltaX > 0) or (deltaZ > 0)
+		if ((deltaX > 0) || (deltaZ > 0))
 		{
 			if (deltaX < 0)
 				{
@@ -373,7 +374,10 @@ public:
 		float deltaFinal = sqrt(pow(deltaXZ,2) + pow(deltaY,2));
 		float angleXRes  = acos(deltaXZ / deltaFinal);
 		
-		if deltaY > 0 do (angleXRes = -angleXRes)
+		if (deltaY > 0) 
+		{
+			(angleXRes = -angleXRes);
+		}
 	
 		return (angleXRes,angleYRes,0);
 	}
@@ -388,12 +392,12 @@ public:
 		float mP = maxPrimaryCnst;
 		float mS = maxSecondCnst;
 
-		float primarAres = absFn(primarVar, maxPCnst);
-		float secondARes = absFn(secondVar, maxSCnst);
+		float primarAres = absFn(primarVar, mP);
+		float secondARes = absFn(secondVar, mS);
 
-		float primaryRes = ((secondARes*(primarAres + primaryWVar))*maxPCnst);
+		float primaryRes = ((secondARes*(primarAres + primaryWVar))*mP);
 
-		float primaryResLmt = binaryRectFn(primaryRes, -maxPCnst, maxPCnst)
+		float primaryResLmt = binaryRectFn(primaryRes, -mP, mP);
 
 		return primaryResLmt;
 	}
@@ -408,7 +412,7 @@ public:
 
 		return deltaFinal;
 	}
-	float posPredFn(float ItltL[], float IcurrPos[], float IpredDist)
+	float posPredFn(float ItltL[3], float IcurrPos[3], float IpredDist)
 	{
 		float posXvar       = IcurrPos[0];
 		float posYvar       = IcurrPos[1];

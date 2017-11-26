@@ -5,6 +5,94 @@ Demonstration of a neural network that will identify an location on a 3d space a
 using one emiter which will change direction, compensating for tilt, inertia and gravity.
 
 
+11/26/2017---------------------------------------------------------------------------------------------------------------------------
+
+At this point, the bulk of the algorithm is working, save for some minor functions not perfected yet. 
+
+What is new:
+
+I have decided to re-rite it in C++ for some reasons:
+
+    The layers will have to become a structure by themselves and is better to start that now than later.
+
+    For a more acurate monitoring, I will need to create a interface in order to see weights in real-time.
+
+    Some of the math functions will be consolidated so it lowers redundancy, as well as more complex functions
+    should be broken down.
+
+    The complete replacement of value Class for pointers might be a better and faster solution for the import 
+    and export of values.
+
+    As a bonus, I might try multi-threading in some of the tasks to improve learning time.
+
+    I started with MathLybrary:
+
+        I have removed the limitFn and replaced it completely with a Binary Rectfier function,
+        also resolved issues:
+
+            1)The limitFn would turn any number over or under a min and max value into the min/max value.
+            - The problem is that i would lose too much data, as well as the method of calculation would take too
+            long with too many If's statements.
+
+            2)The binaryRectfier function was supposed to do the same, but was always returning a positive 1
+            if the tests where false, this problem was fixed by first defining the orientation of the number,
+            anyway, the binaryRectifier will return a value or the min/max of that value. 
+
+            3)The next solution will be to also return the loss data in order to analize and change the max/min
+            values in the future.
+
+            4)Also to clarify, is advised to use those functions with relative values(-1.0 to 1.0) or the result
+            of an absolute function
+
+        I am still in the process of consolidating the prediction functions.
+
+            1)Right now I would divide them in prediction for  movement, tilt and location/positional.
+
+                -The Movement functions would take the derivative of the other predictions,
+                as a good example would be the derivative "speed" which is simply a derivative of the current
+                distance against the previous distances. 
+                This is basicaly the heart of the machine learning process, it should take the both values
+                and how incorrect(the weight) the result was on the last time those input values occured.
+                -- The result will be a float number.
+
+                In theory, after enought try and error, the output value should match with the input values.
+
+                -The Location and Tilt functions right now are the least reliable ones at this moment
+                    The location takes the current speed and direction then predicts the distance the source will
+                    be in the next time-step. 
+                    -- The result will be a cartesian coordenate.
+
+                    I have not added weights for this functions for sake of simplicity as compounding
+                    weights might destabilize the equation at this point.
+
+                    The tilt function will take the predicted location, the current location and return an X,Y angles.
+
+        I changed the constrain function, so it will take a minimum value, so there wont be unused nodes
+        anymore for values with no negative values.
+
+        I replaced speed,acel,delta functions with simple movement functions that will derivate from
+        current and past Inputs.
+
+        Also had to modify randonGen, added rand().
+
+Problems still looming:
+    
+    Training time is still quite slow - I am back with the sigmoid function but it is not satisfactory enought yet.
+    Some of the functions will not translate perfectly well to C++, as an example,
+    instead of arrays, I had to use vectors.
+
+
+Needs:
+
+    As the conversion is on its way, I might change all the values from absolute values to relative to their maximum.
+    - I have been avoing this because of data loss.
+
+    As the mathLibrary has been filing with redundant local variables, I am still debating on localy reasigning
+    values per function or not.
+
+
+Some more details will be added as time goes by.
+
 
 
 
