@@ -31,7 +31,7 @@ struct mathClass
 
 		absRes = mathClass.absFn diffRes maxC
 		
-		absLmt = mathClass.limitFn diffRes -1.0 1.0
+		absLmt = mathClass.binaryRectFn diffRes -1.0 1.0
 
 		return absLmt
 	),
@@ -79,9 +79,9 @@ struct mathClass
 	),
 	fn binaryRectFn InputValue LowVal highVal = ------------------------------------------------------------------------Binary function, it takes the input value and returns the one of the bolVal. If input is Bigger than Var1, it will turn into val 2, if is smaller than var3 it will turn into val4
 	(
-		foo=1.0
+		foo=(1.0 * (InputValue/ abs InputValue))
 
-		if InputValue > LowVal and InputValue < highVal do
+		if InputValue >= LowVal and InputValue <= highVal do
 		(
 			foo = InputValue
 		)
@@ -92,9 +92,9 @@ struct mathClass
 	(
 		Ivar = InputValue
 		halfL = (nLayers/2) as integer
-		lmtRes = mathClass.limitFn Ivar -1 1
+		lmtRes = mathClass.binaryRectFn Ivar -1 1
 		intRes = ((lmtRes * halfL)+halfL) as integer
-		finalRes = mathClass.limitFn intRes 1 nLayers
+		finalRes = mathClass.binaryRectFn intRes 1 nLayers
 
 		return finalRes
 	),
@@ -502,7 +502,7 @@ struct mathClass
 
 		primaryRes = (secondARes*(primarAres + primaryWVar))*maxPCnst
 
-		primaryResLmt = mathClass.limitFn primaryRes -maxPCnst maxPCnst
+		primaryResLmt = mathClass.binaryRectFn primaryRes -maxPCnst maxPCnst
 
 		return primaryRes
 	),
@@ -534,7 +534,7 @@ struct mathClass
 
 		spdRes = spdARes + spdWVar(aclARes + aclWVar)
 		
-		spdResLmt = mathClass.limitFn spdRes -maxSConst maxSConst
+		spdResLmt = mathClass.binaryRectFn spdRes -maxSConst maxSConst
 		
 		return spdResLmt
 	),
@@ -553,7 +553,7 @@ struct mathClass
 
 		aclRes = aclARes + aclWVar
 
-		aclResLmt = mathClass.limitFn aclRes -maxConstA maxConstA
+		aclResLmt = mathClass.binaryRectFn aclRes -maxConstA maxConstA
 
 		return aclResLmt
 	),
@@ -667,10 +667,10 @@ struct mathClass
 		spdAbsRes  = mathClass.absFn spdSVar maxSConst
 		aclAbsRes  = mathClass.absFn aclSVar maxAConst
 		
-		dstFFinal = (mathClass.limitFn (dstFAbsRes) 0 1.0)/4 	
-		dstFinal  = (mathClass.limitFn (dstAbsRes) 0 1.0)/4
-		spdFinal  = (mathClass.limitFn (spdAbsRes) 0 1.0)/4
-		aclFinal  = (mathClass.limitFn (aclAbsRes) 0 1.0)/4
+		dstFFinal = (mathClass.binaryRectFn (dstFAbsRes) 0 1.0)/4 	
+		dstFinal  = (mathClass.binaryRectFn (dstAbsRes) 0 1.0)/4
+		spdFinal  = (mathClass.binaryRectFn (spdAbsRes) 0 1.0)/4
+		aclFinal  = (mathClass.binaryRectFn (aclAbsRes) 0 1.0)/4
 
 		wndFRes = (dstFFinal+dstFinal+spdFinal+aclFinal)*maxWConst
 
