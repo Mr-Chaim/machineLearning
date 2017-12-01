@@ -4,6 +4,23 @@ Machine Learning Algoritm with NN inside max.
 Demonstration of a neural network that will identify an location on a 3d space and learn to move an object to that location 
 using one emiter which will change direction, compensating for tilt, inertia and gravity.
 
+12-01-2017---------------------------------------------------------------------------------------------------------------------------
+
+
+Right now a working version of the algorithm is located in NeuralNexBeta.
+
+That code will not be further updated.
+
+What is new:
+
+The Visual studio enviroment 2012 with the 3ds max plugin wizard is a nightmare to use, so i ditched it for VS 2017 and will implement the 3ds max integration later. 
+
+At this moment while I am translating from maxscript to C++, I am as well testing and making slght changes to the formulas.
+
+A guide to use the Beta version will be added on the NeuralNetBeta folder soon.
+
+
+
 
 11/26/2017---------------------------------------------------------------------------------------------------------------------------
 
