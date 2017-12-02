@@ -1,9 +1,9 @@
-#pragma once
-#include <string>
 #include "stdafx.h"
 #include <vector>
 #include <string>
 #include "mathLibrary.h"
+#include "layer.h"
+#include <string>
 
 using namespace std;
 using std::vector;

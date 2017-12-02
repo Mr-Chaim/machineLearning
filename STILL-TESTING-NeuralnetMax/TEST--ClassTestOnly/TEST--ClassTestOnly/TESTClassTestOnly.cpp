@@ -7,9 +7,11 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <vector>
+using std::vector;
+using namespace std;
 
-
-int testLayers()
+void testLayers()
 {
 	
 	layer test;
@@ -21,22 +23,29 @@ int testLayers()
 	testN >> x;
 	test.initType(x);
 	cout << "Type of layer: " << test.type << endl;
-
 	cout << "Insert layerName: " << endl;
 	getline(cin, test.layerName);
 	cout << "Layer name: " << test.layerName << endl;
-    return 0;
 }
-int testMath()
+void testMath()
 {
-	mathLibrary math;
-	cout << "Eulers Number: " << math.eulersN() << endl;
-	cout << "Abs Test: " << math.absFn(2.151, 10.0) << endl;
-	return 0;
+	int iNodes = 10;
+	int oNodes = 10;
+	srand(time(NULL));
+	//mathLibrary::initRand;
+	vector<vector<float>> testArray = mathLibrary::arrayGenFn(iNodes, oNodes);
+	cout << "Randon Float Number: " << mathLibrary::randonGenFn(-100.0, 100.0) << endl;
+	cout << "Randon Int Number:   " << mathLibrary::ranIntGenFn(1, 20) << endl;
+	cout << "Eulers Number:       " << mathLibrary::eulersN() << endl;
+	cout << "Abs Test:            " << mathLibrary::absFn(2.151, 10.0) << endl;
+	cout << "Abs Limit:           " << mathLibrary::absLimitFn(12.2, 10.2, 0.012, 15.0) << endl;
+	cout << "Angle Triangulation: " << mathLibrary::angleTriFn(20.0, 35.0) << endl;
+	cout << "Weight:              " << testArray[iNodes-1][oNodes-2] << endl;
+	
 }
 int main()
 {
-	testLayers();
+	testMath();
 	return 0;
 }
 

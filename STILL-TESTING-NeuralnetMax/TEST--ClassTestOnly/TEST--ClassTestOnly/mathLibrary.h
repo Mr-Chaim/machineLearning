@@ -1,31 +1,38 @@
+#pragma once
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <cstdlib>
 #include <stdlib.h>
-#include <time.h>
+#include <ctime>
 #include <iomanip> // setprecision
 #include <sstream> // stringstream
 
 using std::vector;
 using namespace std;
 
+
 class mathLibrary
 {
 	// Basic Math Functions Used in other Functions ---------------------------------------------------------------------
 public:
-	const double eulersN()
+	static void initRand()
+	{
+		srand(time(NULL));
+	}
+	static const double eulersN()
 	{
 		double result = std::exp(1.0);
 
 		return result;
 	};
-	float absFn(float inputValue, float maxValue)
+	static float absFn(float inputValue, float maxValue)
 	{
 		float absRes = inputValue/maxValue;
 		
 		return absRes;
 	};
-	float absLimitFn(float inputCurrValue, float inputPastValue, float iWeight, float maxConstant)
+	static float absLimitFn(float inputCurrValue, float inputPastValue, float iWeight, float maxConstant)
 	{
 		float cVar = inputCurrValue;
 		float pVar = inputPastValue;
@@ -39,7 +46,7 @@ public:
 
 		return absLmt;
 	};
-	float angleTriFn( float iHipotenuse, float iSingleAngle)//Return the angles when given the Hipotenuse and an adj Angle.
+	static float angleTriFn( float iHipotenuse, float iSingleAngle)//Return the angles when given the Hipotenuse and an adj Angle.
 	{
 		float angCCnst = 90.0;
 
@@ -51,26 +58,22 @@ public:
 
 		return resultArr[2];
 	};
-	std::vector<std::vector<float>> arrayGenFn(int iLevelOne, int iLeveltwo)//Creates level 1 number of arrays with Level 2 of interactions of value -1.0 to 1.0
+	static vector<vector<float>> arrayGenFn(int iLevelOne, int iLeveltwo)//Creates level 1 number of arrays with Level 2 of interactions of value -1.0 to 1.0
 	{
 		vector<vector<float>> iArr(iLevelOne);
-
-		for ( int a=0 ; a < iLevelOne ; ++a)
+		vector<float> iArr2(iLeveltwo);
+		for ( int a=0 ; a < iLevelOne ; a++)
 		{
-			vector<float> iArr2(iLeveltwo);
-
-			for ( int b=0 ; b < iLeveltwo ; ++b)
+			for ( int b=0 ; b < iLeveltwo ; b++)
 			{
-				float foo = randonGenFn(-1.0, 1.0);
-				iArr2.push_back(foo);	
+				iArr2[b] = randonGenFn(-1.0,1.0);	
 			}
-			iArr.push_back(iArr2);
-			iArr2.clear();
+			iArr[a] = iArr2;
 		}
 		
 		return iArr;
 	};
-	bool binaryFn(float inputValue, float ilowValue, float ihighValue)//Simple binary function, takes value and returns 0 if value is not between low and high inputs, otherwise returns 1.
+	static bool binaryFn(float inputValue, float ilowValue, float ihighValue)//Simple binary function, takes value and returns 0 if value is not between low and high inputs, otherwise returns 1.
 	{
 		bool foo = 0;
 		
@@ -81,7 +84,7 @@ public:
 
 		return foo;
 	};
-	float binaryRectFn(float inputValue, float ilowValue, float ihighValue)//This binary function will take the value and its direction, as well as minimum and maximum values, then return -1 or +1 if value does not fall between the minimum or maximum, or initial value.
+	static float binaryRectFn(float inputValue, float ilowValue, float ihighValue)//This binary function will take the value and its direction, as well as minimum and maximum values, then return -1 or +1 if value does not fall between the minimum or maximum, or initial value.
 	{
 		float foo = (1.0 * (inputValue/(abs(inputValue))));
 
@@ -92,7 +95,7 @@ public:
 
 		return foo;
 	};
-	int constrainFn(float inputValue, int iNLayers, int iMinValue)
+	static int constrainFn(float inputValue, int iNLayers, int iMinValue)
 	{
 		float iVar = inputValue;
 		int nLayer = iNLayers;
@@ -117,16 +120,21 @@ public:
 			
 		return finalRes;
 	}
-	float randonGenFn(float iMinValue, float iMaxValue)
-	{
-		float minVar = iMinValue;
-		float maxVar = iMaxValue;
-		srand(time(NULL));
-		float valRes = (((rand() % 200)-100)/100);
-
-		return valRes;
+	static float randonGenFn(float minVal, float maxVal)
+	{	
+		float rangeVal = abs(maxVal - minVal);
+		float valRes = ((rand()% 20000))/ 20000.0;
+		float  resultVal = minVal+(rangeVal*valRes);
+		return resultVal;
 	}
-	float sigmoidFn(float inputValue)
+	static int ranIntGenFn(int minVal, int maxVal)
+	{
+		int rangeVal = abs(maxVal - minVal);
+		int valRes = ((rand() % rangeVal));
+		float  resultVal = minVal + valRes;
+		return resultVal;
+	}
+	static float sigmoidFn(float inputValue)
 	{
 		double E = eulersN();
 		float iVar = inputValue;
@@ -134,7 +142,7 @@ public:
 		
 		return sigRes;
 	};
-	stringstream twoDecFn(float inputValue, int iPrecision)//Reduces "InputValue" to "iPrecision" number of decimals.
+	static stringstream twoDecFn(float inputValue, int iPrecision)//Reduces "InputValue" to "iPrecision" number of decimals.
 	{
 		float iVar = inputValue;
 		int decVar = iPrecision;
@@ -144,7 +152,7 @@ public:
 		return nDecFloat;
 	};
 	// Weight Calculations ------------------------------------------------------------------------------------------------------------------------------------------------------------
-	float calcWeightFn(float iCurrVal, float iPredVal, float iPastW)
+	static float calcWeightFn(float iCurrVal, float iPredVal, float iPastW)
 	{
 		float currVar = sigmoidFn(iCurrVal);
 		float predVar = sigmoidFn(iPredVal);
@@ -154,7 +162,7 @@ public:
 		
 		return newWRes;
 	};
-	int getWeightPosFn(float iPrimVal, float iSecVal, float iMaxPrim, float iMaxSec, int nLayers, int iPriMinVal, int iSecMinVal) //Remember that tlt is an angle so it should not be imput as a float
+	static int getWeightPosFn(float iPrimVal, float iSecVal, float iMaxPrim, float iMaxSec, int nLayers, int iPriMinVal, int iSecMinVal) //Remember that tlt is an angle so it should not be imput as a float
 	{
 		float curVar = iPrimVal;
 		float secVar = iSecVal;
@@ -176,7 +184,7 @@ public:
 		
 		return (posPrimRes,posSecRes);
 	};
-	int getWndFWeightPosFn(float IpriValue, float IsecValue, float ItltValue, float ImaxPriValue, float ImaxSecValue, float ImaxTlt, int nLayers, int iPriMinVal, int iSecMinVal) //Remember that tlt is an angle so it should not be imput as a float
+	static int getWndFWeightPosFn(float IpriValue, float IsecValue, float ItltValue, float ImaxPriValue, float ImaxSecValue, float ImaxTlt, int nLayers, int iPriMinVal, int iSecMinVal) //Remember that tlt is an angle so it should not be imput as a float
 	{
 		float priVar = IpriValue;
 		float secVar = IsecValue;
@@ -201,7 +209,7 @@ public:
 		
 		return (posPRes,posSRes);
 	};
-	float getWeightFn(std::vector<std::vector<float>> IWeightArr, int Iposition[2])
+	static float getWeightFn(std::vector<std::vector<float>> IWeightArr, int Iposition[2])
 	{
 		int position1 = Iposition[0];
 		int position2 = Iposition[1];
@@ -210,7 +218,7 @@ public:
 
 		return weightVar;
 	};
-	float weightUpdtFn(float IpriVal, float IsecVal, float IValPPred, float IpastWeight, float maxVal1, float maxVal2)
+	static float weightUpdtFn(float IpriVal, float IsecVal, float IValPPred, float IpastWeight, float maxVal1, float maxVal2)
 	{
 		float priVar   = IpriVal;
 		float SecVar   = IsecVal;
@@ -235,7 +243,7 @@ public:
 
 		return newWRes;
 	};
-	float tltWeightUpdateFn(float IpriVal, float IsecVal, float IValPPred, float IpastWeight, float maxVal1, float maxVal2)
+	static float tltWeightUpdateFn(float IpriVal, float IsecVal, float IValPPred, float IpastWeight, float maxVal1, float maxVal2)
 	{
 		float priVar   = IpriVal;
 		float SecVar   = IsecVal;
@@ -261,7 +269,7 @@ public:
 
 		return newWRes;
 	};
-	float wndWUpdateFn(float IwndFPast, float IdstF, float IdstS, float ItltF, float IpastWeight, float maxW, float maxABS, float maxD, float maxT)//Remember that tlt is an angle so it should not be imput as a float
+	static float wndWUpdateFn(float IwndFPast, float IdstF, float IdstS, float ItltF, float IpastWeight, float maxW, float maxABS, float maxD, float maxT)//Remember that tlt is an angle so it should not be imput as a float
 	{
 		float wndPVar = IwndFPast;
 		float dstFVar = IdstF;
@@ -289,7 +297,7 @@ public:
 		return newWRes;
 	};
 	//Position Functions -----------------------------------------------------------------------------------------------
-	float dstFfn(float IsourcePos[3], float ItargetPos[3])
+	static float dstFfn(float IsourcePos[3], float ItargetPos[3])
 	{
 		float deltaX = ItargetPos[0]-IsourcePos[0];
 		float deltaY = ItargetPos[1]-IsourcePos[1];
@@ -300,7 +308,7 @@ public:
 
 		return deltaFinal;
 	};	
-	float movementFn(float IPastVal, float ICurrVal)
+	static float movementFn(float IPastVal, float ICurrVal)
 	{
 		float currVar = ICurrVal;
 		float pastVar = IPastVal;
@@ -310,7 +318,7 @@ public:
 		
 		return derDir;
 	};
-	float tltFFn(float IpastVal[], float IcurrVal[])
+	static float tltFFn(float IpastVal[], float IcurrVal[])
 	{
 		float deltaX = IcurrVal[0] - IpastVal[0];
 		float deltaY = IcurrVal[1] - IpastVal[1];
@@ -350,7 +358,7 @@ public:
 		return (angleXRes,angleYRes,0);
 	};	
 	//Prediction Functions ---------------------------------------------------------------------------------------------
-	float PredFn(float IprimaryVal, float IsecondVal, float IPrimaryWght, float maxPrimaryCnst, float maxSecondCnst)
+	static float PredFn(float IprimaryVal, float IsecondVal, float IPrimaryWght, float maxPrimaryCnst, float maxSecondCnst)
 	{
 		float primarVar = IprimaryVal;
 		float secondVar = IsecondVal;
@@ -369,7 +377,7 @@ public:
 
 		return primaryResLmt;
 	};
-	float dstPredfn(float IsourcePos[3], float ItargetPos[3])
+	static float dstPredfn(float IsourcePos[3], float ItargetPos[3])
 	{
 		float deltaX = ItargetPos[0]-IsourcePos[0];
 		float deltaY = ItargetPos[1]-IsourcePos[1];
@@ -380,7 +388,7 @@ public:
 
 		return deltaFinal;
 	};
-	float posPredFn(float ItltL[3], float IcurrPos[3], float IpredDist)
+	static float posPredFn(float ItltL[3], float IcurrPos[3], float IpredDist)
 	{
 		float posXvar       = IcurrPos[0];
 		float posYvar       = IcurrPos[1];
@@ -402,7 +410,7 @@ public:
 
 		return (finalposRes[0], finalposRes[1], finalposRes[2]);
 	};	
-	float tltfPredFn(float IpastVal[3], float IcurrVal[3])
+	static float tltfPredFn(float IpastVal[3], float IcurrVal[3])
 	{
 		float deltaX = IcurrVal[0] - IpastVal[0];
 		float deltaY = IcurrVal[1] - IpastVal[1];
@@ -442,7 +450,7 @@ public:
 		return (angleXRes,angleYRes,0);
 	};	
 	//Wind Calculation Functions ---------------------------------------------------------------------------------------
-	double wndFinlTltFn(std::vector<float> IlayersArr, float maxWndCnst)
+	static double wndFinlTltFn(std::vector<float> IlayersArr, float maxWndCnst)
 	{
 		int arrSize = IlayersArr.size();
 		float foo = 0;
@@ -457,7 +465,7 @@ public:
 
 		return wndFRes;
 	};
-	double wndFinlFn(std::vector<float> IlayersArr, float maxWndCnst)
+	static double wndFinlFn(std::vector<float> IlayersArr, float maxWndCnst)
 	{
 		int arrSize = IlayersArr.size();
 		float foo = 0;
