@@ -108,12 +108,12 @@ struct layer
 	{
 		if (type == "Angle")
 		{
-			std::vector<std::vector<std::vector<float> > > weightArray;
+			vector<vector<vector<float>>> weightArray;
 			for (int a = 0; a < 3; a++)
 			{
 				weightArray[a] = mathLibrary::arrayGenFn(numberNodes, exitNodes);
 			}
 		}
-		std::vector<std::vector<float> > weightArray = mathLibrary::arrayGenFn(numberNodes, exitNodes);
+		vector<vector<float>> weightArray = mathLibrary::arrayGenFn(numberNodes, exitNodes);
 	}
 };
