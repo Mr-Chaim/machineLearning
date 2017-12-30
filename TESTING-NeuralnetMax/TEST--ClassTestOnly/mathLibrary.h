@@ -100,24 +100,27 @@ public:
 		float iVar = inputValue;
 		int nLayer = iNLayers;
 		int minVal = iMinValue;
-		int finalRes = 0;
-		int halfL    = 0;
-		float lmtRes = 0.0;
-		float intRes = 0.0;
+		
+		float intRes;
+		int halfL;
+		int finalRes;
+		float lmtRes;
 
 		if (minVal < 0)
 		{
 			halfL = static_cast<int>(nLayer/2);
 			lmtRes = binaryRectFn(iVar, minVal, 1);
-			intRes = ((lmtRes*halfL)+halfL);
+			intRes = ((lmtRes*halfL) + halfL);
 		}
 		else 
 		{
+			halfL = static_cast<int>(nLayer);
 			lmtRes = binaryRectFn(iVar, minVal, 1);
-			intRes = ((lmtRes*nLayer)+nLayer);
+			intRes = ((lmtRes*halfL));
 		}
 		finalRes = static_cast<int>(binaryRectFn(intRes, 0, nLayer));
-			
+		
+		
 		return finalRes;
 	}
 	static float randonGenFn(float minVal, float maxVal)
@@ -138,51 +141,49 @@ public:
 	{
 		double E = eulersN();
 		float iVar = inputValue;
-		float sigRes = 1.0/(1.0 * pow(E,-iVar));
+		float sigRes = 1.0/(1.0 + pow(E,-iVar));
 		
 		return sigRes;
 	};
-	static stringstream twoDecFn(float inputValue, int iPrecision)//Reduces "InputValue" to "iPrecision" number of decimals.
+	static double nDecFn(double inputValue, int iPrecision)//Reduces "InputValue" to "iPrecision" number of decimals.
 	{
-		float iVar = inputValue;
+		double iVar = inputValue;
 		int decVar = iPrecision;
 		stringstream nDecFloat;
 		nDecFloat << fixed << setprecision(decVar) << iVar;
-		
-		return nDecFloat;
+		double finalVal;
+		nDecFloat >> finalVal;
+
+		return finalVal;
 	};
 	// Weight Calculations ------------------------------------------------------------------------------------------------------------------------------------------------------------
 	static float calcWeightFn(float iCurrVal, float iPredVal, float iPastW)
 	{
 		float currVar = sigmoidFn(iCurrVal);
 		float predVar = sigmoidFn(iPredVal);
+		float squrtVal = sqrt(pow(currVar, 2) + pow(predVar, 2));
+		float dirVal = (currVar-predVar) / abs(currVar-predVar);
 		float pastW = iPastW;
-		float calcR = (pastW+(currVar-predVar)/2);
+		float calcR = (pastW * squrtVal*dirVal);
 		float newWRes = binaryRectFn(calcR, -1.0, 1.0);
 		
 		return newWRes;
 	};
-	static int getWeightPosFn(float iPrimVal, float iSecVal, float iMaxPrim, float iMaxSec, int nLayers, int iPriMinVal, int iSecMinVal) //Remember that tlt is an angle so it should not be imput as a float
+	static vector<int> getWeightPosFn(float iPrimRVal, float iSecRVal, int nLayers, int nlayers2, int iPriMinVal, int iSecMinVal) //Remember that tlt is an angle so it should not be imput as a float
 	{
-		float curVar = iPrimVal;
-		float secVar = iSecVal;
-		
-		float mPCnst = iMaxPrim;
-		float mSCnst = iMaxSec;
+		vector<int> positions(2);
+		float curVar = iPrimRVal;
+		float secVar = iSecRVal;
 
 		int priMin = iPriMinVal;
 		int secMin = iSecMinVal;
 
-		float absPrimRes = absFn(curVar, mPCnst);
-		float absSecRes = absFn(secVar, mSCnst);
+		float absPrimLmt = binaryRectFn(curVar, iPriMinVal, 1.0);
+		float absSecLmt = binaryRectFn(secVar, iSecMinVal, 1.0);
 
-		float absPrimLmt = binaryRectFn(absPrimRes, -1.0, 1.0);
-		float absSecLmt = binaryRectFn(absSecRes, -1.0, 1.0);
-
-		int posPrimRes = constrainFn(absPrimRes, nLayers, priMin);
-		int posSecRes = constrainFn(absSecRes, nLayers, secMin);
-		
-		return (posPrimRes,posSecRes);
+		positions[0] = constrainFn(absPrimLmt, nLayers, priMin);
+		positions[1] = constrainFn(absSecLmt, nlayers2, secMin);
+		return positions;
 	};
 	static int getWndFWeightPosFn(float IpriValue, float IsecValue, float ItltValue, float ImaxPriValue, float ImaxSecValue, float ImaxTlt, int nLayers, int iPriMinVal, int iSecMinVal) //Remember that tlt is an angle so it should not be imput as a float
 	{
@@ -209,7 +210,7 @@ public:
 		
 		return (posPRes,posSRes);
 	};
-	static float getWeightFn(std::vector<std::vector<float>> IWeightArr, int Iposition[2])
+	static float getWeightFn(vector<vector<float>> IWeightArr, vector<int> Iposition)
 	{
 		int position1 = Iposition[0];
 		int position2 = Iposition[1];
@@ -218,26 +219,21 @@ public:
 
 		return weightVar;
 	};
-	static float weightUpdtFn(float IpriVal, float IsecVal, float IValPPred, float IpastWeight, float maxVal1, float maxVal2)
+	static float weightUpdtFn(float IpriVal, float IsecVal, float IValPPred, float IpastWeight, int minPrim, int minSec, int minTer)
 	{
 		float priVar   = IpriVal;
 		float SecVar   = IsecVal;
+
 		float pPredVar = IValPPred;
+
 		float PastW    = IpastWeight;
-
-		float maxPri = maxVal1;
-		float maxSec = maxVal2;
-
-		float priA = absFn(priVar, maxPri);
-		float secA = absFn(SecVar, maxSec);
-		float pPrA = absFn(pPredVar, maxPri);
 		
-		float priLmt = binaryRectFn(priA, -1.0, 1.0);
-		float secLmt = binaryRectFn(secA, -1.0, 1.0);
-		float pPrLmt = binaryRectFn(pPrA, -1.0, 1.0);
+		float priLmt = binaryRectFn(priVar, minPrim, 1.0);
+		float secLmt = binaryRectFn(SecVar, minSec, 1.0);
+		float pPrLmt = binaryRectFn(pPredVar, minTer, 1.0);
 		
-		float resCurr = priA;
-		float resPred = ( abs(secA) - 1) - pPrA;
+		float resCurr = priLmt;
+		float resPred = ( abs(priLmt) - 1) - priLmt;
 		
 		float newWRes = calcWeightFn(resCurr, resPred, PastW);
 
@@ -450,7 +446,7 @@ public:
 		return (angleXRes,angleYRes,0);
 	};	
 	//Wind Calculation Functions ---------------------------------------------------------------------------------------
-	static double wndFinlTltFn(std::vector<float> IlayersArr, float maxWndCnst)
+	static double wndFinlTltFn(vector<float> IlayersArr, float maxWndCnst)
 	{
 		int arrSize = IlayersArr.size();
 		float foo = 0;
@@ -465,7 +461,7 @@ public:
 
 		return wndFRes;
 	};
-	static double wndFinlFn(std::vector<float> IlayersArr, float maxWndCnst)
+	static double wndFinlFn(vector<float> IlayersArr, float maxWndCnst)
 	{
 		int arrSize = IlayersArr.size();
 		float foo = 0;
