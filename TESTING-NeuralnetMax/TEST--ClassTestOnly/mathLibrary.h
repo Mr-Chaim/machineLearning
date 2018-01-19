@@ -1,12 +1,14 @@
 #pragma once
-#include <iostream>
+#include "stdafx.h"
+#include <iomanip> // setprecision
+#include <sstream> // stringstream
 #include <vector>
+#include <string>
 #include <cmath>
 #include <cstdlib>
 #include <stdlib.h>
 #include <ctime>
-#include <iomanip> // setprecision
-#include <sstream> // stringstream
+#include <math.h>
 
 using std::vector;
 using namespace std;
@@ -293,7 +295,7 @@ public:
 		return newWRes;
 	};
 	//Position Functions -----------------------------------------------------------------------------------------------
-	static float dstFfn(float IsourcePos[3], float ItargetPos[3])
+	static float dstFfn(float IsourcePos[], float ItargetPos[])// This should use point3 coordenates as input
 	{
 		float deltaX = ItargetPos[0]-IsourcePos[0];
 		float deltaY = ItargetPos[1]-IsourcePos[1];
@@ -314,7 +316,7 @@ public:
 		
 		return derDir;
 	};
-	static float tltFFn(float IpastVal[], float IcurrVal[])
+	static vector<float> tltFFn(float IpastVal[], float IcurrVal[])
 	{
 		float deltaX = IcurrVal[0] - IpastVal[0];
 		float deltaY = IcurrVal[1] - IpastVal[1];
@@ -349,9 +351,11 @@ public:
 		if (deltaY > 0) 
 		{
 			(angleXRes = -angleXRes);
-		}
-	
-		return (angleXRes,angleYRes,0);
+		};
+		
+		vector<float> foo = { angleXRes, angleYRes, 0 };
+		
+		return foo;
 	};	
 	//Prediction Functions ---------------------------------------------------------------------------------------------
 	static float PredFn(float IprimaryVal, float IsecondVal, float IPrimaryWght, float maxPrimaryCnst, float maxSecondCnst)

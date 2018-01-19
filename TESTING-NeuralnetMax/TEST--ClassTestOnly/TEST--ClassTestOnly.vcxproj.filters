@@ -24,13 +24,22 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="mathLibrary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="layerConstructor.h">
+    <ClInclude Include="nodeTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="constantsConstructor.h">
+    <ClInclude Include="layerTemplate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="constantConstructor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nnWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,14 +47,29 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ClassTest.cpp">
+    <ClCompile Include="maxNeuralNet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="layerTemplates.cpp">
+    <ClCompile Include="nodeTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="constants.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="nnWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TEST--maxNeuralNet.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="maxNeuralNet.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="ClassDiagram11.cd" />
   </ItemGroup>
 </Project>

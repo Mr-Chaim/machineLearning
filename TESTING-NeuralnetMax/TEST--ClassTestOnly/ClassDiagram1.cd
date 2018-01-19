@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="constantConstrctor" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JCAAAgAAgAAAAAAAACAAgAwEAAAAAAAABECBIAAAEAA=</HashCode>
+      <FileName>maxNeuralNet.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="constantValues" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAgAAAAQAAAAAAAIEAAAIAAAAABAAABAAAAAAAg=</HashCode>
+      <FileName>maxNeuralNet.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="_layerTemplate" Collapsed="true">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IABABCABAAQEIQgBAAAFAKMQEAEBYAKAIAQAAIgAgCA=</HashCode>
+      <FileName>maxNeuralNet.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="_nodeTemplate" Collapsed="true">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAIAAAAAAAAAAAAAAAECAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>maxNeuralNet.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include "stdafx.h"
 
 class constantConstrctor
@@ -54,6 +53,5 @@ private:
 	float _maxAbs;
 	float _maxWndT;
 
-	~constants();
 };
 
